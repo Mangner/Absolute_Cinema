@@ -26,7 +26,9 @@ class Routing {
             // co jesli user przekaze w url np. dashboard/1456
             // ? jak przekazac zmienna do akcji z kontrolera
             // Podpowiedź użyć REGEX-a
-            include 'public/views/dashboard.html';
+            $controller = new Routing::$routes[$path]['controller'];
+            $action = Routing::$routes[$path]['action'];
+            $controller->$action();
             break;
         case 'login':
 

@@ -5,9 +5,21 @@ class AppController {
 
     protected function render(string $template = null, array $variables = [])
     {
-        $templatePath = 'public/views/'. $template.'.html';
+        $templatePathPhtml = 'public/views/' . $template . '.phtml';
+        $templatePathHtml = 'public/views/' . $template . '.html';
         $templatePath404 = 'public/views/404.html';
+        
+        $templatePath = null;
         $output = "";
+
+        
+        if (file_exists($templatePathPhtml)) {
+            $templatePath = $templatePathPhtml;
+        }
+        elseif (file_exists($templatePathHtml)) {
+            $templatePath = $templatePathHtml;
+        }
+        
                  
         if(file_exists($templatePath)){
             

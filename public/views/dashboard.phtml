@@ -23,12 +23,21 @@
 
         <main>
             <h1>DASHBOARD</h1>
-            <?php foreach($array as $key=>$value): ?>
+            <?php foreach($items as $item): ?>
             <tr>
-                <?php> echo $key; ?></td>
+                <td>
+                    <a href="<?= $item['href']?>">
+                        <?php echo $item['title'] . " : ". $item['subtitle']; ?>
+                    </a>
+
+                    <br>
+                        <img src="<?= htmlspecialchars($item['imageUrlPath']); ?>" alt="<?= htmlspecialchars($item['title']); ?>">
+                    <br>
+
+                </td>
             </tr>
             <?php endforeach; ?>
-            <!-- Tu wyswietlamy elementy -->>
+            <!-- Tu wyswietlamy elementy -->
         </main>
     </div>
 </body>
