@@ -37,6 +37,14 @@ class Routing {
             $action = Routing::$routes[$path]['action'];
             $controller->$action();
             break;
+
+        case 'register':
+            #tutaj zmienić architekture żeby zrobić SINGLETON
+            $controller = new Routing::$routes[$path]['controller'];
+            $action = Routing::$routes[$path]['action'];
+            $controller->$action();
+            break;
+
         default:
             include 'public/views/404.html';
             break;

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rejestracja - Absolute Cinema</title>
+    <link rel="stylesheet" href="public/styles/login.css">
+</head>
+<body>
+
+    <main class="login-container">
+        
+        <div class="login-box">
+            
+            <img src="/images/logo-absolute-cinema.svg" alt="Absolute Cinema Logo" class="logo">
+
+            <nav class="auth-tabs">
+                <a href="/login">Zaloguj się</a>
+                <a href="/register" class="active">Zarejestruj się</a>
+            </nav>
+
+            <form action="/register" method="POST">
+                
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Wpisz swój email" required>
+
+                    
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Hasło</label>
+                    <input type="password" id="password" name="password" placeholder="Wpisz swoje hasło" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="confirm-password">Potwierdź hasło</label>
+                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Wpisz hasło ponownie" required>
+                </div>
+
+                <button type="submit" class="btn-submit">Zarejestruj się</button>
+                
+            </form>
+        </div>
+    </main>
+
+</body>
+</html>

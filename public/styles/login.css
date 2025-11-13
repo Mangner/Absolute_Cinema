@@ -106,3 +106,8 @@ body, html {
     cursor: pointer;
     margin-top: 20px;
 }
+
+
+.message {
+    color: #8E7FAE;
+}

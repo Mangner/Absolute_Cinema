@@ -25,10 +25,16 @@
                     <input type="email" id="email" name="email" placeholder="Wpisz swój email" required>
                 </div>
 
+                <?php if (isset($message)): ?>
+                
+                    <p class="message"><?= $message ?></p>
+
+                <?php endif; ?>
+
                 <div class="input-group">
                     <label for="password">Hasło</label>
                     <input type="password" id="password" name="password" placeholder="Wpisz swoje hasło" required>
-                    </div>
+                </div>
 
                 <a href="/forgot-password" class="forgot-password">Nie pamiętasz hasła?</a>
 
