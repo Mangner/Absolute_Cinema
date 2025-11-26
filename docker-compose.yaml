@@ -22,7 +22,9 @@ services:
       - "5433:5432"
     networks:
       - pg-network
-  
+    volumes:
+      - ./docker/db:/docker-entrypoint-initdb.d
+
   php:
     build:
       context: .

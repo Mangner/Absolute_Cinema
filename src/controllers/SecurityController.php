@@ -1,10 +1,16 @@
 <?php
 
+require_once __DIR__.'/../repository/UserRepository.php';
 require_once 'AppController.php';
 
 class SecurityController extends AppController {
 
 
+    private $userRepository;
+
+    public function __construct() {
+        $this->userRepository = new UserRepository();
+    }
     // public function login() {
         
 
@@ -65,9 +71,17 @@ class SecurityController extends AppController {
 
     public function login()
     {
+
+
+
         if (!$this->isPost()) {
             return $this->render('login');
         }
+        
+        
+        
+        $userRepository = new UserRepository();
+        $users = $userRepository->getUsers($email);
 
         $email = $_POST["email"] ?? '';
         $password = $_POST["password"] ?? '';
