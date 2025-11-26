@@ -40,6 +40,12 @@
 
                 <button type="submit" class="btn-submit">Zarejestruj się</button>
                 
+                <?php if (isset($message)): ?>
+                
+                    <p class="message"><?= $message ?></p>
+
+                <?php endif; ?>
+
             </form>
         </div>
     </main>

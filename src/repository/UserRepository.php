@@ -21,7 +21,7 @@ class UserRepository extends Repository
     {
         $stmt = $this->database->connect()->prepare('SELECT * FROM users WHERE email =:email');
 
-        $stmt->bindParams(':email', $email);
+        $stmt->bindParam(':email', $email);
         $stmt->execute();
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
