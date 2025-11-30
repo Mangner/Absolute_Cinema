@@ -1,0 +1,99 @@
+body {
+    background-color: #121212;
+    padding: 1em;
+    color: yellow;
+
+    display: grid;
+    grid-template-rows: 1fr 1fr 10fr;
+}
+
+div {
+    color: white;
+}
+
+.navigation-bar {
+    display: flex;
+    justify-content: space-between;
+    color: white;   
+    border-bottom: 0.25em solid #212121;}
+
+.navigation-bar > * {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-width: 50px;
+}
+
+#search-bar {
+    background-color: #1e1e1e1e;
+    color: #666666;
+    font-size: 1rem;
+}
+
+.offer-section {
+    display: grid;
+    grid-template-rows: 1fr 4fr;
+    padding: 1em;
+}
+
+input[type="radio"] {
+    display: none
+}
+
+.tab-panel {
+    display: none
+}
+
+.tab-content-container {
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#tab-screen:checked ~ .tab-content-container #content-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#tab-screen:checked ~ .cinema-offer-bar label[for="tab-screen"] {
+    border-bottom: 0.25em solid #D4AF37;
+}
+
+#tab-soon:checked  ~ .tab-content-container #content-soon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#tab-soon:checked ~ .cinema-offer-bar label[for="tab-soon"] {
+    border-bottom: 0.25em solid #D4AF37;
+}
+
+#tab-gastro:checked ~ .tab-content-container #content-gastro {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#tab-gastro:checked ~ .cinema-offer-bar label[for="tab-gastro"] {
+    border-bottom: 0.25em solid #D4AF37;
+}
+
+.cinema-offer-bar {
+    display: flex;
+    padding: 1em;
+}
+
+.cinema-offer-bar label {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    border-bottom: 0.25em solid #242424;
+}
+

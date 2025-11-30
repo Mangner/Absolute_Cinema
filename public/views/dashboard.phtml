@@ -1,44 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
+
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="public/styles/main.css">
-    <script scr="public/scripts/main.js" defer></script>
-    <title>DASHBOARD</title>
+    <meta charset="UTF-8">
+    <title>DashBoard</title>
+    <link rel="stylesheet" href="public/styles/dashboard.css">
 </head>
+
 <body>
     <nav>
-        <p>LOGO</p>
-        <ul>
-            <li>DAHSBOARD</li>
-            <li>USERS</li>
-            <li>REPORTS</li>
-        </ul>
+        <div class="navigation-bar">
+            <div>Absolute Cinema</div>
+            <div>Lokalizacja</div>
+            <div>Zaloguj/Moje Konto</div>
+            <div>Kontakt</div>
+            <input id="search-bar" type="text" placeholder="🔎 Szukaj">
+        </div>
     </nav>
-    <div class="container">
-        <aside>
-            <p>MOJ TOOLBAR</p>
-        </aside>
 
-        <main>
-            <h1>DASHBOARD</h1>
-            <?php foreach($items as $item): ?>
-            <tr>
-                <td>
-                    <a href="<?= $item['href']?>">
-                        <?php echo $item['title'] . " : ". $item['subtitle']; ?>
-                    </a>
+    <div class="offer-section">
+        <input type="radio" name="tab_set" id="tab-screen" checked>
+        <input type="radio" name="tab_set" id="tab-soon">
+        <input type="radio" name="tab_set" id="tab-gastro">
 
-                    <br>
-                        <img src="<?= htmlspecialchars($item['imageUrlPath']); ?>" alt="<?= htmlspecialchars($item['title']); ?>">
-                    <br>
+        <div class="cinema-offer-bar">
+            <label for="tab-screen">Na Ekranie</label>
+            <label for="tab-soon">Wkrótce</label>
+            <label for="tab-gastro">Oferta Gastronomiczna</label>
+        </div>
 
-                </td>
-            </tr>
-            <?php endforeach; ?>
-            <!-- Tu wyswietlamy elementy -->
-        </main>
+        <div class="tab-content-container">
+            <div id="content-screen" class="tab-panel">
+                <p>Kafelki filmów NA EKRANIE</p>
+            </div>
+
+            <div id="content-soon" class="tab-panel">
+                <p>Kafelki filmów WKRÓTCE</p>
+            </div>
+    
+            <div id="content-gastro" class="tab-panel">
+                <p>Kafelki OFERTA GASTRONOMICZNA</p>
+            </div>
+        </div>
     </div>
 </body>
 </html>
