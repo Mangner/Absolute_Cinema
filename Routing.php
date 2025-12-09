@@ -16,39 +16,29 @@ class Routing {
         'dashboard' => [
             'controller' => "DashboardController",
             'action' => 'index'
+        ],
+        'search-cards' => [
+            'controller' => "DashboardController",
+            'action' => 'search'
         ]
+
     ];
 
+    // REGEX NA ROUTINGU ZEBY POBRAC ID
+    // DI - SIGNGLETON
+    // Sesja Uzytkownika
+    // Security Bingo
 
-    public static function run(string $path) {
-    switch($path) {
-        case 'dashboard':
-            // co jesli user przekaze w url np. dashboard/1456
-            // ? jak przekazac zmienna do akcji z kontrolera
-            // Podpowiedź użyć REGEX-a
-            $controller = new Routing::$routes[$path]['controller'];
-            $action = Routing::$routes[$path]['action'];
-            $controller->$action();
-            break;
-        case 'login':
-
-            #tutaj zmienić architekture żeby zrobić SINGLETON
-            $controller = new Routing::$routes[$path]['controller'];
-            $action = Routing::$routes[$path]['action'];
-            $controller->$action();
-            break;
-
-        case 'register':
-            #tutaj zmienić architekture żeby zrobić SINGLETON
-            $controller = new Routing::$routes[$path]['controller'];
-            $action = Routing::$routes[$path]['action'];
-            $controller->$action();
-            break;
-
-        default:
-            include 'public/views/404.html';
-            break;
-        };
+    public static function run($url) {
         
+        if (array_key_exists($url, self::$routes)) {
+            $controller = self::$routes[$url]['controller']; 
+            $action = self::$routes[$url]['action'];
+            $object = new $controller;
+            $object->$action();
+        } else {
+            http_response_code(404);
+            include 'public/views/404.html';
+        }
     }
 }
