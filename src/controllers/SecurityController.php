@@ -41,7 +41,7 @@ class SecurityController extends AppController {
         $_SESSION['user_firstname'] = $user['name'] ?? null;
         $_SESSION['is_logged_in'] = true;
 
-        return $this->url("dashboard");
+        return $this->url("dashboard?id=" . $user['id']);
     }
 
     
