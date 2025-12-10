@@ -12,7 +12,7 @@ class SecurityController extends AppController {
         $this->userRepository = new UserRepository();
     }
 
-    
+
     public function login()
     {
         if (!$this->isPost()) {
@@ -23,12 +23,7 @@ class SecurityController extends AppController {
         $email = $_POST["email"] ?? '';
         $password = $_POST["password"] ?? '';
 
-        $userRepository = new UserRepository();
-        $users = $userRepository->getUsers($email);
-
-
-        $userRepository = new UserRepository();
-        $user = $userRepository->getUserByEmail($email);
+        $user = $this->userRepository->getUserByEmail($email);
 
         if (!$user) {
             return $this->render("login", ["message" => "User not exists!"]);
@@ -39,10 +34,42 @@ class SecurityController extends AppController {
         }
     
         // TODO create user session/ cookie/ token 
-        return $this->render("dashboard");
+
+        session_regenerate_id(true);
+        $_SESSION['user_id'] = $user['id']; 
+        $_SESSION['user_email'] = $user['email'];
+        $_SESSION['user_firstname'] = $user['name'] ?? null;
+        $_SESSION['is_logged_in'] = true;
+
+        return $this->url("dashboard");
     }
 
     
+    public function logout() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $_SESSION = [];
+
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(), 
+                '', 
+                time() - 42000,
+                $params["path"], 
+                $params["domain"],
+                $params["secure"], 
+                $params["httponly"]
+            );
+        }
+
+        session_destroy();
+
+        return $this->url("login");
+    }
+
 
     public function register()
     {

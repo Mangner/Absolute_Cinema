@@ -15,6 +15,24 @@ class AppController {
     }
 
 
+    protected function url(string $path) {
+        $url = "http://$_SERVER[HTTP_HOST]";
+        header("Location: {$url}/{$path}");
+    }
+
+
+    protected function requireLogin() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (empty($_SESSION['user_id'])) {
+            $this->url('login');
+            exit();
+        }
+    }
+
+    
     protected function render(string $template = null, array $variables = [])
     {
         $templatePathPhtml = 'public/views/' . $template . '.phtml';
