@@ -31,6 +31,8 @@ class AppController {
             exit();
         }
         
+        $timeout = 600;
+        
         if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $timeout)) {
             // Czas minął! Czyścimy sesję
             session_unset();
