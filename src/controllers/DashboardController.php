@@ -20,14 +20,9 @@ class DashboardController extends AppController {
     public function index() {
         $this->requireLogin();
 
-        $moviesOnScreen = $this->movieRepository->getMoviesOnScreen();
-        $moviesUpcoming = $this->movieRepository->getUpcomingMovies();
-        
         $snacks = $this->snacksRepository->getSnacks(); 
 
         $this->render('dashboard', [
-            'moviesOnScreen' => $moviesOnScreen, 
-            'moviesUpcoming' => $moviesUpcoming,
             'snacks' => $snacks
         ]);
     }
@@ -67,5 +62,62 @@ class DashboardController extends AppController {
             'movies' => $this->movieRepository->getMoviesByTitle($searchTag)
         ]);
         return;
+    }
+
+
+    public function getOnScreenMovies() {
+        header('Content-Type: application/json');
+
+        if (!$this->isGet()) {
+            http_response_code(405);
+            echo json_encode([
+                'status' => 'Method not allowed'
+            ]);
+            return;
+        }
+
+        http_response_code(200);
+        echo json_encode([
+            'status' => 'ok',
+            'movies' => $this->movieRepository->getMoviesOnScreen(),
+        ]);
+    }
+
+
+    public function getUpcomingMovies() {
+        header('Content-Type: application/json');
+
+        if (!$this->isGet()) {
+            http_response_code(405);
+            echo json_encode([
+                'status' => 'Method not allowed'
+            ]);
+            return;
+        }
+
+        http_response_code(200);
+        echo json_encode([
+            'status' => 'ok',
+            'movies' => $this->movieRepository->getUpcomingMovies(),
+        ]);
+    }
+
+
+    public function getSnacks() {
+        header('Content-Type: application/json');
+
+        if (!$this->isGet()) {
+            http_response_code(405);
+            echo json_encode([
+                'status' => 'Method not allowed'
+            ]);
+            return;
+        }
+
+        http_response_code(200);
+        echo json_encode([
+            'status' => 'ok',
+            'snacks' => $this->snacksRepository->getSnacks(),
+        ]);
     }
 }

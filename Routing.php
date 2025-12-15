@@ -24,8 +24,19 @@ class Routing {
         'search-movies' => [
             'controller' => "DashboardController",
             'action' => 'search'
+        ],
+        'get-OnScreen-movies' => [
+            'controller' => "DashboardController",
+            'action' => 'getOnScreenMovies'
+        ],
+        'get-Upcoming-movies' => [
+            'controller' => "DashboardController",
+            'action' => 'getUpcomingMovies'
+        ],
+        'get-snacks' => [
+            'controller' => "DashboardController",
+            'action' => 'getSnacks'
         ]
-
     ];
 
     // REGEX NA ROUTINGU ZEBY POBRAC ID

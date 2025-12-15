@@ -33,7 +33,7 @@ INSERT INTO movies (title, description, director, release_date, image, price, du
     'Książę Paul Atryda przyjmuje przydomek Muad''Dib i rozpoczyna duchowo-fizyczną podróż, by stać się przepowiedzianym wyzwolicielem ludu Diuny.', 
     'Denis Villeneuve', 
     '2024-02-29', 
-    'https://upload.wikimedia.org/wikipedia/en/5/52/Dune_Part_Two_poster.jpg', 
+    'https://image.tmdb.org/t/p/w600_and_h900_face/xdfO6EB9e59qZpzmHxezTdPfTxZ.jpg', 
     25.00,
     166
 ),
@@ -62,7 +62,7 @@ INSERT INTO movies (title, description, director, release_date, image, price, du
     'Kontynuacja epickiej historii o zdradzie, zemście i walce o honor w starożytnym Rzymie.', 
     'Ridley Scott', 
     '2026-11-22', 
-    'https://upload.wikimedia.org/wikipedia/en/thumb/f/f3/Gladiator_II_poster.jpg/220px-Gladiator_II_poster.jpg', 
+    'https://image.tmdb.org/t/p/w600_and_h900_face/q6mkkb5XU6ERF7xP9nAjnNq9n7V.jpg', 
     28.00,
     140
 ),
@@ -86,6 +86,6 @@ CREATE TABLE food_items (
 );
 
 INSERT INTO food_items (name, category, price, image) VALUES
-('Popcorn Mały', 'Przekąska', 15.00, 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Popcorn_at_a_fair_or_event.jpg/320px-Popcorn_at_a_fair_or_event.jpg'),
-('Coca-Cola 0.5L', 'Napój', 9.00, 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/15-09-26-RalfR-WLC-0098.jpg/320px-15-09-26-RalfR-WLC-0098.jpg'),
-('Nachos z serem', 'Przekąska', 25.00, 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Nachos_with_cheese.jpg/320px-Nachos_with_cheese.jpg');
+('Popcorn Mały', 'Przekąska', 15.00, 'https://images.unsplash.com/photo-1691480213129-106b2c7d1ee8?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'),
+('Coca-Cola 0.5L', 'Napój', 9.00, 'https://images.unsplash.com/photo-1583683433877-042a75ba47e3?q=80&w=749&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'),
+('Nachos z serem', 'Przekąska', 25.00, 'https://media.istockphoto.com/id/1405036040/pl/zdj%C4%99cie/puste-miejsce-w-sali-kinowej-z-nachosami-i-col%C4%85.jpg?s=2048x2048&w=is&k=20&c=cQ6Uz4UtG9D5wJXLKOCErqEIUjvBRw6HSlpCXiMCQpM=');
