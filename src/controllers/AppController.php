@@ -15,8 +15,45 @@ class AppController {
     }
 
 
+    protected function url(string $path) {
+        $url = "http://$_SERVER[HTTP_HOST]";
+        header("Location: {$url}/{$path}");
+    }
+
+
+    protected function requireLogin() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (empty($_SESSION['user_id'])) {
+            $this->url('login');
+            exit();
+        }
+        
+        $timeout = 600;
+        
+        if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $timeout)) {
+            // Czas minął! Czyścimy sesję
+            session_unset();
+            session_destroy();
+            
+            // Przekierowujemy z komunikatem (opcjonalnie)
+            $this->url('login');
+            exit();
+        }
+
+        // Aktualizujemy czas ostatniej aktywności na TERAZ
+        $_SESSION['last_activity'] = time();
+    }
+
+    
     protected function render(string $template = null, array $variables = [])
     {
+        header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+        header("Cache-Control: post-check=0, pre-check=0", false);
+        header("Pragma: no-cache");
+
         $templatePathPhtml = 'public/views/' . $template . '.phtml';
         $templatePathHtml = 'public/views/' . $template . '.html';
         $templatePath404 = 'public/views/404.html';

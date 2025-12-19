@@ -17,7 +17,7 @@ class UserRepository extends Repository
     }
 
 
-    public function getUserByEmail(string $email): ?array
+    public function getUserByEmail(string $email)
     {
         $stmt = $this->database->connect()->prepare('SELECT * FROM users WHERE email =:email');
 
@@ -29,16 +29,19 @@ class UserRepository extends Repository
     }
 
 
-    public function createUser(string $email, string $hashedPassword, string $firstname, string $lastname, string $bio="") {
-        $stmt = $this->database->connect()->prepare(
-            '
-            INSERT INTO users (email, password, firstname,lastname,bio) VALUES (?,?,?,?,?)
-            '
-        );
+   public function createUser(string $name, string $surname, string $email, string $password) {
+    
+        $stmt = $this->database->connect()->prepare('
+            INSERT INTO users (name, surname, email, password)
+            VALUES (?, ?, ?, ?)
+        ');
+
         $stmt->execute([
-            $email, $hashedPassword, $firstname, $lastname, $bio
+            $name,
+            $surname,
+            $email,
+            $password
         ]);
     }
-
 }
 

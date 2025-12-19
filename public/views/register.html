@@ -12,7 +12,7 @@
         
         <div class="login-box">
             
-            <img src="/images/logo-absolute-cinema.svg" alt="Absolute Cinema Logo" class="logo">
+            <img src="/public/images/logo.svg" alt="Absolute Cinema Logo" class="logo">
 
             <nav class="auth-tabs">
                 <a href="/login">Zaloguj się</a>
@@ -22,10 +22,18 @@
             <form action="/register" method="POST">
                 
                 <div class="input-group">
+                    <label for="name">Imię</label>
+                    <input type="text" id="name" name="name" placeholder="Twoje imię" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="surname">Nazwisko</label>
+                    <input type="text" id="surname" name="surname" placeholder="Twoje nazwisko" required>
+                </div>
+
+                <div class="input-group">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" placeholder="Wpisz swój email" required>
-
-                    
                 </div>
 
                 <div class="input-group">
@@ -34,16 +42,14 @@
                 </div>
 
                 <div class="input-group">
-                    <label for="confirm-password">Potwierdź hasło</label>
-                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Wpisz hasło ponownie" required>
+                    <label for="confirmedPassword">Potwierdź hasło</label>
+                    <input type="password" id="confirmedPassword" name="confirmedPassword" placeholder="Wpisz hasło ponownie" required>
                 </div>
 
                 <button type="submit" class="btn-submit">Zarejestruj się</button>
                 
                 <?php if (isset($message)): ?>
-                
                     <p class="message"><?= $message ?></p>
-
                 <?php endif; ?>
 
             </form>
