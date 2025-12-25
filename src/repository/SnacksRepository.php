@@ -1,7 +1,7 @@
 <?php
 
 require_once 'Repository.php';
-
+require_once __DIR__."/../models/snack.php";
 
 class SnacksRepository extends Repository {
 
@@ -12,6 +12,8 @@ class SnacksRepository extends Repository {
         );
 
         $smtm->execute();
-        return $smtm->fetchAll(PDO::FETCH_ASSOC);
+        $snacks =  $smtm->fetchAll(PDO::FETCH_CLASS, Snack::class);
+        if (!$snacks) { return null; }
+        return $snacks;
     }
 }

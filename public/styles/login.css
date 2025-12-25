@@ -111,3 +111,10 @@ body, html {
 .message {
     color: #8E7FAE;
 }
+
+
+.no-valid {
+    border: 2px solid red;
+    background-color: #ffe5e5;
+}
+

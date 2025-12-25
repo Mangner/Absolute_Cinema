@@ -1,7 +1,7 @@
 <?php 
 
 require_once 'Repository.php';
-
+require_once __DIR__."/../models/movie.php";
 
 class MovieRepository extends Repository {
 
@@ -22,9 +22,11 @@ class MovieRepository extends Repository {
             WHERE release_date <= CURRENT_DATE
             ORDER BY release_date DESC
         ');
-        
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $movies =  $stmt->fetchAll(PDO::FETCH_CLASS, Movie::class);
+        if (!$movies) { return null; }
+        return $movies;
     }
 
     public function getUpcomingMovies(): array
@@ -34,9 +36,11 @@ class MovieRepository extends Repository {
             WHERE release_date > CURRENT_DATE
             ORDER BY release_date ASC
         ');
-
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $movies = $stmt->fetchAll(PDO::FETCH_CLASS, Movie::class);
+        if (!$movies) { return null; }
+        return $movies;
     }
 
     public function getMoviesByTitle(string $searchString)

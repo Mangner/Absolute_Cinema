@@ -2,7 +2,6 @@
 
 require_once 'AppController.php';
 require_once __DIR__.'/../repository/UserRepository.php';
-require_once __DIR__.'/../repository/CardsRepository.php';
 require_once __DIR__.'/../repository/MovieRepository.php';
 require_once __DIR__.'/../repository/SnacksRepository.php';
 
@@ -19,12 +18,7 @@ class DashboardController extends AppController {
 
     public function index() {
         $this->requireLogin();
-
-        $snacks = $this->snacksRepository->getSnacks(); 
-
-        $this->render('dashboard', [
-            'snacks' => $snacks
-        ]);
+        $this->render('dashboard');
     }
 
 
