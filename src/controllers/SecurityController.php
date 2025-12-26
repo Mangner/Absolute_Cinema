@@ -1,7 +1,13 @@
 <?php
 
-require_once __DIR__.'/../repository/UserRepository.php';
 require_once 'AppController.php';
+require_once __DIR__.'/../repository/UserRepository.php';
+require_once __DIR__."/../valueObjects/Email.php";
+require_once __DIR__."/../valueObjects/Password.php";
+require_once __DIR__."/../valueObjects/Name.php";
+require_once __DIR__."/../DTOs/RegisterUserDTO.php";
+require_once __DIR__."/../models/user.php";
+
 
 class SecurityController extends AppController {
 
@@ -19,29 +25,31 @@ class SecurityController extends AppController {
             return $this->render('login');
         }
         
+        try {
+            $emailVo = new Email($_POST["email"] ?? ''); 
+        } catch (InvalidArgumentException $e) {
+            return $this->render("login", ["message" => "Podaj poprawny adres email!"]);
+        }
 
-        $email = $_POST["email"] ?? '';
-        $password = $_POST["password"] ?? '';
-
-        $user = $this->userRepository->getUserByEmail($email);
+        $user = $this->userRepository->getUserByEmail((string)$emailVo);
 
         if (!$user) {
-            return $this->render("login", ["message" => "User not exists!"]);
+            return $this->render("login", ["message" => "Użytkownik nie istnieje!"]);
         }
 
-        if (!password_verify($password, $user['password'])) {
-            return $this->render("login", ['message' => "Wrong password"]);
+        if (!password_verify($_POST["password"], $user->getPassword())) {
+            return $this->render("login", ['message' => "Błędne hasło!"]);
         }
-    
+
         // TODO create user session/ cookie/ token 
 
         session_regenerate_id(true);
-        $_SESSION['user_id'] = $user['id']; 
-        $_SESSION['user_email'] = $user['email'];
-        $_SESSION['user_firstname'] = $user['name'] ?? null;
+        $_SESSION['user_id'] = $user->getId(); 
+        $_SESSION['user_email'] = $user->getEmail();
+        $_SESSION['user_firstname'] = $user->getName() ?? null;
         $_SESSION['is_logged_in'] = true;
 
-        return $this->url("dashboard?id=" . $user['id']);
+        return $this->url("dashboard");
     }
 
     
@@ -71,33 +79,41 @@ class SecurityController extends AppController {
     }
 
 
-    public function register()
-    {
+    public function register() {
+
         if (!$this->isPost()) {
             return $this->render('register');
         }
 
-        // Odbieramy nowe pola z formularza
-        $email = $_POST['email'] ?? "";
-        $password = $_POST['password'] ?? "";
-        $confirmedPassword = $_POST['confirmedPassword'] ?? "";
-        $name = $_POST['name'] ?? "";       // <--- Tutaj zmiana
-        $surname = $_POST['surname'] ?? ""; // <--- Tutaj zmiana
-
-        if ($password !== $confirmedPassword) {
-            return $this->render('register', ['message' => 'Passwords match error!']);
-        }
-
-        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-
-        $this->userRepository->createUser(
-            $name, 
-            $surname, 
-            $email, 
-            $hashedPassword
+        $registerDTO = new RegisterUserDTO(
+            $_POST['name'] ?? '',
+            $_POST['surname'] ?? '',
+            $_POST['email'] ?? '',
+            $_POST['password'] ?? '',
+            $_POST['confirmedPassword'] ?? ''  
         );
 
-        return $this->render("login", ['message' => 'Registration completed!']);
+        try {
+            $nameVo = new Name($registerDTO->name);
+            $surnameVo = new Name($registerDTO->surname);
+            $emailVo = new Email($registerDTO->email);
+            $passwordVo = new Password($registerDTO->password, $registerDTO->confirmedPassword);
+
+            $userEntity = User::create(
+                $nameVo,
+                $surnameVo,
+                $emailVo,
+                $passwordVo->getHash()
+            );
+
+            $this->userRepository->createUser($userEntity);
+            return $this->render("login", ['message' => 'Registration completed!']);
+
+        } catch (InvalidArgumentException $e) {
+            return $this->render('register', ['message' => $e->getMessage()]);
+        } catch (Exception $e) {
+            return $this->render('register', ['message' => 'Wystąpił błąd serwera.']);
+        }
     }
 
 }

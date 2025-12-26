@@ -2,6 +2,7 @@
 
 
 require_once 'Repository.php';
+require_once __DIR__."/../models/user.php";
 
 
 class UserRepository extends Repository
@@ -11,8 +12,8 @@ class UserRepository extends Repository
         $stmt = $this->database->connect()->prepare('SELECT * FROM users');
         $stmt->execute();
 
-        $users = $stmt->fetchALL(PDO::FETCH_ASSOC);
-
+        $users = $stmt->fetchALL(PDO::FETCH_CLASS, User::class);
+        if (!$users) { return null; }
         return $users;
     }
 
@@ -24,12 +25,15 @@ class UserRepository extends Repository
         $stmt->bindParam(':email', $email);
         $stmt->execute();
 
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, User::class);
+
+        $user = $stmt->fetch();
+        if ($user === false ) { return null; }
         return $user;
     }
 
 
-   public function createUser(string $name, string $surname, string $email, string $password) {
+   public function createUser(User $user): void {
     
         $stmt = $this->database->connect()->prepare('
             INSERT INTO users (name, surname, email, password)
@@ -37,10 +41,10 @@ class UserRepository extends Repository
         ');
 
         $stmt->execute([
-            $name,
-            $surname,
-            $email,
-            $password
+            $user->getName(),
+            $user->getSurname(),
+            $user->getEmail(),
+            $user->getPassword()
         ]);
     }
 }
