@@ -20,31 +20,35 @@
                 <a href="/register" class="active">Zarejestruj się</a>
             </nav>
 
-            <form action="/register" method="POST">
+            <form action="/register" method="POST" novalidate>
                 
                 <div class="input-group">
                     <label for="name">Imię</label>
                     <input type="text" id="name" name="name" placeholder="Twoje imię" required>
-                </div>
+                    <span class="error-text"></span> </div>
 
                 <div class="input-group">
                     <label for="surname">Nazwisko</label>
                     <input type="text" id="surname" name="surname" placeholder="Twoje nazwisko" required>
+                    <span class="error-text"></span>
                 </div>
 
                 <div class="input-group">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" placeholder="Wpisz swój email" required>
+                    <span class="error-text"></span>
                 </div>
 
                 <div class="input-group">
                     <label for="password">Hasło</label>
                     <input type="password" id="password" name="password" placeholder="Wpisz swoje hasło" required>
+                    <span class="error-text"></span>
                 </div>
 
                 <div class="input-group">
                     <label for="confirmedPassword">Potwierdź hasło</label>
                     <input type="password" id="confirmedPassword" name="confirmedPassword" placeholder="Wpisz hasło ponownie" required>
+                    <span class="error-text"></span>
                 </div>
 
                 <button type="submit" class="btn-submit">Zarejestruj się</button>

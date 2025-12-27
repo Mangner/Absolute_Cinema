@@ -21,7 +21,7 @@ class User {
         $user = new self();
         $user->name = $name;
         $user->surname = $surname;
-        $user->email = $email->getEmail(); // Wyciągamy stringa z Value Object!
+        $user->email = $email; // Wyciągamy stringa z Value Object!
         $user->password = $passwordHash;
         return $user;
     }
