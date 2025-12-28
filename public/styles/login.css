@@ -23,10 +23,27 @@ body, html {
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
-.logo {
+/* --- Zastąp starą klasę .logo tym kodem: --- */
+
+.brand-header {
+    display: flex;
+    align-items: center;       /* Wyrównanie w pionie do środka */
+    justify-content: center;   /* Wyśrodkowanie całości w kontenerze */
+    margin-bottom: 30px;       /* Odstęp od tabów (Zaloguj/Zarejestruj) */
+    gap: 15px;                 /* Odstęp między ikoną a napisem */
+}
+
+.brand-header img {
+    width: 50px;               /* Zmniejszona szerokość ikony (dostosuj wg uznania) */
+    height: auto;              /* Zachowanie proporcji */
     display: block;
-    margin: 0 auto 30px auto; 
-    width: 200px; 
+}
+
+.brand-header span {
+    font-size: 1.5rem;         /* Wielkość tekstu "Absolute Cinema" */
+    font-weight: bold;         /* Pogrubienie */
+    color: #ffffff;            /* Biały kolor */
+    line-height: 1.2;
 }
 
 .auth-tabs {
