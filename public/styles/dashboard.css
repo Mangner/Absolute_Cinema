@@ -24,9 +24,23 @@ body {
     font-weight: bold;
 }
 
+/* --- Zastąp obecną klasę .brand tym kodem: --- */
+
 .brand {
-    color: #D4AF37; /* Złoty kolor loga */
+    display: flex;          /* Układa obrazek i tekst w jednej linii */
+    align-items: center;    /* Centruje elementy w pionie */
+    gap: 12px;              /* Odstęp między logo a napisem */
     font-size: 1.2rem;
+    font-weight: bold;      /* Pogrubienie czcionki jak w projekcie */
+    color: #ffffff;         /* Zmieniamy kolor tekstu na biały (zgodnie z designem) */
+    text-decoration: none;
+}
+
+/* Nowy styl, który zmniejsza logo */
+.brand img {
+    height: 32px;           /* Ustawiamy sztywną wysokość ikony (dostosuj np. 30-40px) */
+    width: auto;            /* Szerokość dopasuje się sama, zachowując proporcje */
+    display: block;         /* Usuwa zbędne dolne marginesy obrazka */
 }
 
 #search-bar {

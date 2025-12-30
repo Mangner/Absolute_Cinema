@@ -1,61 +1,40 @@
 <?php
 
+require_once __DIR__."/../valueObjects/Email.php";
+require_once __DIR__."/../valueObjects/Password.php";
+
 class User {
-    private $email;
-    private $password;
-    private $name;
-    private $surname;
-    private $phone;
 
-    public function __construct(
-        string $email,
-        string $password,
-        string $name,
-        string $surname
-    ) {
-        $this->email = $email;
-        $this->password = $password;
-        $this->name = $name;
-        $this->surname = $surname;
+    public ?int $id;
+    public string $name;
+    public string $surname;
+    public string $email;
+    public string $password;
+    public ?string $role;
+    public string $created_at;
+
+    public function __construct() {
     }
 
-    public function getEmail(): string 
+    
+    public static function create(string $name, string $surname, Email $email, string $passwordHash): self 
     {
-        return $this->email;
+        $user = new self();
+        $user->name = $name;
+        $user->surname = $surname;
+        $user->email = $email; // Wyciągamy stringa z Value Object!
+        $user->password = $passwordHash;
+        return $user;
     }
 
-    public function getPassword()
-    {
-        return $this->password;
-    }
+    public function getId(): int { return $this->id; }
+    public function getName(): string { return $this->name; }
+    public function getSurname(): string { return $this->surname; }
+    public function getEmail(): string { return $this->email; }
+    public function getPassword() { return $this->password; }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
+    public function setName(string $name): void { $this->name = $name; }
+    public function setSurname(string $surname): void { $this->surname = $surname; }
+    public function setEmail(string $email): void { $this->email = $email; }
 
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    public function getSurname(): string
-    {
-        return $this->surname;
-    }
-
-    public function setSurname(string $surname): void
-    {
-        $this->surname = $surname;
-    }
-
-    public function getPhone()
-    {
-        return $this->phone;
-    }
-
-    public function setPhone($phone): void
-    {
-        $this->phone = $phone;
-    }
 }

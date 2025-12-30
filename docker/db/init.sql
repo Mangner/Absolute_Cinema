@@ -1,6 +1,15 @@
-DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS movies CASCADE;
+DROP TABLE IF EXISTS tickets CASCADE;
+DROP TABLE IF EXISTS booking_snacks CASCADE;
+DROP TABLE IF EXISTS bookings CASCADE;
+DROP TABLE IF EXISTS showtimes CASCADE;
+DROP TABLE IF EXISTS seats CASCADE;
+DROP TABLE IF EXISTS halls CASCADE;
+DROP TABLE IF EXISTS cinemas CASCADE;
 DROP TABLE IF EXISTS food_items CASCADE;
+DROP TABLE IF EXISTS movies CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
+
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -8,24 +17,98 @@ CREATE TABLE users (
     surname VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) DEFAULT 'user' CHECK (role IN ('user', 'admin', 'employee')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO users (name, surname, email, password) 
-VALUES ('Jan', 'Kowalski', 'admin@example.com', '$2y$10$wz2g9JrHYcF8bLGBbDkEXuJQAnl4uO9RV6cWJKcf.6uAEkhFZpU0i');
+INSERT INTO users (name, surname, email, password, role) 
+VALUES ('Jan', 'Kowalski', 'admin@example.com', '$2y$10$wz2g9JrHYcF8bLGBbDkEXuJQAnl4uO9RV6cWJKcf.6uAEkhFZpU0i', 'admin'); 
 -- Hasło: admin123
 
-/* --- 3. FILMY (REPERTUAR) --- */
+
+
+/* --- 2. KINA I SALE --- */
+CREATE TABLE cinemas (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL, -- np. Absolute Cinema Warszawa
+    city VARCHAR(100) NOT NULL,
+    address VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE halls (
+    id SERIAL PRIMARY KEY,
+    cinema_id INT REFERENCES cinemas(id) ON DELETE CASCADE,
+    name VARCHAR(50) NOT NULL, -- np. Sala 1, Sala IMAX
+    type VARCHAR(20) DEFAULT 'Standard' -- Standard, IMAX, 4DX
+);
+
+/* --- 3. MIEJSCA (Siatka foteli) --- */
+CREATE TABLE seats (
+    id SERIAL PRIMARY KEY,
+    hall_id INT REFERENCES halls(id) ON DELETE CASCADE,
+    row_label CHAR(1) NOT NULL, -- A, B, C...
+    seat_number INT NOT NULL,   -- 1, 2, 3...
+    UNIQUE(hall_id, row_label, seat_number) -- Unikalne miejsce w danej sali
+);
+
+/* --- 4. FILMY --- */
 CREATE TABLE movies (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
     director VARCHAR(100),
     release_date DATE NOT NULL,
-    image VARCHAR(1024),        -- Zwiększono limit znaków dla długich URLi
+    image VARCHAR(1024),
     price DECIMAL(10, 2),
-    duration INT
+    duration INT NOT NULL -- czas w minutach
 );
+
+/* --- 5. SEANSE (Repertuar) --- */
+CREATE TABLE showtimes (
+    id SERIAL PRIMARY KEY,
+    movie_id INT REFERENCES movies(id) ON DELETE CASCADE,
+    hall_id INT REFERENCES halls(id) ON DELETE CASCADE,
+    start_time TIMESTAMP NOT NULL,
+    technology VARCHAR(50) DEFAULT '2D', -- 2D, 3D, IMAX
+    base_price DECIMAL(10, 2) NOT NULL   -- Cena bazowa biletu na ten seans
+);
+
+/* --- 6. REZERWACJE I PŁATNOŚCI --- */
+CREATE TABLE bookings (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE SET NULL,
+    booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    total_price DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    payment_status VARCHAR(20) DEFAULT 'PENDING' CHECK (payment_status IN ('PENDING', 'PAID', 'CANCELLED')),
+    payment_method VARCHAR(50) -- np. BLIK, Karta (tylko do celów informacyjnych)
+);
+
+CREATE TABLE tickets (
+    id SERIAL PRIMARY KEY,
+    booking_id INT REFERENCES bookings(id) ON DELETE CASCADE,
+    showtime_id INT REFERENCES showtimes(id) ON DELETE CASCADE,
+    seat_id INT REFERENCES seats(id) ON DELETE RESTRICT,
+    price DECIMAL(10, 2) NOT NULL, -- Cena konkretnego biletu (może uwzględniać zniżki studenckie itp.)
+    ticket_token VARCHAR(64) UNIQUE -- Unikalny kod do kodu QR na bilecie
+);
+
+/* --- 7. JEDZENIE --- */
+CREATE TABLE food_items (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    category VARCHAR(50),
+    price DECIMAL(10, 2) NOT NULL,
+    image VARCHAR(1024)
+);
+
+
+
+
+-- Kina
+INSERT INTO cinemas (name, city, address) VALUES 
+('Absolute Cinema Warszawa', 'Warszawa', 'Złota 44'),
+('Absolute Cinema Kraków', 'Kraków', 'Pawia 5 (Galeria Krakowska)');
+
 
 INSERT INTO movies (title, description, director, release_date, image, price, duration) VALUES
 (
@@ -77,15 +160,7 @@ INSERT INTO movies (title, description, director, release_date, image, price, du
 );
 
 
-CREATE TABLE food_items (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    category VARCHAR(50),
-    price DECIMAL(10, 2) NOT NULL,
-    image VARCHAR(1024) -- Tutaj też długi URL
-);
-
 INSERT INTO food_items (name, category, price, image) VALUES
-('Popcorn Mały', 'Przekąska', 15.00, 'https://images.unsplash.com/photo-1691480213129-106b2c7d1ee8?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'),
-('Coca-Cola 0.5L', 'Napój', 9.00, 'https://images.unsplash.com/photo-1583683433877-042a75ba47e3?q=80&w=749&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'),
-('Nachos z serem', 'Przekąska', 25.00, 'https://media.istockphoto.com/id/1405036040/pl/zdj%C4%99cie/puste-miejsce-w-sali-kinowej-z-nachosami-i-col%C4%85.jpg?s=2048x2048&w=is&k=20&c=cQ6Uz4UtG9D5wJXLKOCErqEIUjvBRw6HSlpCXiMCQpM=');
+('Popcorn Mały', 'Przekąska', 15.00, 'https://images.unsplash.com/photo-1691480213129-106b2c7d1ee8?q=80&w=880&auto=format&fit=crop'),
+('Coca-Cola 0.5L', 'Napój', 9.00, 'https://images.unsplash.com/photo-1583683433877-042a75ba47e3?q=80&w=749&auto=format&fit=crop');
+

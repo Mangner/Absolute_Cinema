@@ -4,41 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logowanie - Absolute Cinema</title>
-    <link rel="stylesheet" href="public/styles/login.css"> </head>
+    <link rel="stylesheet" href="public/styles/login.css">
+    </head>
 <body>
 
     <main class="login-container">
         
         <div class="login-box">
             
-            <img src="/images/logo-absolute-cinema.svg" alt="Absolute Cinema Logo" class="logo">
+            <div class="brand-header">
+                <img src="public/images/logo-absolute-cinema.png" alt="Logo">
+                <span>Absolute Cinema</span>
+            </div>
 
             <nav class="auth-tabs">
                 <a href="/login" class="active">Zaloguj się</a>
                 <a href="/register">Zarejestruj się</a>
             </nav>
 
-            <form action="/login" method="POST">
+            <form action="/login" method="POST" novalidate>
                 
                 <div class="input-group">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" placeholder="Wpisz swój email" required>
+                    <span class="error-text"></span>
                 </div>
-
-                <?php if (isset($message)): ?>
-                
-                    <p class="message"><?= $message ?></p>
-
-                <?php endif; ?>
 
                 <div class="input-group">
                     <label for="password">Hasło</label>
                     <input type="password" id="password" name="password" placeholder="Wpisz swoje hasło" required>
+                    <span class="error-text"></span>
                 </div>
 
                 <a href="/forgot-password" class="forgot-password">Nie pamiętasz hasła?</a>
 
                 <button type="submit" class="btn-submit">Zaloguj się</button>
+
+                <?php if (isset($message)): ?>
+                    <p class="message"><?= $message ?></p>
+                <?php endif; ?>
                 
             </form>
         </div>
