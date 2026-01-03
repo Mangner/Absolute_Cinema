@@ -1,77 +1,101 @@
 <!DOCTYPE html>
 <html lang="pl">
-
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="UTF-8">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
     <title>DashBoard</title>
-    <link rel="stylesheet" href="public/styles/dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="public/styles/dashboard.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="public/scripts/carousel.js" defer></script>
     <script src="public/scripts/tabsLoader.js" defer></script>
-</head>
+    <script src="public/scripts/chooseCinema.js" defer></script>
+  </head>
 
-<body>
+  <body>
     <nav>
-        <div class="navigation-bar">
-            <div class="brand">
-                <img src="public/images/logo-absolute-cinema.png" alt="Logo">
-                Absolute Cinema
-            </div>
-            <div>Lokalizacja</div>
-            <div>
-            <a href="/logout" style="color: inherit; text-decoration: none;">Wyloguj</a>
-            </div>
-            <div>Kontakt</div>
-            <div class="search-container">
-                <input id="search-bar" type="text" placeholder="🔎 Szukaj">
-            </div>
+      <div class="navigation-bar">
+        <div class="brand">
+          <img src="public/images/logo-absolute-cinema.png" alt="Logo" />
+          Absolute Cinema
         </div>
+        <div>
+            <?php if (isset($_POST['cinema_id'])): ?>
+                    <label><?php echo $_POST['cinema_id'] ?></label>
+            <? else : ?>
+                    <label>Lokalizacja</label>
+            <?php endif; ?>
+        </div>
+        <div>
+            <button id="cinema-choice-btn">Wybierz Kino</button>
+        </div>
+        <div>
+          <a href="/logout" style="color: inherit; text-decoration: none"
+            >Wyloguj</a
+          >
+        </div>
+        <div>Kontakt</div>
+        <div class="search-container">
+          <input id="search-bar" type="text" placeholder="🔎 Szukaj" />
+        </div>
+      </div>
     </nav>
 
     <div class="offer-section">
-        <input type="radio" name="tab_set" id="tab-screen" checked>
-        <input type="radio" name="tab_set" id="tab-soon">
-        <input type="radio" name="tab_set" id="tab-gastro">
+      <input type="radio" name="tab_set" id="tab-screen" checked />
+      <input type="radio" name="tab_set" id="tab-soon" />
+      <input type="radio" name="tab_set" id="tab-gastro" />
 
-        <div class="cinema-offer-bar">
-            <label for="tab-screen">Na Ekranie</label>
-            <label for="tab-soon">Wkrótce</label>
-            <label for="tab-gastro">Oferta Gastronomiczna</label>
+      <div class="cinema-offer-bar">
+        <label for="tab-screen">Na Ekranie</label>
+        <label for="tab-soon">Wkrótce</label>
+        <label for="tab-gastro">Oferta Gastronomiczna</label>
+      </div>
+
+      <div class="tab-content-container">
+        <div id="content-screen" class="tab-panel">
+          <div class="carousel-container">
+            <button class="carousel-btn btn-prev">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="carousel-track"></div>
+
+            <button class="carousel-btn btn-next">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
         </div>
 
-        <div class="tab-content-container">
-            
-            <div id="content-screen" class="tab-panel">
-                <div class="carousel-container">
-                    <button class="carousel-btn btn-prev"><i class="fas fa-chevron-left"></i></button>
-                    
-                    <div class="carousel-track"></div>
+        <div id="content-soon" class="tab-panel">
+          <div class="carousel-container">
+            <button class="carousel-btn btn-prev">
+              <i class="fas fa-chevron-left"></i>
+            </button>
 
-                    <button class="carousel-btn btn-next"><i class="fas fa-chevron-right"></i></button>
-                </div>
-            </div>
+            <div class="carousel-track"></div>
 
-            <div id="content-soon" class="tab-panel">
-                <div class="carousel-container">
-                    <button class="carousel-btn btn-prev"><i class="fas fa-chevron-left"></i></button>
-                    
-                    <div class="carousel-track"></div>
-
-                    <button class="carousel-btn btn-next"><i class="fas fa-chevron-right"></i></button>
-                </div>
-            </div>
-    
-            <div id="content-gastro" class="tab-panel">
-                <div class="carousel-container">
-                    <button class="carousel-btn btn-prev"><i class="fas fa-chevron-left"></i></button>
-                    
-                    <div class="carousel-track"></div>
-
-                    <button class="carousel-btn btn-next"><i class="fas fa-chevron-right"></i></button>
-                </div>
-            </div>
+            <button class="carousel-btn btn-next">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
         </div>
+
+        <div id="content-gastro" class="tab-panel">
+          <div class="carousel-container">
+            <button class="carousel-btn btn-prev">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="carousel-track"></div>
+
+            <button class="carousel-btn btn-next">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-</body>
+  </body>
 </html>

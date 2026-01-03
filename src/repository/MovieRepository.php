@@ -10,9 +10,11 @@ class MovieRepository extends Repository {
         $smtm = $this->database->connect()->prepare('
             SELECT * FROM movies'
         );
-
         $smtm->execute();
-        return $smtm->fetchAll(PDO::FETCH_ASSOC);
+
+        $movies = $smtm->fetchAll(PDO::FETCH_CLASS, Movie::class);
+        if (!$movies) { return null; }
+        return $movies;
     }
 
     public function getMoviesOnScreen(): array
@@ -55,5 +57,45 @@ class MovieRepository extends Repository {
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getMoviesByCinemaId(int $cinemaId): array {
+        $sql = "
+            SELECT DISTINCT * FROM MOVIES
+            NATURAL JOIN showtimes
+            NATURAL JOIN halls
+            WHERE cinema_id = :cinemaId
+            AND release_date <= NOW()
+            AND s.start_time > NOW()
+            ORDER BY release_date DESC;
+        ";
+
+        $stmt = $this->database->connect()->prepare($sql);
+        $stmt->bindParam(':cinemaId', $cinemaId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $movies = $stmt->fetchAll(PDO::FETCH_CLASS, Movie::class);
+        if (!$movies) { return null; }
+        return $movies;
+    }
+
+    public function getUpcomingMoviesByCinemaId(int $cinemaId): array {
+        $sql = "
+            SELECT DISTINCT m.* FROM movies m
+            INNER JOIN showtimes s ON m.id = s.movie_id
+            INNER JOIN halls h ON s.hall_id = h.id
+            WHERE h.cinema_id = :cinemaId
+            AND s.start_time > NOW()
+            AND m.release_date > CURRENT_DATE 
+            ORDER BY m.release_date DESC
+        ";
+
+        $stmt = $this->database->connect()->prepare($sql);
+        $stmt->bindParam(':cinemaId', $cinemaId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $movies = $stmt->fetchAll(PDO::FETCH_CLASS, Movie::class);
+        if (!$movies) { return null; }
+        return $movies;
     }
 }

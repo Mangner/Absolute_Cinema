@@ -1,6 +1,7 @@
 <?php
 
 require_once 'AppController.php';
+require_once __DIR__.'/../repository/CinemaRepository.php';
 require_once __DIR__.'/../repository/UserRepository.php';
 require_once __DIR__.'/../repository/MovieRepository.php';
 require_once __DIR__.'/../repository/SnacksRepository.php';
@@ -8,10 +9,12 @@ require_once __DIR__.'/../repository/SnacksRepository.php';
 
 class DashboardController extends AppController {
 
+    private $cinemaRepository;
     private $movieRepository;
     private $snacksRepository;
 
     public function __construct() {
+        $this->cinemaRepository = new CinemaRepository();
         $this->movieRepository = new MovieRepository();
         $this->snacksRepository = new SnacksRepository();
     }
@@ -70,10 +73,12 @@ class DashboardController extends AppController {
             return;
         }
 
+        $movies = $this->movieRepository->getMoviesOnScreen(); 
+
         http_response_code(200);
         echo json_encode([
             'status' => 'ok',
-            'movies' => $this->movieRepository->getMoviesOnScreen(),
+            'movies' => $movies,
         ]);
     }
 
@@ -89,10 +94,12 @@ class DashboardController extends AppController {
             return;
         }
 
+        $movies = $this->movieRepository->getUpcomingMovies(); 
+
         http_response_code(200);
         echo json_encode([
             'status' => 'ok',
-            'movies' => $this->movieRepository->getUpcomingMovies(),
+            'movies' => $movies
         ]);
     }
 
@@ -111,7 +118,26 @@ class DashboardController extends AppController {
         http_response_code(200);
         echo json_encode([
             'status' => 'ok',
-            'snacks' => $this->snacksRepository->getSnacks(),
+            'snacks' => $this->snacksRepository->getSnacks()
+        ]);
+    }
+
+
+    public function getCinemas() {
+        header('Content-Type: application/json');
+        
+        if (!$this->isGet()) {
+            http_response_code(405);
+            echo json_encode([
+                'status' => 'Method not allowed'
+            ]);
+            return;
+        }
+
+        http_response_code(200);
+        echo json_encode([
+            'status' => 'ok',
+            'cinemas' => $this->cinemaRepository->getCinemas()
         ]);
     }
 }

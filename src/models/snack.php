@@ -3,13 +3,13 @@
 
 class Snack {
 
-    public int $id;
+    public int $food_item_id;
     public string $name;
     public string $category;
     public float $price;
     public string $image;
 
-    public function getId() { return $this->id; }
+    public function getId() { return $this->food_item_id; }
     public function getName() { return $this->name; }
     public function getCategory() { return $this->category; }
     public function getPrice() { return $this->price; }

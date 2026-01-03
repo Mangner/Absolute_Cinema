@@ -1,6 +1,7 @@
 <?php
 require_once 'src/controllers/SecurityController.php';
 require_once 'src/controllers/DashboardController.php';
+require_once 'src/controllers/MovieController.php';
 
 class Routing {
 
@@ -36,6 +37,14 @@ class Routing {
         'get-snacks' => [
             'controller' => "DashboardController",
             'action' => 'getSnacks'
+        ],
+        'get-cinemas' => [
+            'controller' => "DashboardController",
+            'action' => 'getCinemas'
+        ],
+        'movie' => [
+            'controller' => "MovieController",
+            'action' => 'getDetails'
         ]
     ];
 
@@ -51,6 +60,12 @@ class Routing {
             $action = self::$routes[$url]['action'];
             $object = new $controller;
             $object->$action();
+        } else if (preg_match("/movie\/[0-9]+/", $url)) {
+            $controller = self::$routes['movie']['controller'];
+            $action = self::$routes['movie']['action'];
+            $object = new $controller;
+            $object->$action();
+
         } else {
             http_response_code(404);
             include 'public/views/404.html';

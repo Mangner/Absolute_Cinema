@@ -5,7 +5,7 @@ require_once __DIR__."/../valueObjects/Password.php";
 
 class User {
 
-    public ?int $id;
+    public ?int $user_id;
     public string $name;
     public string $surname;
     public string $email;
@@ -27,7 +27,7 @@ class User {
         return $user;
     }
 
-    public function getId(): int { return $this->id; }
+    public function getId(): int { return $this->user_id; }
     public function getName(): string { return $this->name; }
     public function getSurname(): string { return $this->surname; }
     public function getEmail(): string { return $this->email; }
