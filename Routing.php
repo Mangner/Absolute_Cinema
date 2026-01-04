@@ -60,11 +60,27 @@ class Routing {
             $action = self::$routes[$url]['action'];
             $object = new $controller;
             $object->$action();
-        } else if (preg_match("/movie\/[0-9]+/", $url)) {
+
+        } else if (preg_match('/^movie\/(\d+)\/(\d+)$/', $url, $matches)) {
+            
             $controller = self::$routes['movie']['controller'];
             $action = self::$routes['movie']['action'];
             $object = new $controller;
-            $object->$action();
+
+            $movieId = (int)$matches[1];
+            $cinemaId = (int)$matches[2];
+
+            $object->$action($movieId, $cinemaId);
+
+        } else if (preg_match('/^movie\/(\d+)$/', $url, $matches)) {
+            
+            $controller = self::$routes['movie']['controller'];
+            $action = self::$routes['movie']['action'];
+            $object = new $controller;
+
+            $movieId = (int)$matches[1];
+
+            $object->$action($movieId);
 
         } else {
             http_response_code(404);

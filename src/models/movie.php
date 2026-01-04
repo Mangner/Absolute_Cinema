@@ -17,7 +17,7 @@ class Movie {
     public function getDescription() : string { return $this->description; }
     public function getDirector() : string { return $this->director; }
     public function getReleaseDate() : string {return $this->release_date; } 
-    public function getImageUrl() : string { return $this->image_url; }
+    public function getImageUrl() : string { return $this->image; }
     public function getPrice() : float { return $this->price; }
     public function getDuration() : float { return $this->duration; }
 

@@ -99,6 +99,13 @@ CREATE TABLE tickets (
 
 
 
+/* --- DODANIE ADMINA (ID: 1) --- */
+-- Hasło w postaci jawnej: admin123
+-- Hash bcrypt (cost 10): $2y$10$vI8aWBnW3fBr4ffg5PMDlO.pOeYbeDL.xeO/IyceOArj8k8sAGvFC
+INSERT INTO users (name, surname, email, password, role) VALUES 
+('Admin', 'Główny', 'admin@example.com', '$2y$10$vI8aWBnW3fBr4ffg5PMDlO.pOeYbeDL.xeO/IyceOArj8k8sAGvFC', 'admin');
+
+
 -- Kina
 INSERT INTO cinemas (name, city, address) VALUES 
 ('Absolute Cinema Warszawa', 'Warszawa', 'Złota 44'),

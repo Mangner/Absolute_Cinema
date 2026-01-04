@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+    <title>Szczegóły Filmu</title>
+    <link rel="stylesheet" href="/public/styles/movieDetails.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  </head>
+  <body>
+    <!-- Nawigacja skopiowana z dashboard -->
+    <nav>
+      <div class="navigation-bar">
+        <div class="brand">
+          <img src="/public/images/logo-absolute-cinema.png" alt="Logo" />
+          Absolute Cinema
+        </div>
+        <div>
+          <label>Warszawa</label>
+        </div>
+        <div>
+          <button id="cinema-choice-btn">Wybierz Kino</button>
+        </div>
+        <div>
+          <a href="/logout" style="color: inherit; text-decoration: none"
+            >Wyloguj</a
+          >
+        </div>
+        <div>Kontakt</div>
+        <div class="search-container">
+          <input id="search-bar" type="text" placeholder="🔎 Szukaj" />
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero sekcja z tłem -->
+    <div class="movie-hero">
+      <div class="hero-background"></div>
+      <div class="hero-overlay"></div>
+
+      <div class="hero-content">
+        <!-- Plakat filmu -->
+        <div class="movie-poster">
+          <img
+            src="<?= $movie->getImageUrl(); ?>"
+            alt="<?= $movie->getTitle(); ?>" />
+          <div class="official-badge">
+            <i class="fas fa-certificate"></i>
+            <span>OFICJALNY ZWIASTUN</span>
+          </div>
+        </div>
+
+        <!-- Informacje o filmie -->
+        <div class="movie-info">
+          <div class="breadcrumb">
+            <a href="/dashboard">Start</a>
+            <i class="fas fa-chevron-right"></i>
+            <span><?php echo $movie->getTitle(); ?></span>
+          </div>
+
+          <h1 class="movie-title">
+            <?php echo $movie->getTitle(); ?>
+            </h1>
+
+          <div class="movie-meta">
+            <span class="meta-item">
+              <i class="fas fa-star"></i>
+              <strong>8.5</strong>/10
+            </span>
+            <span class="meta-item">
+              <i class="fas fa-clock"></i>
+              <?php echo $movie->getDuration() ?> min
+            </span>
+            <span class="meta-item">
+              <i class="fas fa-calendar"></i>
+              19 grudnia 2025
+            </span>
+            <span class="meta-item age-rating"> PG-13 </span>
+          </div>
+
+          <div class="movie-genres">
+            <span class="genre-tag">Przygodowy</span>
+            <span class="genre-tag">Sci-Fi</span>
+            <span class="genre-tag">Fantasy</span>
+          </div>
+
+          <p class="movie-description">
+            <?php echo $movie->getDescription(); ?>
+          </p>
+
+          <div class="action-buttons">
+            <button class="btn-primary">
+              <i class="fas fa-ticket-alt"></i>
+              Kup Bilet
+            </button>
+            <button class="btn-secondary">
+              <i class="fas fa-play"></i>
+              Zwiastun
+            </button>
+            <button class="btn-icon">
+              <i class="fas fa-heart"></i>
+            </button>
+            <button class="btn-icon">
+              <i class="fas fa-share-alt"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Szczegółowe informacje -->
+    <div class="details-container">
+      <div class="details-grid">
+        <!-- Główna kolumna -->
+        <div class="main-column">
+          <!-- Tabela z informacjami -->
+          <section class="info-section">
+            <h2 class="section-title">
+              <i class="fas fa-info-circle"></i>
+              Informacje o filmie
+            </h2>
+            <table class="info-table">
+              <tr>
+                <td class="label">Tytuł oryginalny:</td>
+                <td class="value"><?php echo $movie->getTitle(); ?></td>
+              </tr>
+              <tr>
+                <td class="label">Gatunek:</td>
+                <td class="value">Przygodowy, Sci-Fi</td>
+              </tr>
+              <tr>
+                <td class="label">Data premiery:</td>
+                <td class="value"><?php echo $movie->getReleaseDate(); ?></td>
+              </tr>
+              <tr>
+                <td class="label">Czas trwania:</td>
+                <td class="value"><?php echo $movie->getDuration(); ?> min</td>
+              </tr>
+              <tr>
+                <td class="label">Reżyser:</td>
+                <td class="value"><?php echo $movie->getDirector(); ?></td>
+              </tr>
+              <tr>
+                <td class="label">Obsada:</td>
+                <td class="value">
+                  Sam Worthington, Zoe Saldaña, Sigourney Weaver, Stephen Lang,
+                  Oona Chaplin, Cliff Curtis, Kate Winslet, Britain Dalton,
+                  Trinity Bliss, Jack Champion, Bailey Bass
+                </td>
+              </tr>
+              <tr>
+                <td class="label">Produkcja:</td>
+                <td class="value">USA 2025</td>
+              </tr>
+              <tr>
+                <td class="label">Język oryginalny:</td>
+                <td class="value">EN</td>
+              </tr>
+            </table>
+          </section>
+
+          <!-- Sekcja z seansami (placeholder na backend) -->
+          <section class="showtimes-section">
+            <h2 class="section-title">
+              <i class="fas fa-film"></i>
+              Dostępne seanse
+            </h2>
+            <div class="showtimes-placeholder">
+              <i class="fas fa-clock"></i>
+              <p>Seanse będą dostępne po wybraniu kina i daty</p>
+              <button class="btn-primary">Wybierz kino</button>
+            </div>
+          </section>
+        </div>
+
+        <!-- Boczna kolumna -->
+        <aside class="side-column">
+          <!-- Oceny -->
+          <div class="ratings-card">
+            <h3>Oceny</h3>
+            <div class="rating-item">
+              <span class="rating-source">IMDb</span>
+              <span class="rating-score">
+                <i class="fas fa-star"></i>
+                8.5/10
+              </span>
+            </div>
+            <div class="rating-item">
+              <span class="rating-source">Rotten Tomatoes</span>
+              <span class="rating-score">
+                <i class="fas fa-tomato"></i>
+                92%
+              </span>
+            </div>
+            <div class="rating-item">
+              <span class="rating-source">Metacritic</span>
+              <span class="rating-score">
+                <i class="fas fa-chart-line"></i>
+                85/100
+              </span>
+            </div>
+          </div>
+
+          <!-- Dostępne formaty -->
+          <div class="formats-card">
+            <h3>Dostępne formaty</h3>
+            <div class="format-tags">
+              <span class="format-tag">Standard 2D</span>
+              <span class="format-tag">IMAX 3D</span>
+              <span class="format-tag">4DX</span>
+              <span class="format-tag">ScreenX</span>
+            </div>
+          </div>
+
+          <!-- Udostępnij -->
+          <div class="share-card">
+            <h3>Udostępnij</h3>
+            <div class="share-buttons">
+              <button class="share-btn facebook">
+                <i class="fab fa-facebook-f"></i>
+              </button>
+              <button class="share-btn twitter">
+                <i class="fab fa-twitter"></i>
+              </button>
+              <button class="share-btn whatsapp">
+                <i class="fab fa-whatsapp"></i>
+              </button>
+              <button class="share-btn link">
+                <i class="fas fa-link"></i>
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </body>
+</html>

@@ -59,6 +59,22 @@ class MovieRepository extends Repository {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getMovieById(int $movie_id) {
+        $stmt = $this->database->connect()->prepare('
+            SELECT * FROM movies 
+            WHERE movie_id = :given_id
+        ');
+        $stmt->bindParam(':given_id', $movie_id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $stmt->setFetchMode(PDO::FETCH_CLASS, Movie::class);
+        $movie = $stmt->fetch();
+        if ($movie === false) {
+            return null;
+        }
+        return $movie;
+    }
+
     public function getMoviesByCinemaId(int $cinemaId): array {
         $sql = "
             SELECT DISTINCT * FROM MOVIES
