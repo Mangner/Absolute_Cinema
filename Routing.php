@@ -42,6 +42,10 @@ class Routing {
             'controller' => "DashboardController",
             'action' => 'getCinemas'
         ],
+        'set-cinema' => [
+            'controller' => "DashboardController",
+            'action' => 'setCinema'
+        ],
         'movie' => [
             'controller' => "MovieController",
             'action' => 'getDetails'

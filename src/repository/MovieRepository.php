@@ -2,6 +2,8 @@
 
 require_once 'Repository.php';
 require_once __DIR__."/../models/movie.php";
+require_once __DIR__."/../models/genre.php";
+require_once __DIR__."/../models/cast_member.php";
 
 class MovieRepository extends Repository {
 
@@ -114,4 +116,43 @@ class MovieRepository extends Repository {
         if (!$movies) { return null; }
         return $movies;
     }
+
+    public function getGenresByMovieId(int $movie_id) {
+
+        $sql = "
+            SELECT g.genre_id, g.name, g.description 
+            FROM genres g
+            INNER JOIN movie_genres mg on g.genre_id = mg.genre_id
+            WHERE mg.movie_id = :movie_id
+            ORDER BY g.name ASC
+        ";
+
+        $stmt = $this->database->connect()->prepare($sql);
+        $stmt->bindParam(':movie_id', $movie_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $genres = $stmt->fetchAll(PDO::FETCH_CLASS, Genre::class);
+        if (!$genres) { return null; }
+        return $genres;
+    }
+
+    public function getCastByMovieId(int $movie_id) {
+
+        $sql = "
+            SELECT c.cast_id, c.name, c.role, c.biography, c.image 
+            FROM cast_members c
+            INNER JOIN movie_cast mc on c.cast_id = mc.cast_id
+            WHERE mc.movie_id = :movie_id
+            ORDER BY c.name ASC
+        ";
+
+        $stmt = $this->database->connect()->prepare($sql);
+        $stmt->bindParam(':movie_id', $movie_id, PDO::PARAM_INT);
+        $stmt->execute();
+    
+        $movie_cast = $stmt->fetchAll(PDO::FETCH_CLASS, Cast_Member::class);
+        if (!$movie_cast) { return null; }
+        return $movie_cast;
+    }
+    
 }

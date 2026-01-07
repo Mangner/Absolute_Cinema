@@ -140,4 +140,43 @@ class DashboardController extends AppController {
             'cinemas' => $this->cinemaRepository->getCinemas()
         ]);
     }
+
+
+    public function setCinema() {
+        $this->requireLogin(); // Security: only logged-in users
+        header('Content-Type: application/json');
+
+        if (!$this->isPost()) {
+            http_response_code(405);
+            echo json_encode(['status' => 'Method not allowed']);
+            return;
+        }
+
+        $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
+        
+        if ($contentType !== "application/json") {
+            http_response_code(415);
+            echo json_encode(['status' => 'Invalid content type']);
+            return;
+        }
+
+        $content = trim(file_get_contents("php://input"));
+        $decoded = json_decode($content, true);
+        $cinemaId = $decoded['cinema_id'] ?? null;
+
+        if (!$cinemaId) {
+            http_response_code(400);
+            echo json_encode(['status' => 'Cinema ID required']);
+            return;
+        }
+
+        // Store in THIS user's session only
+        $_SESSION['selected_cinema_id'] = $cinemaId;
+
+        http_response_code(200);
+        echo json_encode([
+            'status' => 'ok',
+            'cinema_id' => $cinemaId
+        ]);
+    }
 }

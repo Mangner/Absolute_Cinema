@@ -53,22 +53,10 @@ class AppController {
         header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
         header("Cache-Control: post-check=0, pre-check=0", false);
         header("Pragma: no-cache");
-
-        $templatePathPhtml = 'public/views/' . $template . '.phtml';
-        $templatePathHtml = 'public/views/' . $template . '.html';
+      
         $templatePath404 = 'public/views/404.html';
-        
-        $templatePath = null;
+        $templatePath = 'public/views/' . $template . '.html';
         $output = "";
-
-        
-        if (file_exists($templatePathPhtml)) {
-            $templatePath = $templatePathPhtml;
-        }
-        elseif (file_exists($templatePathHtml)) {
-            $templatePath = $templatePathHtml;
-        }
-        
                  
         if(file_exists($templatePath)){
             

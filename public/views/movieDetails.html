@@ -8,6 +8,7 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="/public/scripts/chooseCinema.js" defer></script>
   </head>
   <body>
     <!-- Nawigacja skopiowana z dashboard -->
@@ -18,7 +19,11 @@
           Absolute Cinema
         </div>
         <div>
-          <label>Warszawa</label>
+          <?php if (isset($_SESSION['selected_cinema_id'])): ?>
+                  <label><?php echo htmlspecialchars($_SESSION['selected_cinema_id']); ?></label>
+          <?php else: ?>
+                  <label>Lokalizacja</label>
+          <?php endif; ?>
         </div>
         <div>
           <button id="cinema-choice-btn">Wybierz Kino</button>
@@ -75,15 +80,15 @@
             </span>
             <span class="meta-item">
               <i class="fas fa-calendar"></i>
-              19 grudnia 2025
+                <?php echo $movie->getReleaseDate(); ?>
             </span>
             <span class="meta-item age-rating"> PG-13 </span>
           </div>
 
           <div class="movie-genres">
-            <span class="genre-tag">Przygodowy</span>
-            <span class="genre-tag">Sci-Fi</span>
-            <span class="genre-tag">Fantasy</span>
+            <?php foreach($genres as $genre) : ?>
+              <span class="genre-tag"><?php echo $genre->getName(); ?></span>
+            <?php endforeach; ?>
           </div>
 
           <p class="movie-description">
@@ -145,18 +150,25 @@
               <tr>
                 <td class="label">Obsada:</td>
                 <td class="value">
-                  Sam Worthington, Zoe Saldaña, Sigourney Weaver, Stephen Lang,
-                  Oona Chaplin, Cliff Curtis, Kate Winslet, Britain Dalton,
-                  Trinity Bliss, Jack Champion, Bailey Bass
+                  <?php
+
+                    $names = [];
+
+                    foreach ($cast as $cast_member) {
+                      $names[] = $cast_member->getName();
+                    }
+
+                    echo implode(', ', $names);
+                  ?>
                 </td>
               </tr>
               <tr>
                 <td class="label">Produkcja:</td>
-                <td class="value">USA 2025</td>
+                <td class="value"><?php echo $movie->getProductionCountry() ?></td>
               </tr>
               <tr>
                 <td class="label">Język oryginalny:</td>
-                <td class="value">EN</td>
+                <td class="value"><?php echo $movie->getOriginalLanguage() ?></td>
               </tr>
             </table>
           </section>
@@ -184,21 +196,21 @@
               <span class="rating-source">IMDb</span>
               <span class="rating-score">
                 <i class="fas fa-star"></i>
-                8.5/10
+                <?php echo $movie->getImdbRating() . "/10" ?>
               </span>
             </div>
             <div class="rating-item">
               <span class="rating-source">Rotten Tomatoes</span>
               <span class="rating-score">
                 <i class="fas fa-tomato"></i>
-                92%
+                <?php echo $movie->getRottenTomatoesRating() . "%" ?>
               </span>
             </div>
             <div class="rating-item">
               <span class="rating-source">Metacritic</span>
               <span class="rating-score">
                 <i class="fas fa-chart-line"></i>
-                85/100
+                <?php echo $movie->getMetacriticRating() . "/100" ?>
               </span>
             </div>
           </div>

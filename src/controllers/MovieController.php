@@ -19,7 +19,10 @@ class MovieController extends AppController {
     public function getDetails($movieId, $cinemaId = null) {
         
         $movie = $this->movieRepository->getMovieById($movieId);
-        $this->render('movieDetails', ["movie" => $movie]);
+        $genres = $this->movieRepository->getGenresByMovieId($movieId);
+        $cast = $this->movieRepository->getCastByMovieId($movieId);
+
+        $this->render('movieDetails', ["movie" => $movie, "genres" => $genres, "cast" => $cast]);
     }
 
 }
