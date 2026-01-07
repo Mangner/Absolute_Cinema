@@ -143,8 +143,35 @@ class DashboardController extends AppController {
 
 
     public function setCinema() {
-        $this->requireLogin(); // Security: only logged-in users
         header('Content-Type: application/json');
+        
+        // Manual session check for AJAX - requireLogin() redirects which breaks fetch
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (empty($_SESSION['user_id'])) {
+            http_response_code(401);
+            echo json_encode([
+                'status' => 'unauthorized',
+                'message' => 'Session expired. Please login again.'
+            ]);
+            return;
+        }
+
+        // Check session timeout (same as requireLogin)
+        $timeout = 600;
+        if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $timeout)) {
+            session_unset();
+            session_destroy();
+            http_response_code(401);
+            echo json_encode([
+                'status' => 'unauthorized',
+                'message' => 'Session expired. Please login again.'
+            ]);
+            return;
+        }
+        $_SESSION['last_activity'] = time();
 
         if (!$this->isPost()) {
             http_response_code(405);
@@ -163,6 +190,7 @@ class DashboardController extends AppController {
         $content = trim(file_get_contents("php://input"));
         $decoded = json_decode($content, true);
         $cinemaId = $decoded['cinema_id'] ?? null;
+        $cinemaName = $decoded['cinema_name'] ?? null;
 
         if (!$cinemaId) {
             http_response_code(400);
@@ -172,6 +200,7 @@ class DashboardController extends AppController {
 
         // Store in THIS user's session only
         $_SESSION['selected_cinema_id'] = $cinemaId;
+        $_SESSION['selected_cinema_name'] = $cinemaName;
 
         http_response_code(200);
         echo json_encode([

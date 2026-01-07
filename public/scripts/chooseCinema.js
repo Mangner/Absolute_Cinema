@@ -1,5 +1,7 @@
 const chooseCinemaBtn = document.getElementById("cinema-choice-btn");
 const cinemasURL = "http://localhost:8080/get-cinemas";
+const setCinemaURL = "http://localhost:8080/set-cinema";
+
 
 function createCinemaModal() {
   let existingModal = document.getElementById("cinema-modal");
@@ -70,8 +72,8 @@ function loadCinemas() {
 
         cinemas.forEach(cinema => {
           const option = document.createElement("option");
-          option.value = cinema.name;
-          option.textContent = `${cinema.name} - ${cinema.city}`;
+          option.value = cinema.cinema_id;
+          option.textContent = `${cinema.name}`;
           select.appendChild(option);
         });
       } else {
@@ -90,20 +92,25 @@ document.addEventListener("submit", e => {
   if (e.target.id === "cinema-form") {
     e.preventDefault(); // Prevent page reload and POST data
     
-    const cinemaId = document.getElementById("cinema-select").value;
-    
+    const select = document.getElementById("cinema-select");
+    const cinemaId = select.options[select.selectedIndex].value;
+    const cinemaName = select.options[select.selectedIndex].textContent;
+
     if (!cinemaId) {
       alert("Proszę wybrać kino");
       return;
     }
 
     // Send cinema selection to PHP backend to store in session
-    fetch("http://localhost:8080/set-cinema", {
+    fetch(setCinemaURL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ cinema_id: cinemaId })
+      body: JSON.stringify({ 
+        cinema_id: cinemaId,
+        cinema_name: cinemaName
+       })
     })
     .then(response => {
       // Check if session expired (401 Unauthorized)

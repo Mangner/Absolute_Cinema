@@ -25,6 +25,26 @@ class MovieController extends AppController {
         $this->render('movieDetails', ["movie" => $movie, "genres" => $genres, "cast" => $cast]);
     }
 
+
+    public function getShowtimes($movie_id, $cinema_id, $date) {
+
+        header('Content-Type: application/json');
+
+        if (!$this->isGet()) {
+            http_response_code(405);
+            echo json_encode([
+                'status' => 'Method not allowed'
+            ]);
+            return;
+        }
+
+        http_response_code(200);
+        echo json_encode([
+            'status' => 'ok',
+            'cinemas' => $this->showtimeRepository->getShowtimesByMovieAndCinemaIdAndDate($movie_id, $cinema_id, $date)
+        ]);
+
+    }
 }
 
 

@@ -732,3 +732,12 @@ body {
         flex-direction: column;
     }
 }
+
+#movie_id {
+  display: none;
+}
+
+
+#cinema_id {
+  display: none;
+}
