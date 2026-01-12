@@ -278,27 +278,7 @@ body {
   border-color: rgba(255, 255, 255, 0.5);
 }
 
-.btn-icon {
-  background: rgba(255, 255, 255, 0.1);
-  color: #d4af37;
-  border: 2px solid rgba(212, 175, 55, 0.3);
-  width: 50px;
-  height: 50px;
-  border-radius: 8px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-}
-
-.btn-icon:hover {
-  background: rgba(212, 175, 55, 0.2);
-  border-color: #d4af37;
-  transform: scale(1.1);
-}
+/* USUNIĘTO: .btn-icon */
 
 /* --- Sekcja szczegółów --- */
 .details-container {
@@ -402,9 +382,9 @@ body {
   gap: 25px;
 }
 
+/* USUNIĘTO: .share-card z poniższego selektora */
 .ratings-card,
-.formats-card,
-.share-card {
+.formats-card {
   background: rgba(255, 255, 255, 0.03);
   border-radius: 12px;
   padding: 25px;
@@ -412,9 +392,9 @@ body {
   backdrop-filter: blur(10px);
 }
 
+/* USUNIĘTO: .share-card h3 z poniższego selektora */
 .ratings-card h3,
-.formats-card h3,
-.share-card h3 {
+.formats-card h3 {
   margin: 0 0 20px 0;
   font-size: 1.3rem;
   color: #fff;
@@ -468,53 +448,7 @@ body {
   font-weight: 600;
 }
 
-/* Udostępnianie */
-.share-buttons {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-
-.share-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 8px;
-  font-size: 1.3rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.share-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-.share-btn.facebook:hover {
-  background: #1877f2;
-  border-color: #1877f2;
-}
-
-.share-btn.twitter:hover {
-  background: #1da1f2;
-  border-color: #1da1f2;
-}
-
-.share-btn.whatsapp:hover {
-  background: #25d366;
-  border-color: #25d366;
-}
-
-.share-btn.link:hover {
-  background: #d4af37;
-  border-color: #d4af37;
-  color: #000;
-}
+/* USUNIĘTO: Cała sekcja Udostępnianie */
 
 /* --- Responsywność --- */
 @media (max-width: 1200px) {
@@ -733,6 +667,92 @@ body {
     }
 }
 
+/* --- Showtimes Calendar & Buttons --- */
+
+/* Kontener dla kalendarza - zapewnia scrollowanie jeśli dni się nie mieszczą */
+.calendar-days {
+  display: flex;              /* Układ w rzędzie */
+  flex-wrap: nowrap;          /* Zabrania zawijania do nowej linii */
+  gap: 15px;                  /* Odstępy między przyciskami */
+  overflow-x: auto;           /* Włącza przewijanie poziome */
+  padding: 10px 5px;          /* Margines wewnętrzny, żeby cień nie był ucięty */
+  justify-content: flex-start; /* Zaczyna od lewej */
+  scrollbar-width: thin;       /* Cienki pasek przewijania (Firefox) */
+  scrollbar-color: #d4af37 #222; /* Kolory paska (Firefox) */
+}
+
+/* Stylizacja paska przewijania dla Chrome/Safari/Edge */
+.calendar-days::-webkit-scrollbar {
+  height: 6px;
+}
+.calendar-days::-webkit-scrollbar-track {
+  background: #222;
+  border-radius: 3px;
+}
+.calendar-days::-webkit-scrollbar-thumb {
+  background-color: #d4af37;
+  border-radius: 3px;
+}
+
+/* Podstawowy wygląd przycisku dnia */
+.day-btn {
+  flex: 0 0 auto;             /* Nie ściska przycisków */
+  min-width: 90px;            /* Minimalna szerokość */
+  padding: 15px 10px;
+  background-color: transparent; /* Przezroczyste tło domyślnie */
+  border: 1px solid rgba(212, 175, 55, 0.3); /* Delikatna ramka złota */
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;                /* Domyślny kolor tekstu */
+  text-align: center;
+}
+
+/* Wygląd tekstów wewnątrz */
+.day-btn .day-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  color: #d4af37;             /* Nazwa dnia na złoto */
+}
+
+.day-btn .day-date {
+  font-size: 0.8rem;
+  color: #aaa;                /* Data na szaro */
+}
+
+/* Efekt najechania myszką (HOVER) */
+.day-btn:hover {
+  border-color: #d4af37;
+  background-color: rgba(212, 175, 55, 0.1); /* Lekkie podświetlenie tła */
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Stan AKTYWNY (kliknięty) - Pełny żółty */
+.day-btn.active {
+  background: linear-gradient(135deg, #d4af37 0%, #f0c43f 100%); /* Złoty gradient */
+  border-color: #f0c43f;
+  color: #000;                /* Czarny tekst dla kontrastu */
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+
+/* Zmiana kolorów tekstów wewnątrz aktywnego przycisku */
+.day-btn.active .day-name,
+.day-btn.active .day-date {
+  color: #000 !important;     /* Wymuszamy czarny kolor na żółtym tle */
+}
+
+/* Sekcja z godzinami seansów (pod kalendarzem) */
+.showtimes-placeholder {
+    width: 100%;
+}
+
 #movie_id {
   display: none;
 }
@@ -740,4 +760,95 @@ body {
 
 #cinema_id {
   display: none;
+}
+
+/* --- Style dla listy seansów (Cinema City Style) --- */
+
+#showtimes-results {
+    padding: 20px 0;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Grupa (Technologia + Przyciski) */
+.showtime-group {
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Delikatna linia oddzielająca */
+    padding-bottom: 20px;
+}
+
+.showtime-group:last-child {
+    border-bottom: none;
+}
+
+/* Nagłówek Technologii (np. 2D) */
+.showtime-tech {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 15px 0;
+    text-transform: uppercase;
+}
+
+/* Kontener na przyciski (Flexbox) */
+.showtime-buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+/* Przycisk z godziną (Pomarańczowy) */
+.showtime-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    background-color: #f27e16; /* Kolor pomarańczowy Cinema City */
+    color: #000;              /* Czarny tekst */
+    
+    padding: 10px 20px;
+    border-radius: 4px;       /* Lekkie zaokrąglenie */
+    text-decoration: none;    /* Usuwa podkreślenie linku */
+    transition: all 0.2s ease;
+    min-width: 80px;
+}
+
+.showtime-btn .time {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+/* Opcjonalny tekst języka (np. mały napis pod godziną) */
+.showtime-btn .lang-info {
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 2px;
+    opacity: 0.8;
+}
+
+/* Hover (najechanie myszką) */
+.showtime-btn:hover {
+    background-color: #ff9f4d; /* Jaśniejszy pomarańczowy */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(242, 126, 22, 0.3);
+}
+
+/* Napis pod przyciskami (np. Dubbing PL) */
+.tech-subinfo {
+    color: #aaa;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    text-transform: uppercase;
+}
+
+/* Loader i komunikaty */
+.loading-message, .error-message, .no-showtimes {
+    text-align: center;
+    padding: 30px;
+    color: #ccc;
+    font-size: 1.1rem;
+}
+.loading-message i {
+    color: #d4af37;
+    margin-right: 10px;
 }

@@ -189,7 +189,7 @@ class DashboardController extends AppController {
 
         $content = trim(file_get_contents("php://input"));
         $decoded = json_decode($content, true);
-        $cinemaId = $decoded['cinema_id'] ?? null;
+        $cinemaId = (int)($decoded['cinema_id'] ?? 0);
         $cinemaName = $decoded['cinema_name'] ?? null;
 
         if (!$cinemaId) {
@@ -198,7 +198,7 @@ class DashboardController extends AppController {
             return;
         }
 
-        // Store in THIS user's session only
+        // Store BOTH numeric ID (for queries) and name (for display) in session
         $_SESSION['selected_cinema_id'] = $cinemaId;
         $_SESSION['selected_cinema_name'] = $cinemaName;
 

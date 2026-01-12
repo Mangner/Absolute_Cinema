@@ -2,8 +2,8 @@ const chooseCinemaBtn = document.getElementById("cinema-choice-btn");
 const cinemasURL = "http://localhost:8080/get-cinemas";
 const setCinemaURL = "http://localhost:8080/set-cinema";
 
-
-function createCinemaModal() {
+// ZMIANA 1: Dodajemy "window." - teraz funkcja jest globalna
+window.createCinemaModal = function() {
   let existingModal = document.getElementById("cinema-modal");
   if (existingModal) {
     existingModal.style.display = "flex";
@@ -40,6 +40,11 @@ function createCinemaModal() {
   const closeBtn = document.getElementById("close-modal");
   const cancelBtn = document.getElementById("cancel-btn");
 
+  // Funkcja zamykania musi być wewnątrz, żeby widzieć zmienną 'modal'
+  function closeModal() {
+      modal.style.display = "none";
+  }
+
   closeBtn.addEventListener("click", closeModal);
   cancelBtn.addEventListener("click", closeModal);
 
@@ -50,15 +55,9 @@ function createCinemaModal() {
   });
 
   loadCinemas();
-}
+}; // koniec funkcji window.createCinemaModal
 
-function closeModal() {
-  const modal = document.getElementById("cinema-modal");
-  if (modal) {
-    modal.style.display = "none";
-  }
-}
-
+// Tę funkcję też musisz mieć dostępną (lub przenieść ją do środka createCinemaModal, ale może zostać tutaj)
 function loadCinemas() {
   const select = document.getElementById("cinema-select");
 
@@ -88,9 +87,10 @@ function loadCinemas() {
     });
 }
 
+// Globalny nasłuchiwacz formularza (działa dla każdego modala)
 document.addEventListener("submit", e => {
   if (e.target.id === "cinema-form") {
-    e.preventDefault(); // Prevent page reload and POST data
+    e.preventDefault(); 
     
     const select = document.getElementById("cinema-select");
     const cinemaId = select.options[select.selectedIndex].value;
@@ -101,7 +101,6 @@ document.addEventListener("submit", e => {
       return;
     }
 
-    // Send cinema selection to PHP backend to store in session
     fetch(setCinemaURL, {
       method: "POST",
       headers: {
@@ -113,7 +112,6 @@ document.addEventListener("submit", e => {
        })
     })
     .then(response => {
-      // Check if session expired (401 Unauthorized)
       if (response.status === 401) {
         alert("Twoja sesja wygasła. Zostaniesz przekierowany do strony logowania.");
         window.location.href = "http://localhost:8080/login";
@@ -122,11 +120,13 @@ document.addEventListener("submit", e => {
       return response.json();
     })
     .then(data => {
-      if (!data) return; // Session expired, already redirected
+      if (!data) return; 
       
       if (data.status === 'ok') {
-        closeModal();
-        // Reload page to show updated cinema in navbar
+        // Zamykamy modal ręcznie
+        const modal = document.getElementById("cinema-modal");
+        if (modal) modal.style.display = "none";
+        
         window.location.reload();
       } else if (data.status === 'unauthorized') {
         alert(data.message || "Twoja sesja wygasła.");
@@ -142,4 +142,7 @@ document.addEventListener("submit", e => {
   }
 });
 
-chooseCinemaBtn.addEventListener("click", createCinemaModal);
+// ZMIANA 2: Podpinamy przycisk z nawigacji używając window.createCinemaModal
+if (chooseCinemaBtn) {
+    chooseCinemaBtn.addEventListener("click", window.createCinemaModal);
+}

@@ -23,12 +23,36 @@ class ShowtimeRepository extends Repository {
         $stmt->bindParam(':movie_id', $movie_id, PDO::PARAM_INT);
         $stmt->bindParam(':cinema_id', $cinema_id, PDO::PARAM_INT);
         $stmt->bindParam(':date', $date, PDO::PARAM_STR);
+        $stmt->execute();
 
         $showtimes = $stmt->fetchAll(PDO::FETCH_CLASS, Showtime::class);
+        
         if (!$showtimes) { return null; }
         return $showtimes;
     }
 
+
+    public function getFormatsByMovieId(int $movie_id, int $cinema_id) {
+
+        $sql = "
+            SELECT DISTINCT(s.technology)
+            FROM showtimes s
+            INNER JOIN movies m on m.movie_id = s.movie_id
+            INNER JOIN halls h ON s.hall_id = h.hall_id
+            WHERE s.movie_id = :movie_id
+            AND h.cinema_id = :cinema_id
+            ORDER BY s.technology ASC 
+        ";
+
+        $stmt = $this->database->connect()->prepare($sql);
+        $stmt->bindParam(':movie_id', $movie_id, PDO::PARAM_INT);
+        $stmt->bindParam(':cinema_id', $cinema_id, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        $technologies = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $technologies;
+    } 
 }
 
 ?>

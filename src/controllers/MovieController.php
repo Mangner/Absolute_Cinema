@@ -26,24 +26,76 @@ class MovieController extends AppController {
     }
 
 
-    public function getShowtimes($movie_id, $cinema_id, $date) {
-
+    public function getShowtimes() {
         header('Content-Type: application/json');
+        
+        // Session check for security (same as setCinema)
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
 
-        if (!$this->isGet()) {
+        if (empty($_SESSION['user_id'])) {
+            http_response_code(401);
+            echo json_encode(['status' => 'unauthorized', 'message' => 'Login required']);
+            return;
+        }
+        
+        // Check timeout
+        $timeout = 600;
+        if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $timeout)) {
+            session_unset();
+            session_destroy();
+            http_response_code(401);
+            echo json_encode(['status' => 'unauthorized', 'message' => 'Session expired']);
+            return;
+        }
+        $_SESSION['last_activity'] = time();
+
+        if (!$this->isPost()) {
             http_response_code(405);
+            echo json_encode(['status' => 'Method not allowed']);
+            return;
+        }
+
+        $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
+        if ($contentType !== "application/json") {
+            http_response_code(415);
+            echo json_encode(['status' => 'Invalid content type']);
+            return;
+        }
+
+        $content = trim(file_get_contents("php://input"));
+        $decoded = json_decode($content, true);
+
+        // Get parameters (cinema_id should be numeric)
+        $movie_id = (int)($decoded['movie_id'] ?? 0);
+        $cinema_id = (int)($decoded['cinema_id'] ?? 0);
+        $date = $decoded['date'] ?? date('Y-m-d');
+
+        // Validate required parameters
+        if (!$movie_id || !$cinema_id) {
+            http_response_code(400);
             echo json_encode([
-                'status' => 'Method not allowed'
+                'status' => 'error',
+                'message' => 'movie_id and cinema_id are required',
+                'received' => ['movie_id' => $movie_id, 'cinema_id' => $cinema_id]
             ]);
             return;
         }
 
+        // Fetch showtimes from repository
+        $showtimes = $this->showtimeRepository->getShowtimesByMovieAndCinemaIdAndDate($movie_id, $cinema_id, $date);
+
         http_response_code(200);
         echo json_encode([
             'status' => 'ok',
-            'cinemas' => $this->showtimeRepository->getShowtimesByMovieAndCinemaIdAndDate($movie_id, $cinema_id, $date)
+            'showtimes' => $showtimes,
+            'date' => $date,
+            'debug' => [
+                'query_params' => ['movie_id' => $movie_id, 'cinema_id' => $cinema_id, 'date' => $date],
+                'result_count' => $showtimes ? count($showtimes) : 0
+            ]
         ]);
-
     }
 }
 

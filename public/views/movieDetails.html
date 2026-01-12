@@ -9,6 +9,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="/public/scripts/chooseCinema.js" defer></script>
+    <script src="/public/scripts/showtimeLoader.js" defer></script>
   </head>
   <body>
     <nav>
@@ -66,7 +67,15 @@
           <div class="movie-meta">
             <span class="meta-item">
               <i class="fas fa-star"></i>
-              <strong>8.5</strong>/10
+              <strong>
+                <?php 
+                    $meanRating = ($movie->getImdbRating()
+                                + $movie->getRottenTomatoesRating() / 10
+                                + $movie->getMetacriticRating() / 10 ) / 3;
+
+                    echo round($meanRating, 1);
+                ?>
+              </strong>/10
             </span>
             <span class="meta-item">
               <i class="fas fa-clock"></i>
@@ -76,7 +85,7 @@
               <i class="fas fa-calendar"></i>
                 <?php echo $movie->getReleaseDate(); ?>
             </span>
-            <span class="meta-item age-rating"> PG-13 </span>
+            <span class="meta-item age-rating"> <?php echo $movie->getAgeRating(); ?> </span>
           </div>
 
           <div class="movie-genres">
@@ -98,23 +107,14 @@
               <i class="fas fa-play"></i>
               Zwiastun
             </button>
-            <button class="btn-icon">
-              <i class="fas fa-heart"></i>
-            </button>
-            <button class="btn-icon">
-              <i class="fas fa-share-alt"></i>
-            </button>
-          </div>
+            </div>
         </div>
       </div>
     </div>
 
-    <!-- Szczegółowe informacje -->
     <div class="details-container">
       <div class="details-grid">
-        <!-- Główna kolumna -->
         <div class="main-column">
-          <!-- Tabela z informacjami -->
           <section class="info-section">
             <h2 class="section-title">
               <i class="fas fa-info-circle"></i>
@@ -165,26 +165,27 @@
           </section>
 
 
-          <div id="movie_id"><?php echo $movie->getId(); ?></div>
-          <div id="cinema_id"><?php echo $_SESSION["selected_cinema_name"]; ?></div>
-
-          <!-- Sekcja z seansami (placeholder na backend) -->
-          <section class="showtimes-section">
+          <section class="showtimes-section" 
+                   data-movie-id="<?php echo $movie->getId(); ?>"
+                   data-cinema-id="<?php echo isset($_SESSION['selected_cinema_id']) ? $_SESSION['selected_cinema_id'] : ''; ?>">
             <h2 class="section-title">
               <i class="fas fa-film"></i>
               Dostępne seanse
             </h2>
             <div class="showtimes-placeholder">
-              <i class="fas fa-clock"></i>
-              <p>Seanse będą dostępne po wybraniu kina i daty</p>
-              <button class="btn-primary">Wybierz kino</button>
+                <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 20px; color: #d4af37;"></i>
+          
+                <p style="margin-bottom: 25px; font-size: 1.1rem; color: #ccc;">
+                    Nie wybrano kina. Wybierz lokalizację, aby zobaczyć repertuar.
+                </p>
+                <button id="placeholder-cinema-btn" class="btn-primary" style="margin: 0 auto;">
+                    Wybierz kino
+                </button>
             </div>
           </section>
         </div>
 
-        <!-- Boczna kolumna -->
         <aside class="side-column">
-          <!-- Oceny -->
           <div class="ratings-card">
             <h3>Oceny</h3>
             <div class="rating-item">
@@ -210,7 +211,6 @@
             </div>
           </div>
 
-          <!-- Dostępne formaty -->
           <div class="formats-card">
             <h3>Dostępne formaty</h3>
             <div class="format-tags">
@@ -221,25 +221,7 @@
             </div>
           </div>
 
-          <!-- Udostępnij -->
-          <div class="share-card">
-            <h3>Udostępnij</h3>
-            <div class="share-buttons">
-              <button class="share-btn facebook">
-                <i class="fab fa-facebook-f"></i>
-              </button>
-              <button class="share-btn twitter">
-                <i class="fab fa-twitter"></i>
-              </button>
-              <button class="share-btn whatsapp">
-                <i class="fab fa-whatsapp"></i>
-              </button>
-              <button class="share-btn link">
-                <i class="fas fa-link"></i>
-              </button>
-            </div>
-          </div>
-        </aside>
+          </aside>
       </div>
     </div>
   </body>
