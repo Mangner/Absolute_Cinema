@@ -8,6 +8,8 @@ class Showtime {
     public int $hall_id;
     public string $start_time;
     public ?string $technology;
+    public string $language;
+    public string $audio_type;
     public float $base_price;
     
     
@@ -16,6 +18,17 @@ class Showtime {
     public function getHallId() : int { return $this->hall_id; }
     public function getStartTime() : string { return $this->start_time; }
     public function getTechnology() : string { return $this->technology; }
+    public function getLanguage() : string { return $this->language; }
+    public function getAudioType() : string { return $this->audio_type; }
+    public function getAudioTypeLabel() : string {
+        return match($this->audio_type) {
+            'dubbed' => 'Dubbing',
+            'subtitled' => 'Napisy',
+            'voiceover' => 'Lektor',
+            'original' => 'Oryginał',
+            default => $this->audio_type
+        };
+    }
     public function getPrice() : float { return $this->base_price; }
 
     public function setMovieId(int $movie_id) : void { $this->movie_id = $movie_id; }

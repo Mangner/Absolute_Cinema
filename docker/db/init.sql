@@ -76,6 +76,7 @@ CREATE TABLE movies (
     director VARCHAR(100),
     release_date DATE NOT NULL,
     image VARCHAR(1024),
+    trailer_url VARCHAR(512),
     price DECIMAL(10, 2), 
     duration INT NOT NULL,
     production_country VARCHAR(100),
@@ -112,6 +113,8 @@ CREATE TABLE showtimes (
     hall_id INT REFERENCES halls(hall_id) ON DELETE CASCADE,
     start_time TIMESTAMP NOT NULL,
     technology VARCHAR(50) DEFAULT '2D',
+    language VARCHAR(10) DEFAULT 'PL',
+    audio_type VARCHAR(20) DEFAULT 'dubbed' CHECK (audio_type IN ('dubbed', 'subtitled', 'voiceover', 'original')),
     base_price DECIMAL(10, 2) NOT NULL
 );
 
@@ -179,7 +182,10 @@ INSERT INTO cinemas (name, city, address) VALUES
 /* --- SALE --- */
 INSERT INTO halls (cinema_id, name, type) VALUES 
 (1, 'Sala 1', 'Standard'),
-(1, 'Sala 2', 'IMAX');
+(1, 'Sala 2', 'IMAX'),
+(2, 'Sala 1', 'Standard'),
+(2, 'Sala 2', 'Standard'),
+(2, 'Sala 3', 'IMAX 3D');
 
 /* --- MIEJSCA (Przykładowe dla Sali 1) --- */
 INSERT INTO seats (hall_id, row_label, seat_number) VALUES
@@ -187,14 +193,15 @@ INSERT INTO seats (hall_id, row_label, seat_number) VALUES
 (1, 'F', 7), (1, 'F', 8), (1, 'F', 9), (1, 'F', 10), (1, 'F', 11), (1, 'F', 12);
 
 /* --- FILMY --- */
-INSERT INTO movies (title, original_title, description, director, release_date, image, price, duration, production_country, original_language, age_rating, imdb_rating, rotten_tomatoes_rating, metacritic_rating) VALUES
+INSERT INTO movies (title, original_title, description, director, release_date, image, trailer_url, price, duration, production_country, original_language, age_rating, imdb_rating, rotten_tomatoes_rating, metacritic_rating) VALUES
 (
     'Diuna: Część druga', 
     'Dune: Part Two',
     'Książę Paul Atryda przyjmuje przydomek Muad''Dib i rozpoczyna duchowo-fizyczną podróż.',
     'Denis Villeneuve', 
     '2024-02-29', 
-    'https://image.tmdb.org/t/p/w600_and_h900_face/xdfO6EB9e59qZpzmHxezTdPfTxZ.jpg', 
+    'https://image.tmdb.org/t/p/w600_and_h900_face/xdfO6EB9e59qZpzmHxezTdPfTxZ.jpg',
+    'https://www.youtube.com/embed/Way9Dexny3w',
     25.00, 166,
     'USA',
     'EN',
@@ -209,7 +216,8 @@ INSERT INTO movies (title, original_title, description, director, release_date, 
     'Po wyrusza w nową przygodę w starożytnych Chinach.',
     'Mike Mitchell', 
     '2024-03-08', 
-    'https://upload.wikimedia.org/wikipedia/en/7/7f/Kung_Fu_Panda_4_poster.jpg', 
+    'https://upload.wikimedia.org/wikipedia/en/7/7f/Kung_Fu_Panda_4_poster.jpg',
+    'https://www.youtube.com/embed/_inKs4eeHiI',
     20.00, 94,
     'USA',
     'EN',
@@ -224,7 +232,8 @@ INSERT INTO movies (title, original_title, description, director, release_date, 
     'Historia amerykańskiego naukowca J. Roberta Oppenheimera i jego roli w projekcie Manhattan.',
     'Christopher Nolan', 
     '2023-07-21', 
-    'https://upload.wikimedia.org/wikipedia/en/4/4a/Oppenheimer_%28film%29.jpg', 
+    'https://upload.wikimedia.org/wikipedia/en/4/4a/Oppenheimer_%28film%29.jpg',
+    'https://www.youtube.com/embed/uYPbbksJxIg',
     22.50, 180,
     'USA',
     'EN',
@@ -239,7 +248,8 @@ INSERT INTO movies (title, original_title, description, director, release_date, 
     'Kontynuacja epickiej historii o zdradzie, honorze i walce o wolność.',
     'Ridley Scott', 
     '2026-11-22', 
-    'https://image.tmdb.org/t/p/w600_and_h900_face/q6mkkb5XU6ERF7xP9nAjnNq9n7V.jpg', 
+    'https://image.tmdb.org/t/p/w600_and_h900_face/q6mkkb5XU6ERF7xP9nAjnNq9n7V.jpg',
+    'https://www.youtube.com/embed/4rgYUipGJNo',
     28.00, 140,
     'USA',
     'EN',
@@ -254,7 +264,8 @@ INSERT INTO movies (title, original_title, description, director, release_date, 
     'Powrót ulubionego ogra i jego nowych przygód w magicznym świecie.',
     'Andrew Adamson', 
     '2026-07-01', 
-    'https://upload.wikimedia.org/wikipedia/en/thumb/4/4d/Shrek_%28character%29.png/220px-Shrek_%28character%29.png', 
+    'https://upload.wikimedia.org/wikipedia/en/thumb/4/4d/Shrek_%28character%29.png/220px-Shrek_%28character%29.png',
+    'https://www.youtube.com/embed/W37DlG1i61s',
     24.00, 95,
     'USA',
     'EN',
@@ -285,9 +296,64 @@ INSERT INTO movie_cast (movie_id, cast_id, character_name, position) VALUES
 (5, 8, 'Shrek (głos)', 1);
 
 /* --- SEANSE --- */
-INSERT INTO showtimes (movie_id, hall_id, start_time, technology, base_price) VALUES
-(1, 1, '2025-10-27 20:30:00', 'IMAX 3D', 35.00), 
-(2, 1, '2025-10-28 18:00:00', '2D', 25.00);
+INSERT INTO showtimes (movie_id, hall_id, start_time, technology, language, audio_type, base_price) VALUES
+-- Diuna (movie_id=1) - Warszawa
+(1, 1, '2026-01-11 10:00:00', '2D', 'PL', 'dubbed', 25.00),
+(1, 1, '2026-01-11 14:00:00', '2D', 'PL', 'subtitled', 25.00),
+(1, 2, '2026-01-11 18:30:00', 'IMAX 3D', 'EN', 'original', 35.00),
+(1, 2, '2026-01-11 21:00:00', 'IMAX 3D', 'PL', 'dubbed', 35.00),
+(1, 1, '2026-01-12 10:00:00', '2D', 'PL', 'dubbed', 25.00),
+(1, 2, '2026-01-12 16:00:00', 'IMAX 3D', 'EN', 'subtitled', 35.00),
+(1, 1, '2026-01-13 14:30:00', '2D', 'PL', 'dubbed', 25.00),
+(1, 2, '2026-01-13 19:00:00', 'IMAX 3D', 'EN', 'original', 35.00),
+(1, 1, '2026-01-14 10:00:00', '2D', 'PL', 'voiceover', 25.00),
+(1, 2, '2026-01-14 20:30:00', 'IMAX 3D', 'PL', 'dubbed', 35.00),
+(1, 1, '2026-01-15 15:00:00', '2D', 'PL', 'dubbed', 25.00),
+(1, 2, '2026-01-15 18:00:00', 'IMAX 3D', 'EN', 'subtitled', 35.00),
+(1, 1, '2026-01-16 11:00:00', '2D', 'PL', 'dubbed', 25.00),
+(1, 2, '2026-01-16 19:30:00', 'IMAX 3D', 'EN', 'original', 35.00),
+(1, 1, '2026-01-17 13:00:00', '2D', 'PL', 'subtitled', 25.00),
+(1, 2, '2026-01-17 20:00:00', 'IMAX 3D', 'PL', 'dubbed', 35.00),
+
+-- Kung Fu Panda (movie_id=2) - Warszawa
+(2, 1, '2026-01-11 12:00:00', '2D', 'PL', 'dubbed', 20.00),
+(2, 1, '2026-01-11 16:00:00', '2D', 'PL', 'dubbed', 20.00),
+(2, 1, '2026-01-12 12:30:00', '2D', 'PL', 'dubbed', 20.00),
+(2, 1, '2026-01-12 18:00:00', '2D', 'EN', 'subtitled', 20.00),
+(2, 1, '2026-01-13 11:00:00', '2D', 'PL', 'dubbed', 20.00),
+(2, 1, '2026-01-13 16:30:00', '2D', 'PL', 'dubbed', 20.00),
+(2, 1, '2026-01-14 12:00:00', '2D', 'PL', 'dubbed', 20.00),
+(2, 1, '2026-01-14 17:00:00', '2D', 'EN', 'original', 20.00),
+
+-- Oppenheimer (movie_id=3) - Warszawa
+(3, 2, '2026-01-11 15:00:00', 'IMAX 3D', 'EN', 'subtitled', 32.00),
+(3, 2, '2026-01-11 19:30:00', 'IMAX 3D', 'EN', 'original', 32.00),
+(3, 2, '2026-01-12 14:00:00', 'IMAX 3D', 'PL', 'voiceover', 32.00),
+(3, 2, '2026-01-12 20:00:00', 'IMAX 3D', 'EN', 'subtitled', 32.00),
+
+-- Diuna (movie_id=1) - Kraków
+(1, 3, '2026-01-11 11:00:00', '2D', 'PL', 'dubbed', 23.00),
+(1, 3, '2026-01-11 15:30:00', '2D', 'PL', 'subtitled', 23.00),
+(1, 5, '2026-01-11 19:00:00', 'IMAX 3D', 'EN', 'original', 33.00),
+(1, 5, '2026-01-11 21:30:00', 'IMAX 3D', 'PL', 'dubbed', 33.00),
+(1, 3, '2026-01-12 10:30:00', '2D', 'PL', 'dubbed', 23.00),
+(1, 5, '2026-01-12 17:00:00', 'IMAX 3D', 'EN', 'subtitled', 33.00),
+(1, 3, '2026-01-13 13:00:00', '2D', 'PL', 'voiceover', 23.00),
+(1, 5, '2026-01-13 18:30:00', 'IMAX 3D', 'EN', 'original', 33.00),
+(1, 3, '2026-01-14 11:00:00', '2D', 'PL', 'dubbed', 23.00),
+(1, 5, '2026-01-14 20:00:00', 'IMAX 3D', 'PL', 'dubbed', 33.00),
+
+-- Kung Fu Panda (movie_id=2) - Kraków
+(2, 4, '2026-01-11 13:00:00', '2D', 'PL', 'dubbed', 18.00),
+(2, 4, '2026-01-11 17:00:00', '2D', 'PL', 'dubbed', 18.00),
+(2, 4, '2026-01-12 12:00:00', '2D', 'PL', 'dubbed', 18.00),
+(2, 4, '2026-01-12 16:30:00', '2D', 'EN', 'subtitled', 18.00),
+
+-- Oppenheimer (movie_id=3) - Kraków
+(3, 5, '2026-01-11 14:00:00', 'IMAX 3D', 'EN', 'subtitled', 30.00),
+(3, 5, '2026-01-11 20:00:00', 'IMAX 3D', 'EN', 'original', 30.00),
+(3, 5, '2026-01-12 15:00:00', 'IMAX 3D', 'PL', 'voiceover', 30.00),
+(3, 5, '2026-01-12 19:30:00', 'IMAX 3D', 'EN', 'subtitled', 30.00);
 
 /* --- JEDZENIE --- */
 INSERT INTO food_items (name, category, price, image) VALUES

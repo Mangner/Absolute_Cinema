@@ -9,8 +9,20 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="/public/scripts/chooseCinema.js" defer></script>
+    <script src="/public/scripts/showtimeLoader.js" defer></script>
+    <script src="/public/scripts/trailerModal.js" defer></script>
   </head>
   <body>
+    <!-- Modal zwiastuna -->
+    <div id="trailer-modal" class="trailer-modal" data-trailer-url="<?php echo $movie->getTrailerUrl(); ?>">
+      <div class="trailer-modal-content">
+        <button class="trailer-modal-close" id="trailer-close">&times;</button>
+        <div class="trailer-iframe-container">
+          <iframe id="trailer-iframe" src="" frameborder="0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+        </div>
+      </div>
+    </div>
+
     <nav>
       <div class="navigation-bar">
         <div class="brand">
@@ -42,10 +54,13 @@
       <div class="hero-overlay"></div>
 
       <div class="hero-content">
-        <div class="movie-poster">
+        <div class="movie-poster trailer-trigger">
           <img
             src="<?= $movie->getImageUrl(); ?>"
             alt="<?= $movie->getTitle(); ?>" />
+          <div class="poster-play-overlay">
+            <i class="fas fa-play-circle"></i>
+          </div>
           <div class="official-badge">
             <i class="fas fa-certificate"></i>
             <span>OFICJALNY ZWIASTUN</span>
@@ -66,7 +81,15 @@
           <div class="movie-meta">
             <span class="meta-item">
               <i class="fas fa-star"></i>
-              <strong>8.5</strong>/10
+              <strong>
+                <?php 
+                    $meanRating = ($movie->getImdbRating()
+                                + $movie->getRottenTomatoesRating() / 10
+                                + $movie->getMetacriticRating() / 10 ) / 3;
+
+                    echo round($meanRating, 1);
+                ?>
+              </strong>/10
             </span>
             <span class="meta-item">
               <i class="fas fa-clock"></i>
@@ -76,7 +99,7 @@
               <i class="fas fa-calendar"></i>
                 <?php echo $movie->getReleaseDate(); ?>
             </span>
-            <span class="meta-item age-rating"> PG-13 </span>
+            <span class="meta-item age-rating"> <?php echo $movie->getAgeRating(); ?> </span>
           </div>
 
           <div class="movie-genres">
@@ -90,31 +113,22 @@
           </p>
 
           <div class="action-buttons">
-            <button class="btn-primary">
+            <a href="#showtimes" class="btn-primary">
               <i class="fas fa-ticket-alt"></i>
               Kup Bilet
-            </button>
-            <button class="btn-secondary">
+            </a>
+            <button class="btn-secondary trailer-trigger" id="trailer-btn">
               <i class="fas fa-play"></i>
               Zwiastun
             </button>
-            <button class="btn-icon">
-              <i class="fas fa-heart"></i>
-            </button>
-            <button class="btn-icon">
-              <i class="fas fa-share-alt"></i>
-            </button>
-          </div>
+            </div>
         </div>
       </div>
     </div>
 
-    <!-- Szczegółowe informacje -->
     <div class="details-container">
       <div class="details-grid">
-        <!-- Główna kolumna -->
         <div class="main-column">
-          <!-- Tabela z informacjami -->
           <section class="info-section">
             <h2 class="section-title">
               <i class="fas fa-info-circle"></i>
@@ -165,26 +179,27 @@
           </section>
 
 
-          <div id="movie_id"><?php echo $movie->getId(); ?></div>
-          <div id="cinema_id"><?php echo $_SESSION["selected_cinema_name"]; ?></div>
-
-          <!-- Sekcja z seansami (placeholder na backend) -->
-          <section class="showtimes-section">
+          <section id="showtimes" class="showtimes-section" 
+                   data-movie-id="<?php echo $movie->getId(); ?>"
+                   data-cinema-id="<?php echo isset($_SESSION['selected_cinema_id']) ? $_SESSION['selected_cinema_id'] : ''; ?>">
             <h2 class="section-title">
               <i class="fas fa-film"></i>
               Dostępne seanse
             </h2>
             <div class="showtimes-placeholder">
-              <i class="fas fa-clock"></i>
-              <p>Seanse będą dostępne po wybraniu kina i daty</p>
-              <button class="btn-primary">Wybierz kino</button>
+                <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 20px; color: #d4af37;"></i>
+          
+                <p style="margin-bottom: 25px; font-size: 1.1rem; color: #ccc;">
+                    Nie wybrano kina. Wybierz lokalizację, aby zobaczyć repertuar.
+                </p>
+                <button id="placeholder-cinema-btn" class="btn-primary" style="margin: 0 auto;">
+                    Wybierz kino
+                </button>
             </div>
           </section>
         </div>
 
-        <!-- Boczna kolumna -->
         <aside class="side-column">
-          <!-- Oceny -->
           <div class="ratings-card">
             <h3>Oceny</h3>
             <div class="rating-item">
@@ -210,36 +225,23 @@
             </div>
           </div>
 
-          <!-- Dostępne formaty -->
+          <?php if (!empty($technologies)) : ?>
           <div class="formats-card">
             <h3>Dostępne formaty</h3>
             <div class="format-tags">
-              <span class="format-tag">Standard 2D</span>
-              <span class="format-tag">IMAX 3D</span>
-              <span class="format-tag">4DX</span>
-              <span class="format-tag">ScreenX</span>
+              <?php foreach($technologies as $technology) : ?>
+                <span class="format-tag"><?php echo $technology->getTechnology(); ?></span>
+              <?php endforeach; ?>
             </div>
           </div>
+          <?php else : ?>
+          <div class="formats-card">
+            <h3>Dostępne formaty</h3>
+            <p>Wybierz kino, aby zobaczyć dostępne formaty</p>
+          </div>
+          <?php endif; ?>
 
-          <!-- Udostępnij -->
-          <div class="share-card">
-            <h3>Udostępnij</h3>
-            <div class="share-buttons">
-              <button class="share-btn facebook">
-                <i class="fab fa-facebook-f"></i>
-              </button>
-              <button class="share-btn twitter">
-                <i class="fab fa-twitter"></i>
-              </button>
-              <button class="share-btn whatsapp">
-                <i class="fab fa-whatsapp"></i>
-              </button>
-              <button class="share-btn link">
-                <i class="fas fa-link"></i>
-              </button>
-            </div>
-          </div>
-        </aside>
+          </aside>
       </div>
     </div>
   </body>

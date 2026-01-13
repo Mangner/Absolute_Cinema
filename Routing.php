@@ -42,6 +42,10 @@ class Routing {
             'controller' => "DashboardController",
             'action' => 'getCinemas'
         ],
+        'get-showtimes' => [
+            'controller' => "MovieController",
+            'action' => 'getShowtimes'
+        ],
         'set-cinema' => [
             'controller' => "DashboardController",
             'action' => 'setCinema'
@@ -64,17 +68,6 @@ class Routing {
             $action = self::$routes[$url]['action'];
             $object = new $controller;
             $object->$action();
-
-        } else if (preg_match('/^movie\/(\d+)\/(\d+)$/', $url, $matches)) {
-            
-            $controller = self::$routes['movie']['controller'];
-            $action = self::$routes['movie']['action'];
-            $object = new $controller;
-
-            $movieId = (int)$matches[1];
-            $cinemaId = (int)$matches[2];
-
-            $object->$action($movieId, $cinemaId);
 
         } else if (preg_match('/^movie\/(\d+)$/', $url, $matches)) {
             
