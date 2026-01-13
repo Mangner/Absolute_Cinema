@@ -109,32 +109,67 @@ function generateShowtimesButtons(showtimes) {
 }
 
 
+let currentWeekOffset = 0;
+const MAX_WEEKS = 4;
+
 function generateDaysButtons() {
   const container = document.querySelector(".showtimes-placeholder");
-  const startDate = new Date();
+  renderWeekView(container, currentWeekOffset);
+}
+
+function renderWeekView(container, weekOffset) {
+  const today = new Date();
+  const startDate = new Date(today);
+  startDate.setDate(today.getDate() + (weekOffset * 7));
+  
   const days = generateCalendarDays(startDate);
 
+  // Generuj przyciski dni
   let buttonsHtml = '';
-  days.forEach(day => {
+  days.forEach((day, index) => {
+    const isToday = day === formatDate(today);
+    const dayLabel = isToday ? 'Dziś' : getDayName(day);
+    const dayNum = day.split('-')[2];
+    const monthNum = day.split('-')[1];
+    
     buttonsHtml += `
       <button class="day-btn" type="button" data-date="${day}">
-        <span class="day-name">${getDayName(day)}</span>
-        <span class="day-date">${day}</span>
+        <span class="day-name">${dayLabel}</span>
+        <span class="day-date">${dayNum}.${monthNum}</span>
       </button>
     `;
   });
 
+  // Określ czy strzałki są aktywne
+  const prevDisabled = weekOffset === 0 ? 'disabled' : '';
+  const nextDisabled = weekOffset >= MAX_WEEKS - 1 ? 'disabled' : '';
+
+  // Etykieta tygodnia
+  const weekStart = days[0].split('-').slice(1).join('.');
+  const weekEnd = days[6].split('-').slice(1).join('.');
+
   container.innerHTML = `
-    <div class="calendar-days">
-      ${buttonsHtml}
+    <div class="week-navigation">
+      <button class="week-arrow prev" ${prevDisabled} title="Poprzedni tydzień">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <div class="week-days">
+        ${buttonsHtml}
+      </div>
+      <button class="week-arrow next" ${nextDisabled} title="Następny tydzień">
+        <i class="fas fa-chevron-right"></i>
+      </button>
     </div>
+    <div class="week-label">${weekStart} - ${weekEnd}</div>
     <div id="showtimes-results">
         <p class="loading-message">Wybierz dzień, aby zobaczyć seanse.</p>
     </div>
   `;
   
   attachDayButtonListeners();
+  attachWeekNavigationListeners(container);
 
+  // Automatycznie załaduj seanse na pierwszy dzień tygodnia
   const firstBtn = container.querySelector('.day-btn');
   if (firstBtn) {
       firstBtn.click(); 
@@ -142,8 +177,28 @@ function generateDaysButtons() {
   }
 }
 
+function attachWeekNavigationListeners(container) {
+  const prevBtn = container.querySelector('.week-arrow.prev');
+  const nextBtn = container.querySelector('.week-arrow.next');
+
+  prevBtn?.addEventListener('click', () => {
+    if (currentWeekOffset > 0) {
+      currentWeekOffset--;
+      renderWeekView(container, currentWeekOffset);
+    }
+  });
+
+  nextBtn?.addEventListener('click', () => {
+    if (currentWeekOffset < MAX_WEEKS - 1) {
+      currentWeekOffset++;
+      renderWeekView(container, currentWeekOffset);
+    }
+  });
+}
+
 function attachDayButtonListeners() {
   const buttons = document.querySelectorAll('.day-btn');
+  
   buttons.forEach(btn => {
     btn.addEventListener('click', (e) => {
       buttons.forEach(b => b.classList.remove('active'));

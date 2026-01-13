@@ -669,19 +669,85 @@ body {
 
 /* --- Showtimes Calendar & Buttons --- */
 
-/* Kontener dla kalendarza - zapewnia scrollowanie jeśli dni się nie mieszczą */
-.calendar-days {
-  display: flex;              /* Układ w rzędzie */
-  flex-wrap: nowrap;          /* Zabrania zawijania do nowej linii */
-  gap: 15px;                  /* Odstępy między przyciskami */
-  overflow-x: auto;           /* Włącza przewijanie poziome */
-  padding: 10px 5px;          /* Margines wewnętrzny, żeby cień nie był ucięty */
-  justify-content: flex-start; /* Zaczyna od lewej */
-  scrollbar-width: thin;       /* Cienki pasek przewijania (Firefox) */
-  scrollbar-color: #d4af37 #222; /* Kolory paska (Firefox) */
+/* Nawigacja tygodniowa ze strzałkami */
+.week-navigation {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 0;
+  width: 100%;
 }
 
-/* Stylizacja paska przewijania dla Chrome/Safari/Edge */
+/* Strzałki nawigacji */
+.week-arrow {
+  background: none;
+  border: none;
+  color: #d4af37;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  font-size: 1.5rem;
+  transition: color 0.3s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.week-arrow:hover:not([disabled]) {
+  color: #f0c43f;
+  transform: scale(1.2);
+}
+
+.week-arrow[disabled] {
+  color: #444;
+  cursor: not-allowed;
+}
+
+.week-arrow i {
+  display: block;
+}
+
+/* Kontener dni w tygodniu */
+.week-days {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0;
+}
+
+.week-days::-webkit-scrollbar {
+  height: 6px;
+}
+.week-days::-webkit-scrollbar-track {
+  background: #222;
+  border-radius: 3px;
+}
+.week-days::-webkit-scrollbar-thumb {
+  background-color: #d4af37;
+  border-radius: 3px;
+}
+
+/* Etykieta zakresu dat */
+.week-label {
+  text-align: center;
+  color: #888;
+  font-size: 0.85rem;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Kontener dla kalendarza - legacy */
+.calendar-days {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 15px;
+  overflow-x: auto;
+  padding: 10px 5px;
+  justify-content: flex-start;
+  scrollbar-width: thin;
+  scrollbar-color: #d4af37 #222;
+}
+
 .calendar-days::-webkit-scrollbar {
   height: 6px;
 }
@@ -696,11 +762,11 @@ body {
 
 /* Podstawowy wygląd przycisku dnia */
 .day-btn {
-  flex: 0 0 auto;             /* Nie ściska przycisków */
-  min-width: 90px;            /* Minimalna szerokość */
-  padding: 15px 10px;
-  background-color: transparent; /* Przezroczyste tło domyślnie */
-  border: 1px solid rgba(212, 175, 55, 0.3); /* Delikatna ramka złota */
+  flex: 1;
+  min-width: 80px;
+  padding: 12px 8px;
+  background-color: transparent;
+  border: 1px solid rgba(212, 175, 55, 0.3);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -708,44 +774,45 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #ccc;                /* Domyślny kolor tekstu */
+  color: #ccc;
   text-align: center;
 }
 
 /* Wygląd tekstów wewnątrz */
 .day-btn .day-name {
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  margin-bottom: 5px;
-  color: #d4af37;             /* Nazwa dnia na złoto */
+  margin-bottom: 3px;
+  color: #d4af37;
 }
 
 .day-btn .day-date {
-  font-size: 0.8rem;
-  color: #aaa;                /* Data na szaro */
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
 }
 
 /* Efekt najechania myszką (HOVER) */
 .day-btn:hover {
   border-color: #d4af37;
-  background-color: rgba(212, 175, 55, 0.1); /* Lekkie podświetlenie tła */
-  transform: translateY(-3px);
+  background-color: rgba(212, 175, 55, 0.1);
+  transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
 }
 
 /* Stan AKTYWNY (kliknięty) - Pełny żółty */
 .day-btn.active {
-  background: linear-gradient(135deg, #d4af37 0%, #f0c43f 100%); /* Złoty gradient */
+  background: linear-gradient(135deg, #d4af37 0%, #f0c43f 100%);
   border-color: #f0c43f;
-  color: #000;                /* Czarny tekst dla kontrastu */
+  color: #000;
   box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
 }
 
 /* Zmiana kolorów tekstów wewnątrz aktywnego przycisku */
 .day-btn.active .day-name,
 .day-btn.active .day-date {
-  color: #000 !important;     /* Wymuszamy czarny kolor na żółtym tle */
+  color: #000 !important;
 }
 
 /* Sekcja z godzinami seansów (pod kalendarzem) */
