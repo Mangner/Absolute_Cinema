@@ -46,25 +46,45 @@ function generateCalendarDays(startDate) {
   return days;
 }
 
+function getAudioTypeLabel(audioType) {
+  const labels = {
+    'dubbed': 'Dubbing',
+    'subtitled': 'Napisy',
+    'voiceover': 'Lektor',
+    'original': 'Oryginał'
+  };
+  return labels[audioType] || audioType;
+}
+
 function generateShowtimesButtons(showtimes) {
   if (!showtimes || showtimes.length === 0) {
     return '<p class="no-showtimes">Brak seansów w wybranym dniu.</p>';
   }
 
+  // Grupowanie po kombinacji: technology + language + audio_type
   const groupedShowtimes = {};
   showtimes.forEach(show => {
-    const techName = show.technology || 'Standard'; 
-    if (!groupedShowtimes[techName]) {
-      groupedShowtimes[techName] = [];
+    const techName = show.technology || 'Standard';
+    const lang = show.language || 'PL';
+    const audioType = show.audio_type || 'dubbed';
+    const groupKey = `${techName}|${lang}|${audioType}`;
+    
+    if (!groupedShowtimes[groupKey]) {
+      groupedShowtimes[groupKey] = {
+        technology: techName,
+        language: lang,
+        audioType: audioType,
+        shows: []
+      };
     }
-    groupedShowtimes[techName].push(show);
+    groupedShowtimes[groupKey].shows.push(show);
   });
 
   let html = '';
-  for (const [tech, shows] of Object.entries(groupedShowtimes)) {
-    shows.sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+  for (const [key, group] of Object.entries(groupedShowtimes)) {
+    group.shows.sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
     
-    const buttonsHtml = shows.map(show => {
+    const buttonsHtml = group.shows.map(show => {
       const time = extractTime(show.start_time);
       return `
         <a href="/rezerwacja/${show.showtime_id}" class="showtime-btn">
@@ -73,13 +93,15 @@ function generateShowtimesButtons(showtimes) {
       `;
     }).join('');
 
+    const audioLabel = getAudioTypeLabel(group.audioType);
+
     html += `
       <div class="showtime-group">
-        <h3 class="showtime-tech">${tech}</h3>
+        <h3 class="showtime-tech">${group.technology}</h3>
         <div class="showtime-buttons-container">
           ${buttonsHtml}
         </div>
-        <p class="tech-subinfo">(DUBBED FILM-PL)</p>
+        <p class="tech-subinfo">${audioLabel} ${group.language}</p>
       </div>
     `;
   }

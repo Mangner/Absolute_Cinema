@@ -2,6 +2,8 @@
 
 require_once "Repository.php";
 require_once __DIR__."/../models/showtime.php";
+require_once __DIR__."/../DTOs/MovieTechnologyDTO.php";
+
 
 
 class ShowtimeRepository extends Repository {
@@ -9,7 +11,7 @@ class ShowtimeRepository extends Repository {
     public function getShowtimesByMovieAndCinemaIdAndDate(int $movie_id, int $cinema_id, string $date) {
 
         $sql = "
-                SELECT s.showtime_id, s.movie_id, s.hall_id, s.start_time, s.technology, s.base_price
+                SELECT s.showtime_id, s.movie_id, s.hall_id, s.start_time, s.technology, s.language, s.audio_type, s.base_price
                 FROM showtimes s
                 INNER JOIN movies m ON s.movie_id = m.movie_id
                 INNER JOIN halls h ON s.hall_id = h.hall_id
@@ -32,12 +34,12 @@ class ShowtimeRepository extends Repository {
     }
 
 
-    public function getFormatsByMovieId(int $movie_id, int $cinema_id) {
+    public function getFormatsByMovieIdAndCinemaId(int $movie_id, int $cinema_id): array {
 
         $sql = "
-            SELECT DISTINCT(s.technology)
+            SELECT DISTINCT s.technology
             FROM showtimes s
-            INNER JOIN movies m on m.movie_id = s.movie_id
+            INNER JOIN movies m ON m.movie_id = s.movie_id
             INNER JOIN halls h ON s.hall_id = h.hall_id
             WHERE s.movie_id = :movie_id
             AND h.cinema_id = :cinema_id
@@ -50,8 +52,9 @@ class ShowtimeRepository extends Repository {
 
         $stmt->execute();
 
-        $technologies = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $technologies;
+        $technologies = $stmt->fetchAll(PDO::FETCH_CLASS, TechnologyDTO::class);
+        
+        return $technologies ?: [];
     } 
 }
 

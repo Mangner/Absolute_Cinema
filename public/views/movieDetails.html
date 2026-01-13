@@ -10,8 +10,19 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="/public/scripts/chooseCinema.js" defer></script>
     <script src="/public/scripts/showtimeLoader.js" defer></script>
+    <script src="/public/scripts/trailerModal.js" defer></script>
   </head>
   <body>
+    <!-- Modal zwiastuna -->
+    <div id="trailer-modal" class="trailer-modal" data-trailer-url="<?php echo $movie->getTrailerUrl(); ?>">
+      <div class="trailer-modal-content">
+        <button class="trailer-modal-close" id="trailer-close">&times;</button>
+        <div class="trailer-iframe-container">
+          <iframe id="trailer-iframe" src="" frameborder="0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+        </div>
+      </div>
+    </div>
+
     <nav>
       <div class="navigation-bar">
         <div class="brand">
@@ -43,10 +54,13 @@
       <div class="hero-overlay"></div>
 
       <div class="hero-content">
-        <div class="movie-poster">
+        <div class="movie-poster trailer-trigger">
           <img
             src="<?= $movie->getImageUrl(); ?>"
             alt="<?= $movie->getTitle(); ?>" />
+          <div class="poster-play-overlay">
+            <i class="fas fa-play-circle"></i>
+          </div>
           <div class="official-badge">
             <i class="fas fa-certificate"></i>
             <span>OFICJALNY ZWIASTUN</span>
@@ -99,11 +113,11 @@
           </p>
 
           <div class="action-buttons">
-            <button class="btn-primary">
+            <a href="#showtimes" class="btn-primary">
               <i class="fas fa-ticket-alt"></i>
               Kup Bilet
-            </button>
-            <button class="btn-secondary">
+            </a>
+            <button class="btn-secondary trailer-trigger" id="trailer-btn">
               <i class="fas fa-play"></i>
               Zwiastun
             </button>
@@ -165,7 +179,7 @@
           </section>
 
 
-          <section class="showtimes-section" 
+          <section id="showtimes" class="showtimes-section" 
                    data-movie-id="<?php echo $movie->getId(); ?>"
                    data-cinema-id="<?php echo isset($_SESSION['selected_cinema_id']) ? $_SESSION['selected_cinema_id'] : ''; ?>">
             <h2 class="section-title">
@@ -211,15 +225,21 @@
             </div>
           </div>
 
+          <?php if (!empty($technologies)) : ?>
           <div class="formats-card">
             <h3>Dostępne formaty</h3>
             <div class="format-tags">
-              <span class="format-tag">Standard 2D</span>
-              <span class="format-tag">IMAX 3D</span>
-              <span class="format-tag">4DX</span>
-              <span class="format-tag">ScreenX</span>
+              <?php foreach($technologies as $technology) : ?>
+                <span class="format-tag"><?php echo $technology->getTechnology(); ?></span>
+              <?php endforeach; ?>
             </div>
           </div>
+          <?php else : ?>
+          <div class="formats-card">
+            <h3>Dostępne formaty</h3>
+            <p>Wybierz kino, aby zobaczyć dostępne formaty</p>
+          </div>
+          <?php endif; ?>
 
           </aside>
       </div>

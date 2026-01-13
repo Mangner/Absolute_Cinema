@@ -16,13 +16,20 @@ class MovieController extends AppController {
     }
 
 
-    public function getDetails($movieId, $cinemaId = null) {
+    public function getDetails($movieId) {
         
+        $cinemaId = isset($_SESSION['selected_cinema_id']) ? (int)$_SESSION['selected_cinema_id'] : null;
+
         $movie = $this->movieRepository->getMovieById($movieId);
         $genres = $this->movieRepository->getGenresByMovieId($movieId);
         $cast = $this->movieRepository->getCastByMovieId($movieId);
 
-        $this->render('movieDetails', ["movie" => $movie, "genres" => $genres, "cast" => $cast]);
+        $technologies = [];
+        if ($cinemaId !== null) {
+            $technologies = $this->showtimeRepository->getFormatsByMovieIdAndCinemaId($movieId, $cinemaId);
+        }
+
+        $this->render('movieDetails', ["movie" => $movie, "genres" => $genres, "cast" => $cast, "technologies" => $technologies]);
     }
 
 

@@ -1,41 +1,66 @@
-function initTab(config) {
-  const tabButton = document.getElementById(config.buttonId);
-  const track = document.querySelector(config.trackSelector);
-  let isLoaded = false;
+const ACTIVE_TAB_KEY = 'dashboard_active_tab';
+const tabConfigs = [];
 
-  function handleTabAction() {
-    if (tabButton && tabButton.checked && !isLoaded) {
-      fetchData();
+function initTab(config) {
+  tabConfigs.push(config);
+}
+
+function setupTabs() {
+  // Najpierw przywróć zapisaną zakładkę (przed inicjalizacją)
+  const savedTab = sessionStorage.getItem(ACTIVE_TAB_KEY);
+  if (savedTab) {
+    const tabButton = document.getElementById(savedTab);
+    if (tabButton) {
+      tabButton.checked = true;
     }
   }
 
-  function fetchData() {
-    fetch(config.apiUrl)
-      .then(response => response.json())
-      .then(data => {
-        const items = data[config.dataKey] || data;
+  // Teraz inicjalizuj wszystkie zakładki
+  tabConfigs.forEach(config => {
+    const tabButton = document.getElementById(config.buttonId);
+    const track = document.querySelector(config.trackSelector);
+    let isLoaded = false;
 
-        if (Array.isArray(items)) {
-          items.forEach(item => {
-            const cardHTML = config.renderCard(item);
-            const div = document.createElement("div");
-            div.classList.add("card");
-            div.innerHTML = cardHTML;
-            track.appendChild(div);
-          });
-          isLoaded = true;
-        } else {
-          console.error("Błąd: Oczekiwano tablicy dla", config.apiUrl);
-        }
-      })
-      .catch(err => console.error("Błąd pobierania:", err));
-  }
+    function handleTabAction() {
+      if (tabButton && tabButton.checked && !isLoaded) {
+        fetchData();
+      }
+    }
 
-  if (tabButton) {
-    tabButton.addEventListener("change", handleTabAction);
-    handleTabAction();
-  }
+    function fetchData() {
+      fetch(config.apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          const items = data[config.dataKey] || data;
+
+          if (Array.isArray(items)) {
+            items.forEach(item => {
+              const cardHTML = config.renderCard(item);
+              const div = document.createElement("div");
+              div.classList.add("card");
+              div.innerHTML = cardHTML;
+              track.appendChild(div);
+            });
+            isLoaded = true;
+          } else {
+            console.error("Błąd: Oczekiwano tablicy dla", config.apiUrl);
+          }
+        })
+        .catch(err => console.error("Błąd pobierania:", err));
+    }
+
+    if (tabButton) {
+      tabButton.addEventListener("change", () => {
+        sessionStorage.setItem(ACTIVE_TAB_KEY, config.buttonId);
+        handleTabAction();
+      });
+      // Załaduj dane tylko dla aktualnie zaznaczonej zakładki
+      handleTabAction();
+    }
+  });
 }
+
+document.addEventListener('DOMContentLoaded', setupTabs);
 
 initTab({
   buttonId: "tab-screen",

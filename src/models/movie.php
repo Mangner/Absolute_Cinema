@@ -10,6 +10,7 @@ class Movie {
     public string $director;
     public string $release_date;
     public string $image;
+    public ?string $trailer_url;
     public float $price;
     public float $duration;
     public string $production_country;
@@ -27,6 +28,7 @@ class Movie {
     public function getDirector() : string { return $this->director; }
     public function getReleaseDate() : string {return $this->release_date; } 
     public function getImageUrl() : string { return $this->image; }
+    public function getTrailerUrl() : ?string { return $this->trailer_url; }
     public function getPrice() : float { return $this->price; }
     public function getDuration() : float { return $this->duration; }
     public function getProductionCountry() : string { return $this->production_country; }
