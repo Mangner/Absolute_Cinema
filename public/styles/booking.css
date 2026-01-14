@@ -1,0 +1,299 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Arial", sans-serif;
+    background-color: #121212;
+    color: #ffffff;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* --- Nawigacja --- */
+.navigation-bar {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 1rem 2rem;
+    background-color: #000;
+    border-bottom: 1px solid #333;
+}
+
+.navigation-bar > div {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.navigation-bar > div:not(.cinema-location):not(.nav-spacer) {
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.navigation-bar > div:not(.cinema-location):not(.nav-spacer):hover {
+    color: #d4af37;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    margin-right: 1rem;
+}
+
+.brand:hover {
+    color: #d4af37;
+}
+
+.brand img {
+    height: 32px;
+    width: auto;
+    display: block;
+}
+
+.cinema-location {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #d4af37;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: default;
+    padding: 8px 16px;
+    background-color: rgba(212, 175, 55, 0.1);
+    border-radius: 5px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.cinema-location i {
+    font-size: 0.9rem;
+}
+
+.cinema-location span {
+    color: #fff;
+}
+
+.nav-spacer {
+    flex: 1;
+}
+
+#search-bar {
+    background-color: #2c2c2c;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    color: #fff;
+}
+
+#cinema-choice-btn {
+    background-color: #d4af37;
+    color: #000;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#cinema-choice-btn:hover {
+    background-color: #f0c43f;
+    transform: translateY(-1px);
+}
+
+h1 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.movie-info {
+    color: #999;
+    font-size: 16px;
+    margin-bottom: 60px;
+}
+
+.screen-label {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.screen {
+    width: 100%;
+    max-width: 600px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #d4af37, transparent);
+    margin: 0 auto 10px;
+}
+
+.screen-text {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.seating-area {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-bottom: 60px;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.seat-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.row-label {
+    width: 30px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.seats {
+    display: flex;
+    gap: 8px;
+}
+
+.seat {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+}
+
+.legend {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 80px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.legend-box {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+}
+
+.legend-box.available {
+    background-color: #e8e8e8;
+}
+
+.legend-box.taken {
+    background-color: #4a4a5a;
+}
+
+.legend-box.selected {
+    background-color: #d4af37;
+}
+
+.legend-text {
+    font-size: 16px;
+}
+
+.summary {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 30px;
+    border-radius: 8px;
+    margin-bottom: 40px;
+}
+
+.summary-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.summary-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #999;
+}
+
+.summary-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.checkout-btn {
+    background: linear-gradient(135deg, #d4af37 0%, #f0c43f 100%);
+    color: #000;
+    border: none;
+    padding: 16px 40px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    float: right;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.checkout-btn:hover {
+    background-color: #f0c43f;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(212, 175, 55, 0.5);
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 32px;
+    }
+
+    .seating-area {
+        gap: 30px;
+    }
+
+    .seat {
+        width: 32px;
+        height: 32px;
+    }
+
+    .seats {
+        gap: 6px;
+    }
+
+    .navigation-bar {
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .brand {
+        margin-right: 0;
+    }
+
+    .cinema-location {
+        order: -1;
+        width: 100%;
+        justify-content: center;
+    }
+}

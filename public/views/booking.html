@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wybór miejsca - Absolute Cinema</title>
+    <link rel="stylesheet" href="/public/styles/booking.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav>
+        <div class="navigation-bar">
+            <a href="/dashboard" class="brand">
+                <img src="/public/images/logo-absolute-cinema.png" alt="Logo" />
+                Absolute Cinema
+            </a>
+            <div class="cinema-location">
+                <i class="fas fa-map-marker-alt"></i>
+                <?php if (isset($_SESSION['selected_cinema_id'])): ?>
+                    <span><?php echo htmlspecialchars($_SESSION['selected_cinema_name']); ?></span>
+                <?php else: ?>
+                    <span>Brak wybranego kina</span>
+                <?php endif; ?>
+            </div>
+            <div class="nav-spacer"></div>
+            <div>
+                <a href="/logout" style="color: inherit; text-decoration: none">Wyloguj</a>
+            </div>
+            <div>Kontakt</div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Wybierz miejsca</h1>
+        <p class="movie-info">Avatar: Ogień i Popiół - 27 Paź, 20:30</p>
+
+        <div class="screen-label">
+            <div class="screen"></div>
+            <div class="screen-text">Ekran</div>
+        </div>
+
+        <div class="seating-area">
+            <!-- Lewa sekcja -->
+            <div class="section" id="left-section">
+                <!-- Miejsca będą generowane dynamicznie przez JS -->
+            </div>
+
+            <!-- Prawa sekcja -->
+            <div class="section" id="right-section">
+                <!-- Miejsca będą generowane dynamicznie przez JS -->
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box available"></div>
+                <span class="legend-text">Wolne</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box taken"></div>
+                <span class="legend-text">Zajęte</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box selected"></div>
+                <span class="legend-text">Twój wybór</span>
+            </div>
+        </div>
+
+        <div class="summary">
+            <div class="summary-title">Podsumowanie</div>
+            <div class="summary-content">
+                <svg class="summary-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                <span>Miejsca: <span id="selected-seats">F7, F8</span></span>
+            </div>
+        </div>
+
+        <button class="checkout-btn">Przejdź do płatności</button>
+    </div>
+</body>
+</html>

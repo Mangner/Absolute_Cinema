@@ -2,6 +2,7 @@
 require_once 'src/controllers/SecurityController.php';
 require_once 'src/controllers/DashboardController.php';
 require_once 'src/controllers/MovieController.php';
+require_once 'src/controllers/BookingController.php';
 
 class Routing {
 
@@ -53,6 +54,10 @@ class Routing {
         'movie' => [
             'controller' => "MovieController",
             'action' => 'getDetails'
+        ],
+        'booking' => [
+            'controller' => "BookingController",
+            'action' => 'show'
         ]
     ];
 
@@ -78,6 +83,17 @@ class Routing {
             $movieId = (int)$matches[1];
 
             $object->$action($movieId);
+
+        } else if (preg_match('/^movie\/(\d+)\/(\d+)$/', $url, $matches)) {
+
+            $controller = self::$routes['booking']['controller'];
+            $action = self::$routes['booking']['action'];
+            $object = new $controller;
+
+            $movieId = (int)$matches[1];
+            $showtimeId = (int)$matches[2];
+
+            $object->$action($movieId, $showtimeId);
 
         } else {
             http_response_code(404);
