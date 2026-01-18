@@ -42,7 +42,47 @@
         <div class="seating-area">
             <!-- Lewa sekcja -->
             <div class="section" id="left-section">
-                <!-- Miejsca będą generowane dynamicznie przez JS -->
+                <?php 
+                if (!isset($seats) || !is_array($seats)) {
+                    $seats = [];
+                }
+
+                // Grupowanie miejsc po rzędach (row_label)
+                $rows = [];
+                foreach ($seats as $seat) {
+                    $rowLabel = $seat->row_label ?? '';
+                    if ($rowLabel === '') {
+                        continue;
+                    }
+                    if (!isset($rows[$rowLabel])) {
+                        $rows[$rowLabel] = [];
+                    }
+                    $rows[$rowLabel][] = $seat;
+                }
+                ksort($rows);
+
+                if (empty($rows)) {
+                    echo '<p class="no-showtimes">Brak miejsc do wyświetlenia.</p>';
+                }
+
+                foreach ($rows as $rowLabel => $rowSeats) {
+                    echo '<div class="seat-row">';
+                    echo '<div class="row-label">' . htmlspecialchars($rowLabel) . '</div>';
+                    echo '<div class="seats">';
+
+                    foreach ($rowSeats as $seat) {
+                        $seatNumber = (int)($seat->seat_number ?? 0);
+                        $seatId = (int)($seat->seat_id ?? 0);
+                        $isTaken = (($seat->status ?? '') === 'ZAJĘTE');
+                        $class = $isTaken ? 'seat taken' : 'seat available';
+                        $disabled = $isTaken ? 'disabled' : '';
+                        echo '<button type="button" class="' . $class . '" data-seat-id="' . $seatId . '" data-row="' . htmlspecialchars($rowLabel) . '" data-seat-number="' . $seatNumber . '" ' . $disabled . '></button>';
+                    }
+
+                    echo '</div>';
+                    echo '</div>';
+                }
+                ?>
             </div>
 
             <!-- Prawa sekcja -->

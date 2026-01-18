@@ -187,10 +187,40 @@ INSERT INTO halls (cinema_id, name, type) VALUES
 (2, 'Sala 2', 'Standard'),
 (2, 'Sala 3', 'IMAX 3D');
 
-/* --- MIEJSCA (Przykładowe dla Sali 1) --- */
-INSERT INTO seats (hall_id, row_label, seat_number) VALUES
-(1, 'F', 1), (1, 'F', 2), (1, 'F', 3), (1, 'F', 4), (1, 'F', 5), (1, 'F', 6),
-(1, 'F', 7), (1, 'F', 8), (1, 'F', 9), (1, 'F', 10), (1, 'F', 11), (1, 'F', 12);
+
+/* --- 5. MIEJSCA --- */
+-- Generowanie miejsc automatycznie dla każdej sali
+
+-- SALA 1 (Warszawa - Standard): Rzędy A-H (8 rzędów), po 10 miejsc (80 miejsc)
+INSERT INTO seats (hall_id, row_label, seat_number)
+SELECT 1, chr(r), s
+FROM generate_series(65, 72) AS r, -- ASCII 65='A', 72='H'
+     generate_series(1, 10) AS s;
+
+-- SALA 2 (Warszawa - IMAX): Rzędy A-K (11 rzędów), po 15 miejsc (165 miejsc)
+INSERT INTO seats (hall_id, row_label, seat_number)
+SELECT 2, chr(r), s
+FROM generate_series(65, 75) AS r, -- ASCII 65='A', 75='K'
+     generate_series(1, 15) AS s;
+
+-- SALA 3 (Kraków - Standard): Rzędy A-G (7 rzędów), po 12 miejsc (84 miejsca)
+-- id 3, bo id 1 i 2 to Warszawa
+INSERT INTO seats (hall_id, row_label, seat_number)
+SELECT 3, chr(r), s
+FROM generate_series(65, 71) AS r, -- ASCII 65='A', 71='G'
+     generate_series(1, 12) AS s;
+
+-- SALA 4 (Kraków - Standard): Rzędy A-G (7 rzędów), po 12 miejsc (84 miejsca)
+INSERT INTO seats (hall_id, row_label, seat_number)
+SELECT 4, chr(r), s
+FROM generate_series(65, 71) AS r, 
+     generate_series(1, 12) AS s;
+
+-- SALA 5 (Kraków - IMAX 3D): Rzędy A-M (13 rzędów), po 20 miejsc (260 miejsc)
+INSERT INTO seats (hall_id, row_label, seat_number)
+SELECT 5, chr(r), s
+FROM generate_series(65, 77) AS r, -- ASCII 65='A', 77='M'
+     generate_series(1, 20) AS s;
 
 /* --- FILMY --- */
 INSERT INTO movies (title, original_title, description, director, release_date, image, trailer_url, price, duration, production_country, original_language, age_rating, imdb_rating, rotten_tomatoes_rating, metacritic_rating) VALUES
@@ -298,62 +328,62 @@ INSERT INTO movie_cast (movie_id, cast_id, character_name, position) VALUES
 /* --- SEANSE --- */
 INSERT INTO showtimes (movie_id, hall_id, start_time, technology, language, audio_type, base_price) VALUES
 -- Diuna (movie_id=1) - Warszawa
-(1, 1, '2026-01-11 10:00:00', '2D', 'PL', 'dubbed', 25.00),
-(1, 1, '2026-01-11 14:00:00', '2D', 'PL', 'subtitled', 25.00),
-(1, 2, '2026-01-11 18:30:00', 'IMAX 3D', 'EN', 'original', 35.00),
-(1, 2, '2026-01-11 21:00:00', 'IMAX 3D', 'PL', 'dubbed', 35.00),
-(1, 1, '2026-01-12 10:00:00', '2D', 'PL', 'dubbed', 25.00),
-(1, 2, '2026-01-12 16:00:00', 'IMAX 3D', 'EN', 'subtitled', 35.00),
-(1, 1, '2026-01-13 14:30:00', '2D', 'PL', 'dubbed', 25.00),
-(1, 2, '2026-01-13 19:00:00', 'IMAX 3D', 'EN', 'original', 35.00),
-(1, 1, '2026-01-14 10:00:00', '2D', 'PL', 'voiceover', 25.00),
-(1, 2, '2026-01-14 20:30:00', 'IMAX 3D', 'PL', 'dubbed', 35.00),
-(1, 1, '2026-01-15 15:00:00', '2D', 'PL', 'dubbed', 25.00),
-(1, 2, '2026-01-15 18:00:00', 'IMAX 3D', 'EN', 'subtitled', 35.00),
-(1, 1, '2026-01-16 11:00:00', '2D', 'PL', 'dubbed', 25.00),
-(1, 2, '2026-01-16 19:30:00', 'IMAX 3D', 'EN', 'original', 35.00),
-(1, 1, '2026-01-17 13:00:00', '2D', 'PL', 'subtitled', 25.00),
-(1, 2, '2026-01-17 20:00:00', 'IMAX 3D', 'PL', 'dubbed', 35.00),
+(1, 1, '2026-01-17 10:00:00', '2D', 'PL', 'dubbed', 25.00),
+(1, 1, '2026-01-18 14:00:00', '2D', 'PL', 'subtitled', 25.00),
+(1, 2, '2026-01-19 18:30:00', 'IMAX 3D', 'EN', 'original', 35.00),
+(1, 2, '2026-01-19 21:00:00', 'IMAX 3D', 'PL', 'dubbed', 35.00),
+(1, 1, '2026-01-19 10:00:00', '2D', 'PL', 'dubbed', 25.00),
+(1, 2, '2026-01-19 16:00:00', 'IMAX 3D', 'EN', 'subtitled', 35.00),
+(1, 1, '2026-01-19 14:30:00', '2D', 'PL', 'dubbed', 25.00),
+(1, 2, '2026-01-19 19:00:00', 'IMAX 3D', 'EN', 'original', 35.00),
+(1, 1, '2026-01-19 10:00:00', '2D', 'PL', 'voiceover', 25.00),
+(1, 2, '2026-01-19 20:30:00', 'IMAX 3D', 'PL', 'dubbed', 35.00),
+(1, 1, '2026-01-20 15:00:00', '2D', 'PL', 'dubbed', 25.00),
+(1, 2, '2026-01-20 18:00:00', 'IMAX 3D', 'EN', 'subtitled', 35.00),
+(1, 1, '2026-01-20 11:00:00', '2D', 'PL', 'dubbed', 25.00),
+(1, 2, '2026-01-20 19:30:00', 'IMAX 3D', 'EN', 'original', 35.00),
+(1, 1, '2026-01-21 13:00:00', '2D', 'PL', 'subtitled', 25.00),
+(1, 2, '2026-01-21 20:00:00', 'IMAX 3D', 'PL', 'dubbed', 35.00),
 
 -- Kung Fu Panda (movie_id=2) - Warszawa
-(2, 1, '2026-01-11 12:00:00', '2D', 'PL', 'dubbed', 20.00),
-(2, 1, '2026-01-11 16:00:00', '2D', 'PL', 'dubbed', 20.00),
-(2, 1, '2026-01-12 12:30:00', '2D', 'PL', 'dubbed', 20.00),
-(2, 1, '2026-01-12 18:00:00', '2D', 'EN', 'subtitled', 20.00),
-(2, 1, '2026-01-13 11:00:00', '2D', 'PL', 'dubbed', 20.00),
-(2, 1, '2026-01-13 16:30:00', '2D', 'PL', 'dubbed', 20.00),
-(2, 1, '2026-01-14 12:00:00', '2D', 'PL', 'dubbed', 20.00),
-(2, 1, '2026-01-14 17:00:00', '2D', 'EN', 'original', 20.00),
+(2, 1, '2026-01-21 12:00:00', '2D', 'PL', 'dubbed', 20.00),
+(2, 1, '2026-01-21 16:00:00', '2D', 'PL', 'dubbed', 20.00),
+(2, 1, '2026-01-22 12:30:00', '2D', 'PL', 'dubbed', 20.00),
+(2, 1, '2026-01-22 18:00:00', '2D', 'EN', 'subtitled', 20.00),
+(2, 1, '2026-01-23 11:00:00', '2D', 'PL', 'dubbed', 20.00),
+(2, 1, '2026-01-23 16:30:00', '2D', 'PL', 'dubbed', 20.00),
+(2, 1, '2026-01-24 12:00:00', '2D', 'PL', 'dubbed', 20.00),
+(2, 1, '2026-01-24 17:00:00', '2D', 'EN', 'original', 20.00),
 
 -- Oppenheimer (movie_id=3) - Warszawa
-(3, 2, '2026-01-11 15:00:00', 'IMAX 3D', 'EN', 'subtitled', 32.00),
-(3, 2, '2026-01-11 19:30:00', 'IMAX 3D', 'EN', 'original', 32.00),
-(3, 2, '2026-01-12 14:00:00', 'IMAX 3D', 'PL', 'voiceover', 32.00),
-(3, 2, '2026-01-12 20:00:00', 'IMAX 3D', 'EN', 'subtitled', 32.00),
+(3, 2, '2026-01-21 15:00:00', 'IMAX 3D', 'EN', 'subtitled', 32.00),
+(3, 2, '2026-01-21 19:30:00', 'IMAX 3D', 'EN', 'original', 32.00),
+(3, 2, '2026-01-22 14:00:00', 'IMAX 3D', 'PL', 'voiceover', 32.00),
+(3, 2, '2026-01-22 20:00:00', 'IMAX 3D', 'EN', 'subtitled', 32.00),
 
 -- Diuna (movie_id=1) - Kraków
-(1, 3, '2026-01-11 11:00:00', '2D', 'PL', 'dubbed', 23.00),
-(1, 3, '2026-01-11 15:30:00', '2D', 'PL', 'subtitled', 23.00),
-(1, 5, '2026-01-11 19:00:00', 'IMAX 3D', 'EN', 'original', 33.00),
-(1, 5, '2026-01-11 21:30:00', 'IMAX 3D', 'PL', 'dubbed', 33.00),
-(1, 3, '2026-01-12 10:30:00', '2D', 'PL', 'dubbed', 23.00),
-(1, 5, '2026-01-12 17:00:00', 'IMAX 3D', 'EN', 'subtitled', 33.00),
-(1, 3, '2026-01-13 13:00:00', '2D', 'PL', 'voiceover', 23.00),
-(1, 5, '2026-01-13 18:30:00', 'IMAX 3D', 'EN', 'original', 33.00),
-(1, 3, '2026-01-14 11:00:00', '2D', 'PL', 'dubbed', 23.00),
-(1, 5, '2026-01-14 20:00:00', 'IMAX 3D', 'PL', 'dubbed', 33.00),
+(1, 3, '2026-01-21 11:00:00', '2D', 'PL', 'dubbed', 23.00),
+(1, 3, '2026-01-21 15:30:00', '2D', 'PL', 'subtitled', 23.00),
+(1, 5, '2026-01-21 19:00:00', 'IMAX 3D', 'EN', 'original', 33.00),
+(1, 5, '2026-01-21 21:30:00', 'IMAX 3D', 'PL', 'dubbed', 33.00),
+(1, 3, '2026-01-22 10:30:00', '2D', 'PL', 'dubbed', 23.00),
+(1, 5, '2026-01-22 17:00:00', 'IMAX 3D', 'EN', 'subtitled', 33.00),
+(1, 3, '2026-01-23 13:00:00', '2D', 'PL', 'voiceover', 23.00),
+(1, 5, '2026-01-23 18:30:00', 'IMAX 3D', 'EN', 'original', 33.00),
+(1, 3, '2026-01-24 11:00:00', '2D', 'PL', 'dubbed', 23.00),
+(1, 5, '2026-01-24 20:00:00', 'IMAX 3D', 'PL', 'dubbed', 33.00),
 
 -- Kung Fu Panda (movie_id=2) - Kraków
-(2, 4, '2026-01-11 13:00:00', '2D', 'PL', 'dubbed', 18.00),
-(2, 4, '2026-01-11 17:00:00', '2D', 'PL', 'dubbed', 18.00),
-(2, 4, '2026-01-12 12:00:00', '2D', 'PL', 'dubbed', 18.00),
-(2, 4, '2026-01-12 16:30:00', '2D', 'EN', 'subtitled', 18.00),
+(2, 4, '2026-01-21 13:00:00', '2D', 'PL', 'dubbed', 18.00),
+(2, 4, '2026-01-21 17:00:00', '2D', 'PL', 'dubbed', 18.00),
+(2, 4, '2026-01-22 12:00:00', '2D', 'PL', 'dubbed', 18.00),
+(2, 4, '2026-01-22 16:30:00', '2D', 'EN', 'subtitled', 18.00),
 
 -- Oppenheimer (movie_id=3) - Kraków
-(3, 5, '2026-01-11 14:00:00', 'IMAX 3D', 'EN', 'subtitled', 30.00),
-(3, 5, '2026-01-11 20:00:00', 'IMAX 3D', 'EN', 'original', 30.00),
-(3, 5, '2026-01-12 15:00:00', 'IMAX 3D', 'PL', 'voiceover', 30.00),
-(3, 5, '2026-01-12 19:30:00', 'IMAX 3D', 'EN', 'subtitled', 30.00);
+(3, 5, '2026-01-21 14:00:00', 'IMAX 3D', 'EN', 'subtitled', 30.00),
+(3, 5, '2026-01-21 20:00:00', 'IMAX 3D', 'EN', 'original', 30.00),
+(3, 5, '2026-01-22 15:00:00', 'IMAX 3D', 'PL', 'voiceover', 30.00),
+(3, 5, '2026-01-22 19:30:00', 'IMAX 3D', 'EN', 'subtitled', 30.00);
 
 /* --- JEDZENIE --- */
 INSERT INTO food_items (name, category, price, image) VALUES
@@ -365,5 +395,12 @@ INSERT INTO bookings (user_id, total_price, payment_status, payment_method) VALU
 (1, 35.00, 'PAID', 'BLIK');
 
 /* --- BILETY --- */
-INSERT INTO tickets (booking_id, showtime_id, seat_id, price, ticket_token) VALUES
-(1, 1, 7, 35.00, 'AC-84JFG61');
+-- Pobieramy dynamicznie ID miejsca dla Sali 1, Rząd F, Miejsce 5 (zamiast wpisywać '7' na sztywno)
+INSERT INTO tickets (booking_id, showtime_id, seat_id, price, ticket_token)
+VALUES (
+    1, 
+    1, 
+    (SELECT seat_id FROM seats WHERE hall_id = 1 AND row_label = 'F' AND seat_number = 5 LIMIT 1), 
+    35.00, 
+    'AC-84JFG61'
+);
