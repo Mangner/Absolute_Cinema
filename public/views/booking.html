@@ -6,6 +6,7 @@
     <title>Wybór miejsca - Absolute Cinema</title>
     <link rel="stylesheet" href="/public/styles/booking.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="/public/scripts/booking.js" defer></script>
 </head>
 <body>
     <nav>
@@ -32,69 +33,23 @@
 
     <div class="container">
         <h1>Wybierz miejsca</h1>
-        <p class="movie-info">Avatar: Ogień i Popiół - 27 Paź, 20:30</p>
+        <p class="movie-info">Rezerwacja biletu</p>
 
         <div class="screen-label">
             <div class="screen"></div>
             <div class="screen-text">Ekran</div>
         </div>
 
-        <div class="seating-area">
-            <!-- Lewa sekcja -->
-            <div class="section" id="left-section">
-                <?php 
-                if (!isset($seats) || !is_array($seats)) {
-                    $seats = [];
-                }
-
-                // Grupowanie miejsc po rzędach (row_label)
-                $rows = [];
-                foreach ($seats as $seat) {
-                    $rowLabel = $seat->row_label ?? '';
-                    if ($rowLabel === '') {
-                        continue;
-                    }
-                    if (!isset($rows[$rowLabel])) {
-                        $rows[$rowLabel] = [];
-                    }
-                    $rows[$rowLabel][] = $seat;
-                }
-                ksort($rows);
-
-                if (empty($rows)) {
-                    echo '<p class="no-showtimes">Brak miejsc do wyświetlenia.</p>';
-                }
-
-                foreach ($rows as $rowLabel => $rowSeats) {
-                    echo '<div class="seat-row">';
-                    echo '<div class="row-label">' . htmlspecialchars($rowLabel) . '</div>';
-                    echo '<div class="seats">';
-
-                    foreach ($rowSeats as $seat) {
-                        $seatNumber = (int)($seat->seat_number ?? 0);
-                        $seatId = (int)($seat->seat_id ?? 0);
-                        $isTaken = (($seat->status ?? '') === 'ZAJĘTE');
-                        $class = $isTaken ? 'seat taken' : 'seat available';
-                        $disabled = $isTaken ? 'disabled' : '';
-                        echo '<button type="button" class="' . $class . '" data-seat-id="' . $seatId . '" data-row="' . htmlspecialchars($rowLabel) . '" data-seat-number="' . $seatNumber . '" ' . $disabled . '></button>';
-                    }
-
-                    echo '</div>';
-                    echo '</div>';
-                }
-                ?>
-            </div>
-
-            <!-- Prawa sekcja -->
-            <div class="section" id="right-section">
-                <!-- Miejsca będą generowane dynamicznie przez JS -->
-            </div>
-        </div>
+        <div id="cinema-hall" class="cinema-grid"></div>
 
         <div class="legend">
             <div class="legend-item">
                 <div class="legend-box available"></div>
                 <span class="legend-text">Wolne</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box vip"></div>
+                <span class="legend-text">VIP (+dopłata)</span>
             </div>
             <div class="legend-item">
                 <div class="legend-box taken"></div>
@@ -112,11 +67,25 @@
                 <svg class="summary-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
                 </svg>
-                <span>Miejsca: <span id="selected-seats">F7, F8</span></span>
+                <div class="summary-details">
+                    <div>Miejsca: <span id="selected-seats-display" style="color: #fff; font-weight: bold;">Brak</span></div>
+                    <div>Razem: <span id="total-price-display" style="color: #d4af37; font-weight: bold;">0.00</span> PLN</div>
+                </div>
             </div>
         </div>
 
-        <button class="checkout-btn">Przejdź do płatności</button>
+        <form id="booking-form" action="/booking/checkout" method="POST">
+            <input type="hidden" name="selected_seats" id="input-selected-seats" value="">
+            <input type="hidden" name="showtime_id" value="<?php echo $showtime_id ?? 0; ?>">
+            
+            <button type="submit" class="checkout-btn" id="checkout-btn" disabled>Przejdź do płatności</button>
+        </form>
     </div>
+
+    <script>
+        const seatsData = <?php echo isset($seats) ? json_encode($seats) : '[]'; ?>;
+    </script>
+    
+    <script src="/public/js/booking.js"></script>
 </body>
 </html>

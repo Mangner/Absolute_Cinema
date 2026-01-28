@@ -9,16 +9,23 @@ class BookingRepository extends Repository {
     public function getSeats(int $showtime_id) {
 
         $sql = '
-            SELECT s.seat_id, s.row_label, s.seat_number,
-            CASE 
-                WHEN t.ticket_id IS NOT NULL THEN \'ZAJĘTE\' 
-                ELSE \'WOLNE\' 
-            END AS status, t.price
+            SELECT 
+                s.seat_id, 
+                s.row_label, 
+                s.seat_number,
+                s.grid_row,
+                s.grid_col,
+                s.extra_charge,
+                (sh.base_price + s.extra_charge) AS price, 
+                CASE 
+                    WHEN t.ticket_id IS NOT NULL THEN \'ZAJĘTE\' 
+                    ELSE \'WOLNE\' 
+                END AS status
             FROM seats s
             JOIN showtimes sh ON s.hall_id = sh.hall_id
             LEFT JOIN tickets t ON s.seat_id = t.seat_id AND t.showtime_id = sh.showtime_id
             WHERE sh.showtime_id = :showtime_id
-            ORDER BY s.row_label, s.seat_number;
+            ORDER BY s.grid_row, s.grid_col; 
         ';
 
         $stmt = $this->database->connect()->prepare($sql);

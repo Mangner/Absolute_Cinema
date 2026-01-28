@@ -58,14 +58,18 @@ CREATE TABLE halls (
     type VARCHAR(20) DEFAULT 'Standard'
 );
 
-/* --- 5. MIEJSCA --- */
+/* --- 5. MIEJSCA (Zaktualizowane) --- */
 CREATE TABLE seats (
     seat_id SERIAL PRIMARY KEY, 
     hall_id INT REFERENCES halls(hall_id) ON DELETE CASCADE,
     row_label CHAR(1) NOT NULL,
     seat_number INT NOT NULL,
+    grid_row INT NOT NULL,  -- Współrzędna Y
+    grid_col INT NOT NULL,  -- Współrzędna X
+    extra_charge DECIMAL(10, 2) DEFAULT 0.00, -- Dopłata za miejsce (np. VIP)
     UNIQUE(hall_id, row_label, seat_number)
 );
+
 
 /* --- 6. FILMY --- */
 CREATE TABLE movies (
@@ -188,38 +192,101 @@ INSERT INTO halls (cinema_id, name, type) VALUES
 (2, 'Sala 3', 'IMAX 3D');
 
 
-/* --- 5. MIEJSCA --- */
--- Generowanie miejsc automatycznie dla każdej sali
+/* --- GENEROWANIE MIEJSC Z UWZGLĘDNIENIEM SIATKI I CEN VIP --- */
 
--- SALA 1 (Warszawa - Standard): Rzędy A-H (8 rzędów), po 10 miejsc (80 miejsc)
-INSERT INTO seats (hall_id, row_label, seat_number)
-SELECT 1, chr(r), s
-FROM generate_series(65, 72) AS r, -- ASCII 65='A', 72='H'
+-- SALA 1 (Warszawa - Standard)
+-- 8 rzędów (A-H), 10 miejsc w rzędzie.
+-- Rzędy G i H (7 i 8) to VIP (+5.00 zł).
+INSERT INTO seats (hall_id, row_label, seat_number, grid_row, grid_col, extra_charge)
+SELECT 
+    1,                  -- hall_id
+    chr(r),             -- row_label (np. 'A')
+    s,                  -- seat_number (np. 1)
+    (r - 64),           -- grid_row (65-64 = 1, czyli Rząd 1)
+    s,                  -- grid_col (Kolumna tożsama z numerem miejsca)
+    CASE 
+        WHEN (r - 64) >= 7 THEN 5.00 -- Dopłata dla rzędów 7 i 8
+        ELSE 0.00 
+    END                 -- extra_charge
+FROM generate_series(65, 72) AS r, -- A do H
      generate_series(1, 10) AS s;
 
--- SALA 2 (Warszawa - IMAX): Rzędy A-K (11 rzędów), po 15 miejsc (165 miejsc)
-INSERT INTO seats (hall_id, row_label, seat_number)
-SELECT 2, chr(r), s
-FROM generate_series(65, 75) AS r, -- ASCII 65='A', 75='K'
+
+-- SALA 2 (Warszawa - IMAX)
+-- 11 rzędów (A-K), 15 miejsc.
+-- KORYTARZ PIONOWY: Po miejscu nr 5 jest przerwa.
+-- Miejsca 1-5 są w kolumnach 1-5. Miejsca 6-15 są w kolumnach 7-16.
+-- Ostatnie 3 rzędy (I, J, K) to VIP (+8.00 zł).
+INSERT INTO seats (hall_id, row_label, seat_number, grid_row, grid_col, extra_charge)
+SELECT 
+    2,
+    chr(r),
+    s,
+    (r - 64),
+    CASE 
+        WHEN s > 5 THEN s + 1 -- Przesuwamy o 1 w prawo, tworząc korytarz na kolumnie 6
+        ELSE s 
+    END, 
+    CASE 
+        WHEN (r - 64) >= 9 THEN 8.00 
+        ELSE 0.00 
+    END
+FROM generate_series(65, 75) AS r, -- A do K
      generate_series(1, 15) AS s;
 
--- SALA 3 (Kraków - Standard): Rzędy A-G (7 rzędów), po 12 miejsc (84 miejsca)
--- id 3, bo id 1 i 2 to Warszawa
-INSERT INTO seats (hall_id, row_label, seat_number)
-SELECT 3, chr(r), s
-FROM generate_series(65, 71) AS r, -- ASCII 65='A', 71='G'
+
+-- SALA 3 (Kraków - Standard)
+-- 7 rzędów (A-G), 12 miejsc.
+-- Ostatni rząd (G) to VIP (+4.00 zł).
+INSERT INTO seats (hall_id, row_label, seat_number, grid_row, grid_col, extra_charge)
+SELECT 
+    3,
+    chr(r),
+    s,
+    (r - 64),
+    s,
+    CASE 
+        WHEN (r - 64) = 7 THEN 4.00 
+        ELSE 0.00 
+    END
+FROM generate_series(65, 71) AS r, -- A do G
      generate_series(1, 12) AS s;
 
--- SALA 4 (Kraków - Standard): Rzędy A-G (7 rzędów), po 12 miejsc (84 miejsca)
-INSERT INTO seats (hall_id, row_label, seat_number)
-SELECT 4, chr(r), s
+
+-- SALA 4 (Kraków - Standard)
+-- Identyczna jak Sala 3
+INSERT INTO seats (hall_id, row_label, seat_number, grid_row, grid_col, extra_charge)
+SELECT 
+    4,
+    chr(r),
+    s,
+    (r - 64),
+    s,
+    CASE 
+        WHEN (r - 64) = 7 THEN 4.00 
+        ELSE 0.00 
+    END
 FROM generate_series(65, 71) AS r, 
      generate_series(1, 12) AS s;
 
--- SALA 5 (Kraków - IMAX 3D): Rzędy A-M (13 rzędów), po 20 miejsc (260 miejsc)
-INSERT INTO seats (hall_id, row_label, seat_number)
-SELECT 5, chr(r), s
-FROM generate_series(65, 77) AS r, -- ASCII 65='A', 77='M'
+
+-- SALA 5 (Kraków - IMAX 3D)
+-- 13 rzędów (A-M), 20 miejsc.
+-- Duża sala, rzędy L i M (12, 13) to Super VIP (+10.00 zł).
+-- Rzędy J, K (10, 11) to VIP (+6.00 zł).
+INSERT INTO seats (hall_id, row_label, seat_number, grid_row, grid_col, extra_charge)
+SELECT 
+    5,
+    chr(r),
+    s,
+    (r - 64),
+    s,
+    CASE 
+        WHEN (r - 64) >= 12 THEN 10.00
+        WHEN (r - 64) >= 10 THEN 6.00
+        ELSE 0.00 
+    END
+FROM generate_series(65, 77) AS r, -- A do M
      generate_series(1, 20) AS s;
 
 /* --- FILMY --- */

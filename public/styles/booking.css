@@ -90,30 +90,6 @@ body {
     flex: 1;
 }
 
-#search-bar {
-    background-color: #2c2c2c;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    color: #fff;
-}
-
-#cinema-choice-btn {
-    background-color: #d4af37;
-    color: #000;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-#cinema-choice-btn:hover {
-    background-color: #f0c43f;
-    transform: translateY(-1px);
-}
-
 h1 {
     font-size: 48px;
     font-weight: 700;
@@ -146,66 +122,85 @@ h1 {
     color: #ffffff;
 }
 
-.seating-area {
-    display: flex;
-    justify-content: center;
-    gap: 60px;
+/* --- GRID SYSTEM --- */
+.cinema-grid {
+    display: grid;
+    /* Odstęp między fotelami */
+    gap: 10px; 
+    /* Wyśrodkowanie siatki */
+    justify-content: center; 
     margin-bottom: 60px;
-}
-
-.section {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.seat-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.row-label {
-    width: 30px;
-    text-align: center;
-    font-weight: 600;
-    font-size: 16px;
-}
-
-.seats {
-    display: flex;
-    gap: 8px;
+    /* Domyślny rozmiar komórki siatki */
+    grid-auto-rows: 40px;
+    grid-auto-columns: 40px;
+    /* Przewijanie horyzontalne dla bardzo szerokich sal na małych ekranach */
+    overflow-x: auto;
+    padding-bottom: 20px;
 }
 
 .seat {
-    width: 40px;
-    height: 40px;
-    border-radius: 4px;
+    width: 100%;
+    height: 100%;
+    border-radius: 6px 6px 2px 2px;
     border: none;
-    padding: 0;
+    font-size: 11px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    transition: all 0.2s ease;
+    position: relative;
 }
 
+/* --- Stan: WOLNE --- */
 .seat.available {
     background-color: #e8e8e8;
     cursor: pointer;
+    color: #333;
 }
 
-.seat.taken,
-.seat:disabled {
+.seat.available:hover {
+    background-color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    z-index: 2;
+}
+
+/* --- Stan: VIP (gdy extra_charge > 0) --- */
+.seat.vip {
+    background-color: #ffd700; /* Złoty */
+    border: 1px solid #d4af37;
+}
+.seat.vip:hover {
+    background-color: #ffe44d;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+}
+
+/* --- Stan: ZAJĘTE --- */
+.seat.taken {
     background-color: #4a4a5a;
+    color: #7a7a8a;
     cursor: not-allowed;
-    opacity: 0.9;
+    opacity: 0.7;
 }
 
+/* --- Stan: WYBRANE --- */
 .seat.selected {
-    background-color: #d4af37;
+    background-color: #22c55e !important; /* Zielony */
+    color: white !important;
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+    transform: scale(1.1);
+    z-index: 2;
 }
 
+/* --- Legenda --- */
 .legend {
     display: flex;
     justify-content: center;
     gap: 40px;
     margin-bottom: 80px;
+    flex-wrap: wrap;
 }
 
 .legend-item {
@@ -220,22 +215,14 @@ h1 {
     border-radius: 4px;
 }
 
-.legend-box.available {
-    background-color: #e8e8e8;
-}
+.legend-box.available { background-color: #e8e8e8; }
+.legend-box.vip { background-color: #ffd700; }
+.legend-box.taken { background-color: #4a4a5a; }
+.legend-box.selected { background-color: #22c55e; }
 
-.legend-box.taken {
-    background-color: #4a4a5a;
-}
+.legend-text { font-size: 16px; }
 
-.legend-box.selected {
-    background-color: #d4af37;
-}
-
-.legend-text {
-    font-size: 16px;
-}
-
+/* --- Podsumowanie --- */
 .summary {
     background-color: rgba(255, 255, 255, 0.05);
     padding: 30px;
@@ -254,6 +241,12 @@ h1 {
     align-items: center;
     gap: 15px;
     color: #999;
+}
+
+.summary-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .summary-icon {
@@ -281,37 +274,17 @@ h1 {
     box-shadow: 0 6px 25px rgba(212, 175, 55, 0.5);
 }
 
+.checkout-btn:disabled {
+    background: #4a4a4a;
+    color: #888;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
 @media (max-width: 768px) {
-    h1 {
-        font-size: 32px;
-    }
-
-    .seating-area {
-        gap: 30px;
-    }
-
-    .seat {
-        width: 32px;
-        height: 32px;
-    }
-
-    .seats {
-        gap: 6px;
-    }
-
-    .navigation-bar {
-        flex-wrap: wrap;
-        gap: 1rem;
-        padding: 1rem;
-    }
-
-    .brand {
-        margin-right: 0;
-    }
-
-    .cinema-location {
-        order: -1;
-        width: 100%;
-        justify-content: center;
-    }
+    h1 { font-size: 32px; }
+    .navigation-bar { flex-wrap: wrap; gap: 1rem; padding: 1rem; }
+    .brand { margin-right: 0; }
+    .cinema-location { order: -1; width: 100%; justify-content: center; }
 }
