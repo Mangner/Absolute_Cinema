@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontakt - Absolute Cinema</title>
+    <link rel="stylesheet" href="/public/styles/contact.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav>
+        <div class="navigation-bar">
+            <a href="/dashboard" class="nav-brand">
+                <img src="/public/images/logo-absolute-cinema.png" alt="Logo" />
+                <span>Absolute Cinema</span>
+            </a>
+
+            <div class="nav-center">
+                <div class="breadcrumb">
+                    <a href="/dashboard">Start</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Kontakt</span>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <a href="/profile" class="nav-link">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Mój profil</span>
+                    </a>
+                    <a href="/logout" class="logout-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Wyloguj</span>
+                    </a>
+                <?php else: ?>
+                    <a href="/login" class="nav-link">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Zaloguj się</span>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </nav>
+
+    <main class="contact-container">
+        <!-- Header -->
+        <div class="contact-header">
+            <h1><i class="fas fa-phone-alt"></i> Kontakt</h1>
+            <p>Dane kontaktowe naszego kina</p>
+        </div>
+
+        <!-- Karty kontaktowe -->
+        <div class="contact-cards">
+            <div class="info-card">
+                <div class="info-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h2>Adres</h2>
+                <div class="info-content">
+                    <p><strong>Absolute Cinema</strong></p>
+                    <p>ul. Filmowa 42</p>
+                    <p>00-001 Warszawa</p>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <h2>Telefon</h2>
+                <div class="info-content">
+                    <p><a href="tel:+48123456789">+48 123 456 789</a></p>
+                    <p class="info-note">Infolinia czynna: 10:00 - 22:00</p>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h2>E-mail</h2>
+                <div class="info-content">
+                    <p><a href="mailto:kontakt@absolutecinema.pl">kontakt@absolutecinema.pl</a></p>
+                    <p><a href="mailto:rezerwacje@absolutecinema.pl">rezerwacje@absolutecinema.pl</a></p>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h2>Godziny otwarcia</h2>
+                <div class="info-content hours-grid">
+                    <span>Poniedziałek - Czwartek</span>
+                    <span>10:00 - 22:00</span>
+                    <span>Piątek - Sobota</span>
+                    <span>10:00 - 24:00</span>
+                    <span>Niedziela</span>
+                    <span>11:00 - 22:00</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="contact-footer">
+        <p>&copy; 2026 Absolute Cinema. Wszelkie prawa zastrzeżone.</p>
+    </footer>
+</body>
+</html>

@@ -48,6 +48,10 @@ class Routing {
             'controller' => "DashboardController",
             'action' => 'getSnacks'
         ],
+        'contact' => [
+            'controller' => "DashboardController",
+            'action' => 'contact'
+        ],
         'search' => [
             'controller' => "MovieController",
             'action' => 'search'

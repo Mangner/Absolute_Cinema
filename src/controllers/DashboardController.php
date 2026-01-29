@@ -147,4 +147,33 @@ class DashboardController extends AppController {
             'cinema_id' => $cinemaId
         ]);
     }
+
+
+    #[AllowedMethods(['GET', 'POST'])]
+    public function contact() {
+        $messageSent = false;
+        $error = null;
+
+        // Obsługa formularza (atrapa - nie wysyła maili)
+        if ($this->isPost()) {
+            $name = trim($_POST['name'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $subject = trim($_POST['subject'] ?? '');
+            $message = trim($_POST['message'] ?? '');
+
+            if (empty($name) || empty($email) || empty($message)) {
+                $error = 'Proszę wypełnić wszystkie wymagane pola.';
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $error = 'Podaj prawidłowy adres e-mail.';
+            } else {
+                // TODO: Implementacja wysyłki maili
+                $messageSent = true;
+            }
+        }
+
+        $this->render('contact', [
+            'messageSent' => $messageSent,
+            'error' => $error
+        ]);
+    }
 }
