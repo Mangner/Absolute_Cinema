@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo isset($showtime) ? 'Edytuj' : 'Dodaj'; ?> Seans - Admin Panel</title>
+    <link rel="stylesheet" href="/public/styles/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav>
+        <div class="navigation-bar">
+            <a href="/dashboard" class="nav-brand">
+                <img src="/public/images/logo-absolute-cinema.png" alt="Logo" />
+                <span>Absolute Cinema</span>
+            </a>
+
+            <div class="nav-center">
+                <div class="breadcrumb">
+                    <a href="/dashboard">Start</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <a href="/admin/showtimes">Seanse</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span><?php echo isset($showtime) ? 'Edytuj' : 'Dodaj'; ?> seans</span>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <a href="/admin/showtimes" class="nav-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Wróć do listy
+                </a>
+                <a href="/logout" class="logout-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Wyloguj</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="admin-container">
+        <!-- Header sekcji -->
+        <div class="admin-header">
+            <div class="header-left">
+                <h1>
+                    <i class="fas fa-<?php echo isset($showtime) ? 'edit' : 'plus'; ?>"></i>
+                    <?php echo isset($showtime) ? 'Edytuj seans' : 'Dodaj nowy seans'; ?>
+                </h1>
+                <p class="admin-subtitle">
+                    <?php echo isset($showtime) 
+                        ? 'Edytujesz seans: ' . htmlspecialchars($showtime['movie_title']) . ' - ' . date('d.m.Y H:i', strtotime($showtime['start_time']))
+                        : 'Wypełnij formularz aby dodać nowy seans do repertuaru'; 
+                    ?>
+                </p>
+            </div>
+        </div>
+
+        <!-- Komunikaty błędów -->
+        <?php if (isset($error)): ?>
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <?php echo htmlspecialchars($error); ?>
+        </div>
+        <?php endif; ?>
+
+        <!-- Formularz -->
+        <div class="form-container">
+            <form action="<?php echo isset($showtime) ? '/admin/showtime/edit/' . $showtime['showtime_id'] : '/admin/showtime/add'; ?>" method="POST" class="admin-form">
+                
+                <!-- Sekcja wyboru filmu i sali -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-film"></i>
+                        Film i lokalizacja
+                    </h3>
+                    
+                    <div class="form-group full-width">
+                        <label for="movie_id">
+                            <i class="fas fa-film"></i>
+                            Film <span class="required">*</span>
+                        </label>
+                        <select id="movie_id" name="movie_id" required>
+                            <option value="">Wybierz film...</option>
+                            <?php foreach ($movies as $movie): ?>
+                            <option value="<?php echo $movie->getId(); ?>"
+                                    <?php echo (isset($showtime) && $showtime['movie_id'] == $movie->getId()) ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($movie->getTitle()); ?> 
+                                (<?php echo date('Y', strtotime($movie->getReleaseDate())); ?>)
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="hall_id">
+                            <i class="fas fa-door-open"></i>
+                            Sala kinowa <span class="required">*</span>
+                        </label>
+                        <select id="hall_id" name="hall_id" required>
+                            <option value="">Wybierz salę...</option>
+                            <?php 
+                            $currentCinema = null;
+                            foreach ($halls as $hall): 
+                                if ($currentCinema !== $hall['cinema_name']):
+                                    if ($currentCinema !== null) echo '</optgroup>';
+                                    $currentCinema = $hall['cinema_name'];
+                            ?>
+                            <optgroup label="<?php echo htmlspecialchars($hall['cinema_name'] . ' - ' . $hall['cinema_city']); ?>">
+                            <?php endif; ?>
+                                <option value="<?php echo $hall['hall_id']; ?>"
+                                        <?php echo (isset($showtime) && $showtime['hall_id'] == $hall['hall_id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($hall['hall_name']); ?> 
+                                    (<?php echo htmlspecialchars($hall['type']); ?>)
+                                </option>
+                            <?php endforeach; ?>
+                            <?php if ($currentCinema !== null) echo '</optgroup>'; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Sekcja daty i godziny -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-calendar-alt"></i>
+                        Data i godzina
+                    </h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="start_date">
+                                <i class="fas fa-calendar"></i>
+                                Data <span class="required">*</span>
+                            </label>
+                            <input type="date" 
+                                   id="start_date" 
+                                   name="start_date" 
+                                   value="<?php echo isset($showtime) ? date('Y-m-d', strtotime($showtime['start_time'])) : ''; ?>"
+                                   required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="start_time">
+                                <i class="fas fa-clock"></i>
+                                Godzina <span class="required">*</span>
+                            </label>
+                            <input type="time" 
+                                   id="start_time" 
+                                   name="start_time" 
+                                   value="<?php echo isset($showtime) ? date('H:i', strtotime($showtime['start_time'])) : ''; ?>"
+                                   required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sekcja szczegółów technicznych -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-cogs"></i>
+                        Szczegóły techniczne
+                    </h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="technology">
+                                <i class="fas fa-tv"></i>
+                                Technologia
+                            </label>
+                            <select id="technology" name="technology">
+                                <option value="2D" <?php echo (isset($showtime) && $showtime['technology'] === '2D') ? 'selected' : ''; ?>>2D</option>
+                                <option value="3D" <?php echo (isset($showtime) && $showtime['technology'] === '3D') ? 'selected' : ''; ?>>3D</option>
+                                <option value="IMAX" <?php echo (isset($showtime) && $showtime['technology'] === 'IMAX') ? 'selected' : ''; ?>>IMAX</option>
+                                <option value="IMAX 3D" <?php echo (isset($showtime) && $showtime['technology'] === 'IMAX 3D') ? 'selected' : ''; ?>>IMAX 3D</option>
+                                <option value="4DX" <?php echo (isset($showtime) && $showtime['technology'] === '4DX') ? 'selected' : ''; ?>>4DX</option>
+                                <option value="Dolby Atmos" <?php echo (isset($showtime) && $showtime['technology'] === 'Dolby Atmos') ? 'selected' : ''; ?>>Dolby Atmos</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="language">
+                                <i class="fas fa-language"></i>
+                                Język
+                            </label>
+                            <select id="language" name="language">
+                                <option value="PL" <?php echo (isset($showtime) && $showtime['language'] === 'PL') ? 'selected' : ''; ?>>Polski</option>
+                                <option value="EN" <?php echo (isset($showtime) && $showtime['language'] === 'EN') ? 'selected' : ''; ?>>Angielski</option>
+                                <option value="DE" <?php echo (isset($showtime) && $showtime['language'] === 'DE') ? 'selected' : ''; ?>>Niemiecki</option>
+                                <option value="FR" <?php echo (isset($showtime) && $showtime['language'] === 'FR') ? 'selected' : ''; ?>>Francuski</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="audio_type">
+                                <i class="fas fa-volume-up"></i>
+                                Wersja dźwiękowa
+                            </label>
+                            <select id="audio_type" name="audio_type">
+                                <option value="dubbed" <?php echo (isset($showtime) && $showtime['audio_type'] === 'dubbed') ? 'selected' : ''; ?>>Dubbing</option>
+                                <option value="subtitled" <?php echo (isset($showtime) && $showtime['audio_type'] === 'subtitled') ? 'selected' : ''; ?>>Napisy</option>
+                                <option value="voiceover" <?php echo (isset($showtime) && $showtime['audio_type'] === 'voiceover') ? 'selected' : ''; ?>>Lektor</option>
+                                <option value="original" <?php echo (isset($showtime) && $showtime['audio_type'] === 'original') ? 'selected' : ''; ?>>Oryginał</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="base_price">
+                                <i class="fas fa-tag"></i>
+                                Cena bazowa (zł) <span class="required">*</span>
+                            </label>
+                            <input type="number" 
+                                   id="base_price" 
+                                   name="base_price" 
+                                   value="<?php echo isset($showtime) ? $showtime['base_price'] : '25.00'; ?>"
+                                   placeholder="np. 25.00"
+                                   step="0.01"
+                                   min="0.01"
+                                   required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Przyciski akcji -->
+                <div class="form-actions">
+                    <a href="/admin/showtimes" class="btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Anuluj
+                    </a>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-<?php echo isset($showtime) ? 'save' : 'plus'; ?>"></i>
+                        <?php echo isset($showtime) ? 'Zapisz zmiany' : 'Dodaj seans'; ?>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

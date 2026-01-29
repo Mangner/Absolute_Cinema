@@ -2,6 +2,9 @@
 
 require_once 'AppController.php';
 require_once __DIR__.'/../repository/UserRepository.php';
+require_once __DIR__.'/../repository/MovieRepository.php';
+require_once __DIR__.'/../repository/ShowtimeRepository.php';
+require_once __DIR__.'/../repository/CinemaRepository.php';
 require_once __DIR__.'/../middleware/Attribute/AllowedMethods.php';
 require_once __DIR__.'/../middleware/Attribute/IsLoggedIn.php';
 
@@ -16,10 +19,16 @@ use Middleware\Attribute\IsLoggedIn;
 class AdminController extends AppController
 {
     private UserRepository $userRepository;
+    private MovieRepository $movieRepository;
+    private ShowtimeRepository $showtimeRepository;
+    private CinemaRepository $cinemaRepository;
 
     public function __construct()
     {
         $this->userRepository = new UserRepository();
+        $this->movieRepository = new MovieRepository();
+        $this->showtimeRepository = new ShowtimeRepository();
+        $this->cinemaRepository = new CinemaRepository();
     }
 
     /**
@@ -222,6 +231,386 @@ class AdminController extends AppController
             exit();
         } catch (Exception $e) {
             header('Location: /admin/users?error=Błąd podczas usuwania użytkownika');
+            exit();
+        }
+    }
+
+    // ========================================
+    // SEKCJA: ZARZĄDZANIE FILMAMI
+    // ========================================
+
+    /**
+     * Lista wszystkich filmów
+     */
+    #[AllowedMethods(['GET'])]
+    #[IsLoggedIn]
+    public function movies(): void
+    {
+        $this->requireAdmin();
+
+        $movies = $this->movieRepository->getMovies();
+        $message = $_GET['message'] ?? null;
+        $error = $_GET['error'] ?? null;
+
+        $this->render('admin_movies', [
+            'movies' => $movies ?? [],
+            'message' => $message,
+            'error' => $error
+        ]);
+    }
+
+    /**
+     * Formularz i logika dodawania nowego filmu
+     */
+    #[AllowedMethods(['GET', 'POST'])]
+    #[IsLoggedIn]
+    public function addMovie(): void
+    {
+        $this->requireAdmin();
+
+        $genres = $this->movieRepository->getAllGenres();
+
+        if ($this->isGet()) {
+            $this->render('admin_movie_form', [
+                'movie' => null,
+                'genres' => $genres,
+                'selectedGenres' => []
+            ]);
+            return;
+        }
+
+        // POST - tworzenie filmu
+        $title = trim($_POST['title'] ?? '');
+        $originalTitle = trim($_POST['original_title'] ?? $title);
+        $description = trim($_POST['description'] ?? '');
+        $director = trim($_POST['director'] ?? '');
+        $releaseDate = $_POST['release_date'] ?? '';
+        $image = trim($_POST['image'] ?? '');
+        $trailerUrl = trim($_POST['trailer_url'] ?? '') ?: null;
+        $price = (float)($_POST['price'] ?? 0);
+        $duration = (int)($_POST['duration'] ?? 0);
+        $productionCountry = trim($_POST['production_country'] ?? '');
+        $originalLanguage = trim($_POST['original_language'] ?? 'PL');
+        $ageRating = trim($_POST['age_rating'] ?? '');
+        $imdbRating = !empty($_POST['imdb_rating']) ? (float)$_POST['imdb_rating'] : null;
+        $rottenTomatoesRating = !empty($_POST['rotten_tomatoes_rating']) ? (float)$_POST['rotten_tomatoes_rating'] : null;
+        $metacriticRating = !empty($_POST['metacritic_rating']) ? (float)$_POST['metacritic_rating'] : null;
+        $selectedGenreIds = $_POST['genres'] ?? [];
+
+        // Walidacja
+        if (empty($title) || empty($releaseDate) || empty($duration)) {
+            $this->render('admin_movie_form', [
+                'movie' => null,
+                'genres' => $genres,
+                'selectedGenres' => $selectedGenreIds,
+                'error' => 'Tytuł, data premiery i czas trwania są wymagane!'
+            ]);
+            return;
+        }
+
+        try {
+            $movieId = $this->movieRepository->addMovie(
+                $title, $originalTitle, $description, $director, $releaseDate,
+                $image, $trailerUrl, $price, $duration, $productionCountry,
+                $originalLanguage, $ageRating, $imdbRating, $rottenTomatoesRating, $metacriticRating
+            );
+
+            // Przypisz gatunki
+            if (!empty($selectedGenreIds)) {
+                $this->movieRepository->setMovieGenres($movieId, $selectedGenreIds);
+            }
+
+            header('Location: /admin/movies?message=Film został dodany pomyślnie');
+            exit();
+        } catch (Exception $e) {
+            $this->render('admin_movie_form', [
+                'movie' => null,
+                'genres' => $genres,
+                'selectedGenres' => $selectedGenreIds,
+                'error' => 'Wystąpił błąd: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Formularz i logika edycji filmu
+     */
+    #[AllowedMethods(['GET', 'POST'])]
+    #[IsLoggedIn]
+    public function editMovie(int $id): void
+    {
+        $this->requireAdmin();
+
+        $movie = $this->movieRepository->getMovieById($id);
+        $genres = $this->movieRepository->getAllGenres();
+        $movieGenres = $this->movieRepository->getGenresByMovieId($id);
+        $selectedGenreIds = $movieGenres ? array_map(fn($g) => $g->getId(), $movieGenres) : [];
+
+        if (!$movie) {
+            header('Location: /admin/movies?error=Film nie został znaleziony');
+            exit();
+        }
+
+        if ($this->isGet()) {
+            $this->render('admin_movie_form', [
+                'movie' => $movie,
+                'genres' => $genres,
+                'selectedGenres' => $selectedGenreIds
+            ]);
+            return;
+        }
+
+        // POST - aktualizacja filmu
+        $title = trim($_POST['title'] ?? '');
+        $originalTitle = trim($_POST['original_title'] ?? $title);
+        $description = trim($_POST['description'] ?? '');
+        $director = trim($_POST['director'] ?? '');
+        $releaseDate = $_POST['release_date'] ?? '';
+        $image = trim($_POST['image'] ?? '');
+        $trailerUrl = trim($_POST['trailer_url'] ?? '') ?: null;
+        $price = (float)($_POST['price'] ?? 0);
+        $duration = (int)($_POST['duration'] ?? 0);
+        $productionCountry = trim($_POST['production_country'] ?? '');
+        $originalLanguage = trim($_POST['original_language'] ?? 'PL');
+        $ageRating = trim($_POST['age_rating'] ?? '');
+        $imdbRating = !empty($_POST['imdb_rating']) ? (float)$_POST['imdb_rating'] : null;
+        $rottenTomatoesRating = !empty($_POST['rotten_tomatoes_rating']) ? (float)$_POST['rotten_tomatoes_rating'] : null;
+        $metacriticRating = !empty($_POST['metacritic_rating']) ? (float)$_POST['metacritic_rating'] : null;
+        $selectedGenreIds = $_POST['genres'] ?? [];
+
+        // Walidacja
+        if (empty($title) || empty($releaseDate) || empty($duration)) {
+            $this->render('admin_movie_form', [
+                'movie' => $movie,
+                'genres' => $genres,
+                'selectedGenres' => $selectedGenreIds,
+                'error' => 'Tytuł, data premiery i czas trwania są wymagane!'
+            ]);
+            return;
+        }
+
+        try {
+            $this->movieRepository->updateMovie(
+                $id, $title, $originalTitle, $description, $director, $releaseDate,
+                $image, $trailerUrl, $price, $duration, $productionCountry,
+                $originalLanguage, $ageRating, $imdbRating, $rottenTomatoesRating, $metacriticRating
+            );
+
+            // Aktualizuj gatunki
+            $this->movieRepository->setMovieGenres($id, $selectedGenreIds);
+
+            header('Location: /admin/movies?message=Film został zaktualizowany');
+            exit();
+        } catch (Exception $e) {
+            $this->render('admin_movie_form', [
+                'movie' => $movie,
+                'genres' => $genres,
+                'selectedGenres' => $selectedGenreIds,
+                'error' => 'Wystąpił błąd: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Usuwanie filmu
+     */
+    #[AllowedMethods(['POST'])]
+    #[IsLoggedIn]
+    public function deleteMovie(): void
+    {
+        $this->requireAdmin();
+
+        $movieId = (int)($_POST['movie_id'] ?? 0);
+
+        if (!$movieId) {
+            header('Location: /admin/movies?error=Nieprawidłowy ID filmu');
+            exit();
+        }
+
+        try {
+            $this->movieRepository->deleteMovie($movieId);
+            header('Location: /admin/movies?message=Film został usunięty');
+            exit();
+        } catch (Exception $e) {
+            header('Location: /admin/movies?error=Błąd podczas usuwania filmu (może mieć przypisane seanse)');
+            exit();
+        }
+    }
+
+    // ========================================
+    // SEKCJA: ZARZĄDZANIE SEANSAMI
+    // ========================================
+
+    /**
+     * Lista wszystkich seansów
+     */
+    #[AllowedMethods(['GET'])]
+    #[IsLoggedIn]
+    public function showtimes(): void
+    {
+        $this->requireAdmin();
+
+        $showtimes = $this->showtimeRepository->getAllShowtimesAdmin();
+        $message = $_GET['message'] ?? null;
+        $error = $_GET['error'] ?? null;
+
+        $this->render('admin_showtimes', [
+            'showtimes' => $showtimes,
+            'message' => $message,
+            'error' => $error
+        ]);
+    }
+
+    /**
+     * Formularz i logika dodawania nowego seansu
+     */
+    #[AllowedMethods(['GET', 'POST'])]
+    #[IsLoggedIn]
+    public function addShowtime(): void
+    {
+        $this->requireAdmin();
+
+        $movies = $this->movieRepository->getMovies();
+        $halls = $this->cinemaRepository->getAllHalls();
+
+        if ($this->isGet()) {
+            $this->render('admin_showtime_form', [
+                'showtime' => null,
+                'movies' => $movies ?? [],
+                'halls' => $halls
+            ]);
+            return;
+        }
+
+        // POST - tworzenie seansu
+        $movieId = (int)($_POST['movie_id'] ?? 0);
+        $hallId = (int)($_POST['hall_id'] ?? 0);
+        $startDate = $_POST['start_date'] ?? '';
+        $startTime = $_POST['start_time'] ?? '';
+        $technology = $_POST['technology'] ?? '2D';
+        $language = $_POST['language'] ?? 'PL';
+        $audioType = $_POST['audio_type'] ?? 'dubbed';
+        $basePrice = (float)($_POST['base_price'] ?? 0);
+
+        $startDateTime = $startDate . ' ' . $startTime . ':00';
+
+        // Walidacja
+        if (!$movieId || !$hallId || empty($startDate) || empty($startTime) || $basePrice <= 0) {
+            $this->render('admin_showtime_form', [
+                'showtime' => null,
+                'movies' => $movies ?? [],
+                'halls' => $halls,
+                'error' => 'Wszystkie pola są wymagane!'
+            ]);
+            return;
+        }
+
+        try {
+            $this->showtimeRepository->addShowtime(
+                $movieId, $hallId, $startDateTime, $technology, $language, $audioType, $basePrice
+            );
+
+            header('Location: /admin/showtimes?message=Seans został dodany pomyślnie');
+            exit();
+        } catch (Exception $e) {
+            $this->render('admin_showtime_form', [
+                'showtime' => null,
+                'movies' => $movies ?? [],
+                'halls' => $halls,
+                'error' => 'Wystąpił błąd: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Formularz i logika edycji seansu
+     */
+    #[AllowedMethods(['GET', 'POST'])]
+    #[IsLoggedIn]
+    public function editShowtime(int $id): void
+    {
+        $this->requireAdmin();
+
+        $showtime = $this->showtimeRepository->getShowtimeById($id);
+        $movies = $this->movieRepository->getMovies();
+        $halls = $this->cinemaRepository->getAllHalls();
+
+        if (!$showtime) {
+            header('Location: /admin/showtimes?error=Seans nie został znaleziony');
+            exit();
+        }
+
+        if ($this->isGet()) {
+            $this->render('admin_showtime_form', [
+                'showtime' => $showtime,
+                'movies' => $movies ?? [],
+                'halls' => $halls
+            ]);
+            return;
+        }
+
+        // POST - aktualizacja seansu
+        $movieId = (int)($_POST['movie_id'] ?? 0);
+        $hallId = (int)($_POST['hall_id'] ?? 0);
+        $startDate = $_POST['start_date'] ?? '';
+        $startTime = $_POST['start_time'] ?? '';
+        $technology = $_POST['technology'] ?? '2D';
+        $language = $_POST['language'] ?? 'PL';
+        $audioType = $_POST['audio_type'] ?? 'dubbed';
+        $basePrice = (float)($_POST['base_price'] ?? 0);
+
+        $startDateTime = $startDate . ' ' . $startTime . ':00';
+
+        // Walidacja
+        if (!$movieId || !$hallId || empty($startDate) || empty($startTime) || $basePrice <= 0) {
+            $this->render('admin_showtime_form', [
+                'showtime' => $showtime,
+                'movies' => $movies ?? [],
+                'halls' => $halls,
+                'error' => 'Wszystkie pola są wymagane!'
+            ]);
+            return;
+        }
+
+        try {
+            $this->showtimeRepository->updateShowtime(
+                $id, $movieId, $hallId, $startDateTime, $technology, $language, $audioType, $basePrice
+            );
+
+            header('Location: /admin/showtimes?message=Seans został zaktualizowany');
+            exit();
+        } catch (Exception $e) {
+            $this->render('admin_showtime_form', [
+                'showtime' => $showtime,
+                'movies' => $movies ?? [],
+                'halls' => $halls,
+                'error' => 'Wystąpił błąd: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Usuwanie seansu
+     */
+    #[AllowedMethods(['POST'])]
+    #[IsLoggedIn]
+    public function deleteShowtime(): void
+    {
+        $this->requireAdmin();
+
+        $showtimeId = (int)($_POST['showtime_id'] ?? 0);
+
+        if (!$showtimeId) {
+            header('Location: /admin/showtimes?error=Nieprawidłowy ID seansu');
+            exit();
+        }
+
+        try {
+            $this->showtimeRepository->deleteShowtime($showtimeId);
+            header('Location: /admin/showtimes?message=Seans został usunięty');
+            exit();
+        } catch (Exception $e) {
+            header('Location: /admin/showtimes?error=Błąd podczas usuwania seansu');
             exit();
         }
     }

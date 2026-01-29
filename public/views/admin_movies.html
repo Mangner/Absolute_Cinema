@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zarządzanie Filmami - Admin Panel</title>
+    <link rel="stylesheet" href="/public/styles/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav>
+        <div class="navigation-bar">
+            <a href="/dashboard" class="nav-brand">
+                <img src="/public/images/logo-absolute-cinema.png" alt="Logo" />
+                <span>Absolute Cinema</span>
+            </a>
+
+            <div class="nav-center">
+                <div class="breadcrumb">
+                    <a href="/dashboard">Start</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <a href="/profile">Profil</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Panel Admina</span>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <a href="/profile" class="nav-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Wróć do profilu
+                </a>
+                <a href="/logout" class="logout-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Wyloguj</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Tabs Navigation -->
+    <div class="admin-tabs-nav">
+        <div class="admin-tabs-container">
+            <a href="/admin/users" class="admin-tab">
+                <i class="fas fa-users"></i>
+                <span>Użytkownicy</span>
+            </a>
+            <a href="/admin/movies" class="admin-tab active">
+                <i class="fas fa-film"></i>
+                <span>Filmy</span>
+            </a>
+            <a href="/admin/showtimes" class="admin-tab">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Seanse</span>
+            </a>
+        </div>
+    </div>
+
+    <main class="admin-container">
+        <!-- Header sekcji -->
+        <div class="admin-header">
+            <div class="header-left">
+                <h1>
+                    <i class="fas fa-film"></i>
+                    Zarządzanie Filmami
+                </h1>
+                <p class="admin-subtitle">Lista wszystkich filmów w repertuarze</p>
+            </div>
+            <a href="/admin/movie/add" class="btn-primary">
+                <i class="fas fa-plus"></i>
+                Dodaj film
+            </a>
+        </div>
+
+        <!-- Komunikaty -->
+        <?php if (isset($message) && $message): ?>
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            <?php echo htmlspecialchars($message); ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if (isset($error) && $error): ?>
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <?php echo htmlspecialchars($error); ?>
+        </div>
+        <?php endif; ?>
+
+        <!-- Statystyki -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fas fa-film"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value"><?php echo count($movies ?? []); ?></span>
+                    <span class="stat-label">Wszystkich filmów</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fas fa-play-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value"><?php echo count(array_filter($movies ?? [], fn($m) => strtotime($m->getReleaseDate()) <= time())); ?></span>
+                    <span class="stat-label">Na ekranach</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon gold">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value"><?php echo count(array_filter($movies ?? [], fn($m) => strtotime($m->getReleaseDate()) > time())); ?></span>
+                    <span class="stat-label">Nadchodzące</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela filmów -->
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Lista filmów</h2>
+                <div class="table-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Szukaj filmu...">
+                </div>
+            </div>
+            
+            <?php if (empty($movies)): ?>
+            <div class="empty-state">
+                <i class="fas fa-film"></i>
+                <h3>Brak filmów</h3>
+                <p>Nie znaleziono żadnych filmów w bazie danych.</p>
+                <a href="/admin/movie/add" class="btn-primary" style="margin-top: 1rem;">
+                    <i class="fas fa-plus"></i>
+                    Dodaj pierwszy film
+                </a>
+            </div>
+            <?php else: ?>
+            <div class="table-responsive">
+                <table class="admin-table" id="moviesTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Plakat</th>
+                            <th>Tytuł</th>
+                            <th>Reżyser</th>
+                            <th>Data premiery</th>
+                            <th>Czas</th>
+                            <th>Ocena</th>
+                            <th>Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($movies as $movie): ?>
+                        <tr data-movie-id="<?php echo $movie->getId(); ?>">
+                            <td class="id-cell">#<?php echo $movie->getId(); ?></td>
+                            <td class="poster-cell">
+                                <?php if ($movie->getImageUrl()): ?>
+                                <img src="<?php echo htmlspecialchars($movie->getImageUrl()); ?>" 
+                                     alt="<?php echo htmlspecialchars($movie->getTitle()); ?>"
+                                     class="movie-poster-thumb">
+                                <?php else: ?>
+                                <div class="poster-placeholder">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <div class="movie-title-cell">
+                                    <strong><?php echo htmlspecialchars($movie->getTitle()); ?></strong>
+                                    <?php if ($movie->getOriginalTitle() && $movie->getOriginalTitle() !== $movie->getTitle()): ?>
+                                    <small class="original-title"><?php echo htmlspecialchars($movie->getOriginalTitle()); ?></small>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                            <td><?php echo htmlspecialchars($movie->getDirector()); ?></td>
+                            <td class="date-cell">
+                                <?php 
+                                    $releaseDate = strtotime($movie->getReleaseDate());
+                                    $isUpcoming = $releaseDate > time();
+                                ?>
+                                <span class="date-badge <?php echo $isUpcoming ? 'upcoming' : 'released'; ?>">
+                                    <?php echo date('d.m.Y', $releaseDate); ?>
+                                </span>
+                            </td>
+                            <td><?php echo (int)$movie->getDuration(); ?> min</td>
+                            <td>
+                                <?php if ($movie->getImdbRating()): ?>
+                                <span class="rating-badge">
+                                    <i class="fab fa-imdb"></i>
+                                    <?php echo number_format($movie->getImdbRating(), 1); ?>
+                                </span>
+                                <?php else: ?>
+                                <span class="text-muted">-</span>
+                                <?php endif; ?>
+                            </td>
+                            <td class="actions-cell">
+                                <a href="/admin/movie/edit/<?php echo $movie->getId(); ?>" class="btn-action btn-edit" title="Edytuj">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn-action btn-delete" 
+                                        onclick="confirmDelete(<?php echo $movie->getId(); ?>, '<?php echo htmlspecialchars(addslashes($movie->getTitle())); ?>')"
+                                        title="Usuń">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php endif; ?>
+        </div>
+    </main>
+
+    <!-- Modal potwierdzenia usunięcia -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Potwierdź usunięcie</h3>
+            </div>
+            <div class="modal-body">
+                <p>Czy na pewno chcesz usunąć film:</p>
+                <p class="user-to-delete" id="itemToDelete"></p>
+                <p class="warning-text">Ta operacja usunie również wszystkie powiązane seanse!</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i>
+                    Anuluj
+                </button>
+                <form id="deleteForm" action="/admin/movie/delete" method="POST" style="display: inline;">
+                    <input type="hidden" name="movie_id" id="deleteItemId">
+                    <button type="submit" class="btn-danger">
+                        <i class="fas fa-trash-alt"></i>
+                        Usuń
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wyszukiwanie filmów
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#moviesTable tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Modal usunięcia
+        function confirmDelete(itemId, itemName) {
+            document.getElementById('deleteItemId').value = itemId;
+            document.getElementById('itemToDelete').textContent = itemName;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+        }
+
+        document.querySelector('.modal-overlay').addEventListener('click', closeDeleteModal);
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeDeleteModal();
+        });
+    </script>
+</body>
+</html>

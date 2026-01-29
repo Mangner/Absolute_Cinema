@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zarządzanie Seansami - Admin Panel</title>
+    <link rel="stylesheet" href="/public/styles/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav>
+        <div class="navigation-bar">
+            <a href="/dashboard" class="nav-brand">
+                <img src="/public/images/logo-absolute-cinema.png" alt="Logo" />
+                <span>Absolute Cinema</span>
+            </a>
+
+            <div class="nav-center">
+                <div class="breadcrumb">
+                    <a href="/dashboard">Start</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <a href="/profile">Profil</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Panel Admina</span>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <a href="/profile" class="nav-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Wróć do profilu
+                </a>
+                <a href="/logout" class="logout-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Wyloguj</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Tabs Navigation -->
+    <div class="admin-tabs-nav">
+        <div class="admin-tabs-container">
+            <a href="/admin/users" class="admin-tab">
+                <i class="fas fa-users"></i>
+                <span>Użytkownicy</span>
+            </a>
+            <a href="/admin/movies" class="admin-tab">
+                <i class="fas fa-film"></i>
+                <span>Filmy</span>
+            </a>
+            <a href="/admin/showtimes" class="admin-tab active">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Seanse</span>
+            </a>
+        </div>
+    </div>
+
+    <main class="admin-container">
+        <!-- Header sekcji -->
+        <div class="admin-header">
+            <div class="header-left">
+                <h1>
+                    <i class="fas fa-calendar-alt"></i>
+                    Zarządzanie Seansami
+                </h1>
+                <p class="admin-subtitle">Lista wszystkich zaplanowanych seansów</p>
+            </div>
+            <a href="/admin/showtime/add" class="btn-primary">
+                <i class="fas fa-plus"></i>
+                Dodaj seans
+            </a>
+        </div>
+
+        <!-- Komunikaty -->
+        <?php if (isset($message) && $message): ?>
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            <?php echo htmlspecialchars($message); ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if (isset($error) && $error): ?>
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <?php echo htmlspecialchars($error); ?>
+        </div>
+        <?php endif; ?>
+
+        <!-- Statystyki -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value"><?php echo count($showtimes ?? []); ?></span>
+                    <span class="stat-label">Wszystkich seansów</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value"><?php echo count(array_filter($showtimes ?? [], fn($s) => strtotime($s['start_time']) > time())); ?></span>
+                    <span class="stat-label">Nadchodzące</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon gold">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value"><?php echo count(array_filter($showtimes ?? [], fn($s) => strtotime($s['start_time']) <= time())); ?></span>
+                    <span class="stat-label">Zakończone</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela seansów -->
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Lista seansów</h2>
+                <div class="table-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Szukaj seansu...">
+                </div>
+            </div>
+            
+            <?php if (empty($showtimes)): ?>
+            <div class="empty-state">
+                <i class="fas fa-calendar-times"></i>
+                <h3>Brak seansów</h3>
+                <p>Nie znaleziono żadnych seansów w bazie danych.</p>
+                <a href="/admin/showtime/add" class="btn-primary" style="margin-top: 1rem;">
+                    <i class="fas fa-plus"></i>
+                    Dodaj pierwszy seans
+                </a>
+            </div>
+            <?php else: ?>
+            <div class="table-responsive">
+                <table class="admin-table" id="showtimesTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Data i godzina</th>
+                            <th>Film</th>
+                            <th>Kino</th>
+                            <th>Sala</th>
+                            <th>Format</th>
+                            <th>Cena</th>
+                            <th>Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($showtimes as $showtime): ?>
+                        <?php 
+                            $isPast = strtotime($showtime['start_time']) < time();
+                        ?>
+                        <tr data-showtime-id="<?php echo $showtime['showtime_id']; ?>" class="<?php echo $isPast ? 'past-showtime' : ''; ?>">
+                            <td class="id-cell">#<?php echo $showtime['showtime_id']; ?></td>
+                            <td class="datetime-cell">
+                                <div class="datetime-display">
+                                    <span class="date">
+                                        <i class="fas fa-calendar"></i>
+                                        <?php echo date('d.m.Y', strtotime($showtime['start_time'])); ?>
+                                    </span>
+                                    <span class="time">
+                                        <i class="fas fa-clock"></i>
+                                        <?php echo date('H:i', strtotime($showtime['start_time'])); ?>
+                                    </span>
+                                </div>
+                                <?php if ($isPast): ?>
+                                <span class="status-badge past">Zakończony</span>
+                                <?php else: ?>
+                                <span class="status-badge upcoming">Nadchodzący</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <div class="movie-info-cell">
+                                    <?php if (!empty($showtime['movie_image'])): ?>
+                                    <img src="<?php echo htmlspecialchars($showtime['movie_image']); ?>" 
+                                         alt="" class="movie-mini-poster">
+                                    <?php endif; ?>
+                                    <span><?php echo htmlspecialchars($showtime['movie_title']); ?></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cinema-info">
+                                    <strong><?php echo htmlspecialchars($showtime['cinema_name']); ?></strong>
+                                    <small><?php echo htmlspecialchars($showtime['cinema_city']); ?></small>
+                                </div>
+                            </td>
+                            <td><?php echo htmlspecialchars($showtime['hall_name']); ?></td>
+                            <td>
+                                <span class="tech-badge <?php echo strtolower($showtime['technology']); ?>">
+                                    <?php echo htmlspecialchars($showtime['technology']); ?>
+                                </span>
+                                <span class="lang-badge">
+                                    <?php 
+                                        $audioLabel = match($showtime['audio_type']) {
+                                            'dubbed' => 'DUB',
+                                            'subtitled' => 'NAP',
+                                            'voiceover' => 'LEK',
+                                            'original' => 'ORG',
+                                            default => $showtime['audio_type']
+                                        };
+                                        echo $audioLabel;
+                                    ?>
+                                </span>
+                            </td>
+                            <td class="price-cell">
+                                <strong><?php echo number_format($showtime['base_price'], 2); ?> zł</strong>
+                            </td>
+                            <td class="actions-cell">
+                                <a href="/admin/showtime/edit/<?php echo $showtime['showtime_id']; ?>" class="btn-action btn-edit" title="Edytuj">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn-action btn-delete" 
+                                        onclick="confirmDelete(<?php echo $showtime['showtime_id']; ?>, '<?php echo htmlspecialchars(addslashes($showtime['movie_title'] . ' - ' . date('d.m.Y H:i', strtotime($showtime['start_time'])))); ?>')"
+                                        title="Usuń">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php endif; ?>
+        </div>
+    </main>
+
+    <!-- Modal potwierdzenia usunięcia -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Potwierdź usunięcie</h3>
+            </div>
+            <div class="modal-body">
+                <p>Czy na pewno chcesz usunąć seans:</p>
+                <p class="user-to-delete" id="itemToDelete"></p>
+                <p class="warning-text">Ta operacja jest nieodwracalna!</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i>
+                    Anuluj
+                </button>
+                <form id="deleteForm" action="/admin/showtime/delete" method="POST" style="display: inline;">
+                    <input type="hidden" name="showtime_id" id="deleteItemId">
+                    <button type="submit" class="btn-danger">
+                        <i class="fas fa-trash-alt"></i>
+                        Usuń
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wyszukiwanie seansów
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#showtimesTable tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Modal usunięcia
+        function confirmDelete(itemId, itemName) {
+            document.getElementById('deleteItemId').value = itemId;
+            document.getElementById('itemToDelete').textContent = itemName;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+        }
+
+        document.querySelector('.modal-overlay').addEventListener('click', closeDeleteModal);
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeDeleteModal();
+        });
+    </script>
+</body>
+</html>

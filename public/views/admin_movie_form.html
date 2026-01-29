@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo isset($movie) ? 'Edytuj' : 'Dodaj'; ?> Film - Admin Panel</title>
+    <link rel="stylesheet" href="/public/styles/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav>
+        <div class="navigation-bar">
+            <a href="/dashboard" class="nav-brand">
+                <img src="/public/images/logo-absolute-cinema.png" alt="Logo" />
+                <span>Absolute Cinema</span>
+            </a>
+
+            <div class="nav-center">
+                <div class="breadcrumb">
+                    <a href="/dashboard">Start</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <a href="/admin/movies">Filmy</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span><?php echo isset($movie) ? 'Edytuj' : 'Dodaj'; ?> film</span>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <a href="/admin/movies" class="nav-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Wróć do listy
+                </a>
+                <a href="/logout" class="logout-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Wyloguj</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="admin-container">
+        <!-- Header sekcji -->
+        <div class="admin-header">
+            <div class="header-left">
+                <h1>
+                    <i class="fas fa-<?php echo isset($movie) ? 'edit' : 'plus'; ?>"></i>
+                    <?php echo isset($movie) ? 'Edytuj film' : 'Dodaj nowy film'; ?>
+                </h1>
+                <p class="admin-subtitle">
+                    <?php echo isset($movie) 
+                        ? 'Edytujesz film: ' . htmlspecialchars($movie->getTitle())
+                        : 'Wypełnij formularz aby dodać nowy film do repertuaru'; 
+                    ?>
+                </p>
+            </div>
+        </div>
+
+        <!-- Komunikaty błędów -->
+        <?php if (isset($error)): ?>
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <?php echo htmlspecialchars($error); ?>
+        </div>
+        <?php endif; ?>
+
+        <!-- Formularz -->
+        <div class="form-container">
+            <form action="<?php echo isset($movie) ? '/admin/movie/edit/' . $movie->getId() : '/admin/movie/add'; ?>" method="POST" class="admin-form movie-form">
+                
+                <!-- Sekcja podstawowych informacji -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-info-circle"></i>
+                        Podstawowe informacje
+                    </h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="title">
+                                <i class="fas fa-heading"></i>
+                                Tytuł <span class="required">*</span>
+                            </label>
+                            <input type="text" 
+                                   id="title" 
+                                   name="title" 
+                                   value="<?php echo isset($movie) ? htmlspecialchars($movie->getTitle()) : ''; ?>"
+                                   placeholder="Wprowadź tytuł filmu"
+                                   required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="original_title">
+                                <i class="fas fa-globe"></i>
+                                Tytuł oryginalny
+                            </label>
+                            <input type="text" 
+                                   id="original_title" 
+                                   name="original_title" 
+                                   value="<?php echo isset($movie) ? htmlspecialchars($movie->getOriginalTitle()) : ''; ?>"
+                                   placeholder="Tytuł w języku oryginalnym">
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="description">
+                            <i class="fas fa-align-left"></i>
+                            Opis filmu
+                        </label>
+                        <textarea id="description" 
+                                  name="description" 
+                                  rows="4"
+                                  placeholder="Wprowadź opis/streszczenie filmu"><?php echo isset($movie) ? htmlspecialchars($movie->getDescription()) : ''; ?></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="director">
+                                <i class="fas fa-user-tie"></i>
+                                Reżyser
+                            </label>
+                            <input type="text" 
+                                   id="director" 
+                                   name="director" 
+                                   value="<?php echo isset($movie) ? htmlspecialchars($movie->getDirector()) : ''; ?>"
+                                   placeholder="Imię i nazwisko reżysera">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="release_date">
+                                <i class="fas fa-calendar"></i>
+                                Data premiery <span class="required">*</span>
+                            </label>
+                            <input type="date" 
+                                   id="release_date" 
+                                   name="release_date" 
+                                   value="<?php echo isset($movie) ? $movie->getReleaseDate() : ''; ?>"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="duration">
+                                <i class="fas fa-clock"></i>
+                                Czas trwania (min) <span class="required">*</span>
+                            </label>
+                            <input type="number" 
+                                   id="duration" 
+                                   name="duration" 
+                                   value="<?php echo isset($movie) ? (int)$movie->getDuration() : ''; ?>"
+                                   placeholder="np. 120"
+                                   min="1"
+                                   required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="price">
+                                <i class="fas fa-tag"></i>
+                                Cena bazowa (zł)
+                            </label>
+                            <input type="number" 
+                                   id="price" 
+                                   name="price" 
+                                   value="<?php echo isset($movie) ? $movie->getPrice() : '25.00'; ?>"
+                                   placeholder="np. 25.00"
+                                   step="0.01"
+                                   min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sekcja mediów -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-photo-video"></i>
+                        Media
+                    </h3>
+                    
+                    <div class="form-group full-width">
+                        <label for="image">
+                            <i class="fas fa-image"></i>
+                            URL plakatu
+                        </label>
+                        <input type="url" 
+                               id="image" 
+                               name="image" 
+                               value="<?php echo isset($movie) ? htmlspecialchars($movie->getImageUrl()) : ''; ?>"
+                               placeholder="https://example.com/poster.jpg">
+                        <small class="form-hint">Podaj pełny URL do obrazka plakatu</small>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="trailer_url">
+                            <i class="fab fa-youtube"></i>
+                            URL zwiastuna (YouTube)
+                        </label>
+                        <input type="url" 
+                               id="trailer_url" 
+                               name="trailer_url" 
+                               value="<?php echo isset($movie) ? htmlspecialchars($movie->getTrailerUrl() ?? '') : ''; ?>"
+                               placeholder="https://www.youtube.com/watch?v=...">
+                    </div>
+                </div>
+
+                <!-- Sekcja szczegółów -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-list-alt"></i>
+                        Szczegóły produkcji
+                    </h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="production_country">
+                                <i class="fas fa-flag"></i>
+                                Kraj produkcji
+                            </label>
+                            <input type="text" 
+                                   id="production_country" 
+                                   name="production_country" 
+                                   value="<?php echo isset($movie) ? htmlspecialchars($movie->getProductionCountry()) : ''; ?>"
+                                   placeholder="np. USA, Polska">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="original_language">
+                                <i class="fas fa-language"></i>
+                                Język oryginalny
+                            </label>
+                            <select id="original_language" name="original_language">
+                                <option value="EN" <?php echo (isset($movie) && $movie->getOriginalLanguage() === 'EN') ? 'selected' : ''; ?>>Angielski</option>
+                                <option value="PL" <?php echo (isset($movie) && $movie->getOriginalLanguage() === 'PL') ? 'selected' : ''; ?>>Polski</option>
+                                <option value="DE" <?php echo (isset($movie) && $movie->getOriginalLanguage() === 'DE') ? 'selected' : ''; ?>>Niemiecki</option>
+                                <option value="FR" <?php echo (isset($movie) && $movie->getOriginalLanguage() === 'FR') ? 'selected' : ''; ?>>Francuski</option>
+                                <option value="ES" <?php echo (isset($movie) && $movie->getOriginalLanguage() === 'ES') ? 'selected' : ''; ?>>Hiszpański</option>
+                                <option value="IT" <?php echo (isset($movie) && $movie->getOriginalLanguage() === 'IT') ? 'selected' : ''; ?>>Włoski</option>
+                                <option value="JP" <?php echo (isset($movie) && $movie->getOriginalLanguage() === 'JP') ? 'selected' : ''; ?>>Japoński</option>
+                                <option value="KO" <?php echo (isset($movie) && $movie->getOriginalLanguage() === 'KO') ? 'selected' : ''; ?>>Koreański</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age_rating">
+                                <i class="fas fa-user-shield"></i>
+                                Kategoria wiekowa
+                            </label>
+                            <select id="age_rating" name="age_rating">
+                                <option value="" <?php echo (!isset($movie) || !$movie->getAgeRating()) ? 'selected' : ''; ?>>Wybierz...</option>
+                                <option value="G" <?php echo (isset($movie) && $movie->getAgeRating() === 'G') ? 'selected' : ''; ?>>G (Dla wszystkich)</option>
+                                <option value="PG" <?php echo (isset($movie) && $movie->getAgeRating() === 'PG') ? 'selected' : ''; ?>>PG (Kontrola rodzicielska)</option>
+                                <option value="PG-13" <?php echo (isset($movie) && $movie->getAgeRating() === 'PG-13') ? 'selected' : ''; ?>>PG-13 (Od 13 lat)</option>
+                                <option value="R" <?php echo (isset($movie) && $movie->getAgeRating() === 'R') ? 'selected' : ''; ?>>R (Od 17 lat)</option>
+                                <option value="NC-17" <?php echo (isset($movie) && $movie->getAgeRating() === 'NC-17') ? 'selected' : ''; ?>>NC-17 (Tylko dorośli)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-tags"></i>
+                                Gatunki
+                            </label>
+                            <div class="genres-checkboxes">
+                                <?php foreach ($genres as $genre): ?>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" 
+                                           name="genres[]" 
+                                           value="<?php echo $genre->getId(); ?>"
+                                           <?php echo in_array($genre->getId(), $selectedGenres ?? []) ? 'checked' : ''; ?>>
+                                    <span><?php echo htmlspecialchars($genre->getName()); ?></span>
+                                </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sekcja ocen -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-star"></i>
+                        Oceny (opcjonalne)
+                    </h3>
+                    
+                    <div class="form-row three-cols">
+                        <div class="form-group">
+                            <label for="imdb_rating">
+                                <i class="fab fa-imdb"></i>
+                                IMDb (0-10)
+                            </label>
+                            <input type="number" 
+                                   id="imdb_rating" 
+                                   name="imdb_rating" 
+                                   value="<?php echo isset($movie) && $movie->getImdbRating() ? $movie->getImdbRating() : ''; ?>"
+                                   placeholder="np. 8.5"
+                                   step="0.1"
+                                   min="0"
+                                   max="10">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="rotten_tomatoes_rating">
+                                <i class="fas fa-apple-alt"></i>
+                                Rotten Tomatoes (%)
+                            </label>
+                            <input type="number" 
+                                   id="rotten_tomatoes_rating" 
+                                   name="rotten_tomatoes_rating" 
+                                   value="<?php echo isset($movie) && $movie->getRottenTomatoesRating() ? $movie->getRottenTomatoesRating() : ''; ?>"
+                                   placeholder="np. 85"
+                                   min="0"
+                                   max="100">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="metacritic_rating">
+                                <i class="fas fa-chart-bar"></i>
+                                Metacritic (0-100)
+                            </label>
+                            <input type="number" 
+                                   id="metacritic_rating" 
+                                   name="metacritic_rating" 
+                                   value="<?php echo isset($movie) && $movie->getMetacriticRating() ? $movie->getMetacriticRating() : ''; ?>"
+                                   placeholder="np. 75"
+                                   min="0"
+                                   max="100">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Przyciski akcji -->
+                <div class="form-actions">
+                    <a href="/admin/movies" class="btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Anuluj
+                    </a>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-<?php echo isset($movie) ? 'save' : 'plus'; ?>"></i>
+                        <?php echo isset($movie) ? 'Zapisz zmiany' : 'Dodaj film'; ?>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Podgląd plakatu
+        document.getElementById('image').addEventListener('input', function() {
+            // Można dodać podgląd plakatu
+        });
+    </script>
+</body>
+</html>

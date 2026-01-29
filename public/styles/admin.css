@@ -939,3 +939,375 @@ nav {
         height: 32px;
     }
 }
+
+/* ==========================================
+   ADMIN TABS NAVIGATION - MOVIES & SHOWTIMES
+   ========================================== */
+
+.admin-tabs-nav {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    margin-top: 2rem;
+    margin-bottom: 0;
+}
+
+.admin-tabs-container {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.admin-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border-radius: 8px;
+    color: #888;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.admin-tab:hover {
+    color: #d4af37;
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.admin-tab.active {
+    background: linear-gradient(135deg, #d4af37 0%, #b8960c 100%);
+    color: #121212;
+    font-weight: 600;
+}
+
+.admin-tab i {
+    font-size: 1rem;
+}
+
+/* === MOVIE POSTER THUMBNAIL === */
+.movie-poster-thumb {
+    width: 50px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.poster-placeholder {
+    width: 50px;
+    height: 75px;
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    font-size: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.movie-title-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.movie-title-cell strong {
+    color: #fff;
+    font-weight: 600;
+}
+
+.original-title {
+    font-size: 0.8rem;
+    color: #888;
+    font-style: italic;
+}
+
+/* === DATE & RATING BADGES === */
+.date-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: #bbb;
+}
+
+.date-badge i {
+    color: #d4af37;
+    font-size: 0.75rem;
+}
+
+.rating-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    background: rgba(212, 175, 55, 0.15);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: #d4af37;
+    font-weight: 600;
+}
+
+.rating-badge i {
+    font-size: 0.75rem;
+}
+
+/* === DATETIME CELL FOR SHOWTIMES === */
+.datetime-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.datetime-display {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.datetime-display i {
+    color: #d4af37;
+    font-size: 0.8rem;
+}
+
+/* === STATUS BADGES === */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.status-badge.upcoming {
+    background: rgba(46, 204, 113, 0.15);
+    color: #2ecc71;
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.status-badge.past {
+    background: rgba(231, 76, 60, 0.15);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+/* === MOVIE INFO CELL FOR SHOWTIMES === */
+.movie-info-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.movie-mini-poster {
+    width: 40px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.movie-mini-poster.placeholder {
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    font-size: 1rem;
+}
+
+.cinema-info {
+    font-size: 0.8rem;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.25rem;
+}
+
+.cinema-info i {
+    color: #d4af37;
+    font-size: 0.7rem;
+}
+
+/* === TECHNOLOGY & LANGUAGE BADGES === */
+.tech-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.tech-badge.tech-2d {
+    background: rgba(52, 152, 219, 0.15);
+    color: #3498db;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.tech-badge.tech-3d {
+    background: rgba(155, 89, 182, 0.15);
+    color: #9b59b6;
+    border: 1px solid rgba(155, 89, 182, 0.3);
+}
+
+.tech-badge.tech-imax {
+    background: rgba(212, 175, 55, 0.15);
+    color: #d4af37;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.tech-badge.tech-4dx {
+    background: rgba(231, 76, 60, 0.15);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.lang-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: #bbb;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.lang-badge i {
+    font-size: 0.7rem;
+}
+
+/* === PRICE CELL === */
+.price-cell {
+    font-weight: 600;
+    color: #2ecc71;
+    font-size: 0.95rem;
+}
+
+/* === PAST SHOWTIME ROW === */
+.admin-table tr.past-showtime {
+    opacity: 0.6;
+}
+
+.admin-table tr.past-showtime:hover {
+    opacity: 0.8;
+}
+
+/* === GENRES CHECKBOXES === */
+.genres-checkboxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.checkbox-label:hover {
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #d4af37;
+    cursor: pointer;
+}
+
+.checkbox-label span {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+/* === THREE COLUMNS FORM LAYOUT === */
+.three-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+    .three-cols {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .three-cols {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* === ADMIN TABS RESPONSIVE === */
+@media (max-width: 768px) {
+    .admin-tabs-nav {
+        padding: 0 1rem;
+    }
+    
+    .admin-tabs-container {
+        flex-direction: column;
+        padding: 0.75rem;
+    }
+    
+    .admin-tab {
+        justify-content: center;
+        padding: 1rem;
+    }
+}
+
+/* === MOVIE/SHOWTIME TABLE RESPONSIVE === */
+@media (max-width: 1100px) {
+    .admin-table .poster-cell,
+    .admin-table .rating-cell {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .movie-info-cell {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .movie-mini-poster {
+        display: none;
+    }
+    
+    .tech-badge,
+    .lang-badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+}
+

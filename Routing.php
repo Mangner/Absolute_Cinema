@@ -76,7 +76,7 @@ class Routing {
             'controller' => "BookingController",
             'action' => 'processPayment'
         ],
-        // Admin routes
+        // Admin routes - Users
         'admin' => [
             'controller' => "AdminController",
             'action' => 'index'
@@ -92,6 +92,32 @@ class Routing {
         'admin/user/delete' => [
             'controller' => "AdminController",
             'action' => 'deleteUser'
+        ],
+        // Admin routes - Movies
+        'admin/movies' => [
+            'controller' => "AdminController",
+            'action' => 'movies'
+        ],
+        'admin/movie/add' => [
+            'controller' => "AdminController",
+            'action' => 'addMovie'
+        ],
+        'admin/movie/delete' => [
+            'controller' => "AdminController",
+            'action' => 'deleteMovie'
+        ],
+        // Admin routes - Showtimes
+        'admin/showtimes' => [
+            'controller' => "AdminController",
+            'action' => 'showtimes'
+        ],
+        'admin/showtime/add' => [
+            'controller' => "AdminController",
+            'action' => 'addShowtime'
+        ],
+        'admin/showtime/delete' => [
+            'controller' => "AdminController",
+            'action' => 'deleteShowtime'
         ]
     ];
 
@@ -170,6 +196,32 @@ class Routing {
 
             $userId = (int)$matches[1];
             $object->$action($userId);
+
+        } else if (preg_match('/^admin\/movie\/edit\/(\d+)$/', $url, $matches)) {
+            // Edycja filmu
+            $object = new AdminController;
+            $action = 'editMovie';
+
+            // Weryfikacja atrybutów przez Middleware
+            if (!MiddlewareHandler::handle($object, $action)) {
+                return;
+            }
+
+            $movieId = (int)$matches[1];
+            $object->$action($movieId);
+
+        } else if (preg_match('/^admin\/showtime\/edit\/(\d+)$/', $url, $matches)) {
+            // Edycja seansu
+            $object = new AdminController;
+            $action = 'editShowtime';
+
+            // Weryfikacja atrybutów przez Middleware
+            if (!MiddlewareHandler::handle($object, $action)) {
+                return;
+            }
+
+            $showtimeId = (int)$matches[1];
+            $object->$action($showtimeId);
 
         } else {
             http_response_code(404);
