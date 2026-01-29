@@ -519,8 +519,129 @@ input[type="radio"] { display: none; }
     background-color: #e0e0e0;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
+/* =========================================
+   RESPONSYWNOŚĆ (RWD)
+   ========================================= */
+
+/* Tablety */
+@media (max-width: 1024px) {
+    .navigation-bar {
+        padding: 0 20px;
+    }
+
+    #search-bar {
+        width: 150px;
+    }
+
+    .carousel-container {
+        padding: 0 30px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    /* --- Nawigacja Mobile --- */
+    .navigation-bar {
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .nav-brand {
+        order: 1;
+    }
+
+    .nav-center {
+        order: 3;
+        width: 100%;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-container {
+        width: 100%;
+        padding: 12px 15px;
+    }
+
+    #search-bar {
+        width: 100%;
+    }
+
+    .cinema-selector {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .nav-actions {
+        order: 2;
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .user-profile-btn {
+        padding: 8px 15px;
+    }
+
+    .user-profile-btn span {
+        display: none;
+    }
+
+    .nav-link {
+        font-size: 0.85rem;
+    }
+
+    /* --- Sekcja Ofert --- */
+    .offer-section {
+        padding: 1em;
+    }
+
+    .cinema-offer-bar {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .cinema-offer-bar label {
+        padding: 10px 15px;
+        font-size: 0.95rem;
+        flex: 1;
+        text-align: center;
+        min-width: 100px;
+    }
+
+    /* --- Karuzela Mobile --- */
+    .carousel-container {
+        padding: 0 10px;
+    }
+
+    .carousel-btn {
+        font-size: 2rem;
+        position: relative;
+        left: auto !important;
+        right: auto !important;
+    }
+
+    .carousel-track {
+        gap: 15px;
+        padding: 15px 0;
+    }
+
+    .card {
+        min-width: 200px;
+    }
+
+    .card-image {
+        height: 280px;
+    }
+
+    .card h3 {
+        font-size: 0.9rem;
+        height: 35px;
+    }
+
+    /* --- Modal --- */
     .modal-content {
         width: 95%;
         margin: 20px;
@@ -528,5 +649,43 @@ input[type="radio"] { display: none; }
     
     .form-actions {
         flex-direction: column;
+    }
+}
+
+/* Małe telefony */
+@media (max-width: 480px) {
+    .navigation-bar {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .nav-brand {
+        font-size: 1rem;
+    }
+
+    .nav-brand img {
+        height: 30px;
+    }
+
+    .user-profile-btn {
+        padding: 8px 12px;
+        border-radius: 50%;
+    }
+
+    .logout-link span {
+        display: none;
+    }
+
+    .card {
+        min-width: 160px;
+    }
+
+    .card-image {
+        height: 220px;
+    }
+
+    .btn-gold {
+        padding: 8px;
+        font-size: 0.85rem;
     }
 }

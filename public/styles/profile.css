@@ -960,7 +960,265 @@ body {
     font-size: 1rem;
 }
 
-/* Responsywność dla modala QR */
+/* =========================================
+   RESPONSYWNOŚĆ (RWD)
+   ========================================= */
+
+/* Tablety */
+@media (max-width: 1024px) {
+    .profile-container {
+        padding: 30px 15px;
+    }
+
+    .profile-header {
+        padding: 25px;
+    }
+
+    .profile-stats {
+        gap: 15px;
+    }
+
+    .stat-card {
+        padding: 15px 20px;
+        min-width: 100px;
+    }
+}
+
+/* Mobile - 768px */
+@media (max-width: 768px) {
+    /* --- Nawigacja Mobile --- */
+    .navigation-bar {
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .nav-brand {
+        order: 1;
+    }
+
+    .nav-center {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .breadcrumb {
+        font-size: 0.85rem;
+    }
+
+    .nav-actions {
+        order: 2;
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .user-profile-btn {
+        padding: 8px 15px;
+    }
+
+    .user-profile-btn span {
+        display: none;
+    }
+
+    /* --- Nagłówek profilu --- */
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+        padding: 25px 20px;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-avatar i {
+        font-size: 50px;
+    }
+
+    .profile-info h1 {
+        font-size: 1.6rem;
+    }
+
+    .profile-stats {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .stat-card {
+        min-width: 120px;
+        padding: 15px;
+    }
+
+    .stat-value {
+        font-size: 1.3rem;
+    }
+
+    /* --- Zakładki Admin --- */
+    .admin-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 5px;
+        padding-bottom: 10px;
+    }
+
+    .tab-btn {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .tab-btn i {
+        font-size: 1rem;
+    }
+
+    /* --- Bilety --- */
+    .tickets-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .ticket-card {
+        min-width: auto;
+    }
+
+    /* --- Sekcje --- */
+    .section-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .empty-state {
+        padding: 40px 15px;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.3rem;
+    }
+
+    /* --- Przyciski --- */
+    .btn-primary {
+        padding: 10px 25px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Małe telefony - 480px */
+@media (max-width: 480px) {
+    .navigation-bar {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .nav-brand {
+        font-size: 1rem;
+    }
+
+    .nav-brand img {
+        height: 30px;
+    }
+
+    .user-profile-btn {
+        padding: 8px 12px;
+        border-radius: 50%;
+    }
+
+    .logout-link span {
+        display: none;
+    }
+
+    .profile-container {
+        padding: 20px 10px;
+    }
+
+    .profile-header {
+        padding: 20px 15px;
+        border-radius: 12px;
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+    }
+
+    .profile-avatar i {
+        font-size: 40px;
+    }
+
+    .profile-info h1 {
+        font-size: 1.4rem;
+    }
+
+    .profile-email,
+    .profile-member-since {
+        font-size: 0.85rem;
+    }
+
+    .stat-card {
+        min-width: 100px;
+        padding: 12px;
+    }
+
+    .stat-value {
+        font-size: 1.1rem;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+    }
+
+    /* --- Zakładki --- */
+    .admin-tabs {
+        margin-bottom: 20px;
+    }
+
+    .tab-btn {
+        padding: 10px 15px;
+        font-size: 0.8rem;
+        gap: 6px;
+    }
+
+    /* --- Bilety na małych ekranach --- */
+    .ticket-card {
+        border-radius: 12px;
+    }
+
+    .ticket-header {
+        padding: 15px;
+    }
+
+    .ticket-movie-title {
+        font-size: 1rem;
+    }
+
+    .ticket-body {
+        padding: 15px;
+    }
+
+    .ticket-info-item {
+        font-size: 0.85rem;
+    }
+
+    .ticket-footer {
+        padding: 10px 15px;
+    }
+
+    .ticket-id {
+        font-size: 0.7rem;
+    }
+}
+
+/* Modal QR - responsywność */
 @media (max-width: 600px) {
     .qr-modal-content {
         padding: 30px 20px;

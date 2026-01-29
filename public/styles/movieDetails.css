@@ -611,6 +611,150 @@ body {
   }
 }
 
+/* Mobile - 768px */
+@media (max-width: 768px) {
+  /* --- Nawigacja Mobile --- */
+  .navigation-bar {
+    flex-direction: column;
+    height: auto;
+    padding: 15px;
+    gap: 15px;
+  }
+
+  .nav-brand {
+    order: 1;
+  }
+
+  .nav-center {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cinema-location {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .btn-cinema-choice {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+
+  .nav-actions {
+    order: 2;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .user-profile-btn {
+    padding: 8px 15px;
+  }
+
+  .user-profile-btn span {
+    display: none;
+  }
+
+  /* --- Hero Section --- */
+  .movie-hero {
+    min-height: auto;
+    padding: 30px 15px;
+  }
+
+  .movie-title {
+    font-size: 1.8rem;
+  }
+
+  .movie-description {
+    font-size: 0.95rem;
+  }
+
+  /* --- Przyciski akcji --- */
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* --- Kalendarz seansów --- */
+  .week-navigation {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .week-days {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+    padding-bottom: 10px;
+  }
+
+  .day-btn {
+    min-width: 70px;
+    padding: 10px 6px;
+    flex-shrink: 0;
+  }
+
+  .day-btn .day-name {
+    font-size: 0.65rem;
+  }
+
+  .day-btn .day-date {
+    font-size: 0.9rem;
+  }
+
+  /* --- Godziny seansów --- */
+  .showtime-buttons-container {
+    gap: 8px;
+  }
+
+  .showtime-btn {
+    padding: 8px 14px;
+    min-width: 70px;
+  }
+
+  .showtime-btn .time {
+    font-size: 1rem;
+  }
+
+  /* --- Sekcja szczegółów --- */
+  .details-container {
+    margin: 30px auto;
+    padding: 0 15px;
+  }
+
+  .info-section {
+    padding: 20px;
+  }
+
+  .info-table .label {
+    width: 120px;
+    font-size: 0.85rem;
+  }
+
+  .info-table .value {
+    font-size: 0.85rem;
+  }
+
+  /* --- Modal zwiastuna --- */
+  .trailer-modal-close {
+    top: -40px;
+    font-size: 30px;
+  }
+
+  .trailer-modal-content {
+    width: 95%;
+  }
+}
+
 @media (max-width: 600px) {
   .movie-poster img {
     width: 250px;
@@ -628,6 +772,78 @@ body {
 
   .movie-meta {
     justify-content: center;
+  }
+}
+
+/* Małe telefony - 480px */
+@media (max-width: 480px) {
+  .navigation-bar {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .nav-brand {
+    font-size: 1rem;
+  }
+
+  .nav-brand img {
+    height: 30px;
+  }
+
+  .user-profile-btn {
+    padding: 8px 12px;
+    border-radius: 50%;
+  }
+
+  .logout-link span {
+    display: none;
+  }
+
+  .movie-hero {
+    padding: 20px 10px;
+  }
+
+  .movie-title {
+    font-size: 1.5rem;
+  }
+
+  .movie-poster img {
+    width: 200px;
+    height: 300px;
+  }
+
+  .movie-meta {
+    gap: 10px;
+  }
+
+  .meta-item {
+    font-size: 0.85rem;
+  }
+
+  .genre-tag {
+    padding: 4px 10px;
+    font-size: 0.8rem;
+  }
+
+  .day-btn {
+    min-width: 60px;
+    padding: 8px 5px;
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+  }
+
+  /* Info table - blokowy układ na bardzo małych ekranach */
+  .info-table tr {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 0;
+  }
+
+  .info-table .label {
+    width: 100%;
+    margin-bottom: 5px;
   }
 }
 

@@ -358,7 +358,161 @@ h1 {
 
 @media (max-width: 768px) {
     h1 { font-size: 32px; }
-    .navigation-bar { flex-wrap: wrap; gap: 1rem; padding: 1rem; }
-    .brand { margin-right: 0; }
-    .cinema-location { order: -1; width: 100%; justify-content: center; }
+    
+    /* --- Nawigacja Mobile --- */
+    .navigation-bar {
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .nav-brand {
+        order: 1;
+    }
+
+    .nav-center {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .cinema-location {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .nav-actions {
+        order: 2;
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .user-profile-btn {
+        padding: 8px 15px;
+    }
+
+    .user-profile-btn span {
+        display: none;
+    }
+
+    /* --- Kontener --- */
+    .container {
+        padding: 15px;
+    }
+
+    /* --- Sala kinowa - poziome przewijanie --- */
+    .cinema-grid {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 20px;
+        margin: 0 -15px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    /* Zachowaj minimalny rozmiar foteli */
+    .seat {
+        min-width: 35px;
+        min-height: 35px;
+        font-size: 10px;
+    }
+
+    /* --- Ekran --- */
+    .screen {
+        max-width: 90%;
+    }
+
+    .screen-text {
+        font-size: 14px;
+    }
+
+    /* --- Legenda --- */
+    .legend {
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .legend-item {
+        gap: 8px;
+    }
+
+    .legend-box {
+        width: 24px;
+        height: 24px;
+    }
+
+    .legend-text {
+        font-size: 13px;
+    }
+
+    /* --- Podsumowanie --- */
+    .summary {
+        padding: 20px;
+    }
+
+    .summary-title {
+        font-size: 18px;
+    }
+
+    .summary-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .checkout-btn {
+        float: none;
+        width: 100%;
+        margin-top: 20px;
+        padding: 14px;
+    }
+
+    /* --- Informacje o filmie --- */
+    .movie-info {
+        margin-bottom: 40px;
+    }
+}
+
+/* Małe telefony */
+@media (max-width: 480px) {
+    h1 { 
+        font-size: 24px; 
+    }
+
+    .navigation-bar {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .nav-brand {
+        font-size: 1rem;
+    }
+
+    .nav-brand img {
+        height: 30px;
+    }
+
+    .user-profile-btn {
+        padding: 8px 12px;
+        border-radius: 50%;
+    }
+
+    .logout-link span {
+        display: none;
+    }
+
+    /* Jeszcze mniejsze fotele ale wciąż czytelne */
+    .seat {
+        min-width: 30px;
+        min-height: 30px;
+        font-size: 9px;
+    }
+
+    .legend {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
 }

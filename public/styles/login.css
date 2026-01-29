@@ -1,9 +1,33 @@
+/* =========================================
+   AUTH STYLES - Dark & Gold Theme
+   ========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body, html {
     height: 100%;
-    margin: 0;
-    font-family: Arial, sans-serif; 
-    background-color: #2c2c31; 
+    font-family: 'Arial', sans-serif; 
+    background-color: #121212;
     color: #ffffff;
+}
+
+/* Opcjonalne tło z gradientem lub subtelnym obrazem */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(ellipse at top left, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+        #121212;
+    z-index: -1;
 }
 
 .login-container {
@@ -15,140 +39,187 @@ body, html {
 }
 
 .login-box {
-    background-color: #322D3E; 
-    border-radius: 24px;      
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 16px;      
     padding: 40px;
     width: 100%;
     max-width: 450px;       
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+    transition: border-color 0.3s ease;
 }
 
-/* --- Zastąp starą klasę .logo tym kodem: --- */
+.login-box:hover {
+    border-color: rgba(212, 175, 55, 0.3);
+}
 
+/* --- Logo i Branding --- */
 .brand-header {
     display: flex;
-    align-items: center;       /* Wyrównanie w pionie do środka */
-    justify-content: center;   /* Wyśrodkowanie całości w kontenerze */
-    margin-bottom: 30px;       /* Odstęp od tabów (Zaloguj/Zarejestruj) */
-    gap: 15px;                 /* Odstęp między ikoną a napisem */
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    gap: 15px;
 }
 
 .brand-header img {
-    width: 50px;               /* Zmniejszona szerokość ikony (dostosuj wg uznania) */
-    height: auto;              /* Zachowanie proporcji */
+    width: 50px;
+    height: auto;
     display: block;
 }
 
 .brand-header span {
-    font-size: 1.5rem;         /* Wielkość tekstu "Absolute Cinema" */
-    font-weight: bold;         /* Pogrubienie */
-    color: #ffffff;            /* Biały kolor */
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
     line-height: 1.2;
 }
 
+/* --- Zakładki Auth (Login/Register) --- */
 .auth-tabs {
     display: flex;
     margin-bottom: 30px;
+    border-bottom: 1px solid #333;
 }
 
 .auth-tabs a {
-    color: #aaa;
+    color: #888;
     text-decoration: none;
-    padding-bottom: 10px;
-    margin-right: 20px;
-    font-size: 1.2rem;
+    padding: 15px 0;
+    margin-right: 30px;
+    font-size: 1.1rem;
     font-weight: bold;
     flex-grow: 1;
     text-align: center;
-    transition: color 0.3s ease, border-color 0.3s ease; /* Dodano animację */
+    border-bottom: 3px solid transparent;
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.auth-tabs a:hover {
+    color: #d4af37;
 }
 
 .auth-tabs a.active {
     color: #ffffff;
-    border-bottom: 3px solid #5C11EF; 
+    border-bottom-color: #d4af37;
 }
 
+/* --- Grupy Inputów --- */
 .input-group {
     margin-bottom: 20px;
-    position: relative; /* Ważne dla pozycjonowania elementów */
+    position: relative;
 }
 
 .input-group label {
     display: block;
     margin-bottom: 8px;
     font-size: 0.9rem;
-    color: #ffffff;
+    color: #888;
+    font-weight: 600;
 }
 
 .input-group input {
     width: 100%; 
-    padding: 15px;
-    background-color: #221933; 
-    border: 1px solid #444;
+    padding: 15px 18px;
+    background-color: #121212;
+    border: 1px solid #333;
     border-radius: 8px;
-    color: #8E7FAE;
+    color: #ffffff;
     font-size: 1rem;
     box-sizing: border-box; 
-    transition: border-color 0.3s ease, background-color 0.3s ease; /* Płynna zmiana koloru */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group input::placeholder {
+    color: #555;
 }
 
 .input-group input:focus {
     outline: none;
-    border-color: #5C11EF; /* Fioletowy akcent przy pisaniu */
+    border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
 
+/* --- Link "Zapomniałeś hasła" --- */
 .forgot-password {
     display: block; 
-    text-align: left; 
-    font-size: 0.9rem; 
-    color: #8E7FAE; 
+    text-align: right; 
+    font-size: 0.85rem; 
+    color: #888; 
     text-decoration: none; 
-    margin-top: -10px; /* Lekka korekta odstępu */
-    margin-bottom: 20px;
+    margin-top: -10px;
+    margin-bottom: 25px;
+    transition: color 0.3s ease;
 }
 
+.forgot-password:hover {
+    color: #d4af37;
+}
+
+/* --- Przycisk Submit (Gold Gradient) --- */
 .btn-submit {
     width: 100%;
-    padding: 15px;
+    padding: 16px;
     border: none;
     border-radius: 8px;
-    background-color: #5B13EC; 
-    color: #ffffff;
+    background: linear-gradient(135deg, #d4af37 0%, #f0c43f 100%);
+    color: #000;
     font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
     margin-top: 10px;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
 }
 
 .btn-submit:hover {
-    background-color: #4a0ec0;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(212, 175, 55, 0.5);
 }
 
+.btn-submit:active {
+    transform: translateY(0);
+}
+
+/* --- Wiadomości (błędy/sukces) --- */
 .message {
-    color: #ff4444; /* Zmieniono na czerwień, bo to zazwyczaj błąd serwera */
+    color: #ff6b6b;
     text-align: center;
-    margin-top: 15px;
+    margin-top: 20px;
+    padding: 12px;
+    background-color: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.message.success {
+    color: #51cf66;
+    background-color: rgba(81, 207, 102, 0.1);
+    border-color: rgba(81, 207, 102, 0.3);
 }
 
 /* =========================================
-   SEKCJA WALIDACJI (Nowe style)
+   SEKCJA WALIDACJI
    ========================================= */
 
 /* Styl dla inputa, który ma błąd */
 .input-group input.no-valid {
-    border: 1px solid #ff4444; /* Czerwona ramka */
-    background-color: rgba(255, 68, 68, 0.1); /* Ciemne, półprzezroczyste czerwone tło */
-    color: #ffcccc; /* Jasny czerwony tekst */
+    border-color: #ff6b6b;
+    background-color: rgba(255, 107, 107, 0.05);
+}
+
+.input-group input.no-valid:focus {
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
 }
 
 /* Tekst komunikatu błędu pod inputem */
 .error-text {
     display: block;
     font-size: 0.8rem;
-    color: #ff4444;
-    margin-top: 5px;
-    min-height: 18px; /* Rezerwuje miejsce, żeby formularz nie skakał */
+    color: #ff6b6b;
+    margin-top: 6px;
+    min-height: 18px;
     opacity: 0;
     transform: translateY(-5px);
     transition: all 0.3s ease;
@@ -158,4 +229,47 @@ body, html {
 .error-text.active {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* =========================================
+   RESPONSYWNOŚĆ (Mobile)
+   ========================================= */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 15px;
+    }
+
+    .login-box {
+        padding: 30px 20px;
+        border-radius: 12px;
+    }
+
+    .brand-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .brand-header img {
+        width: 60px;
+    }
+
+    .brand-header span {
+        font-size: 1.3rem;
+    }
+
+    .auth-tabs a {
+        font-size: 1rem;
+        padding: 12px 0;
+        margin-right: 15px;
+    }
+
+    .input-group input {
+        padding: 14px 15px;
+        font-size: 16px; /* Zapobiega zoomowi na iOS */
+    }
+
+    .btn-submit {
+        padding: 14px;
+        font-size: 1rem;
+    }
 }
