@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mój Profil - Absolute Cinema</title>
+    <link rel="stylesheet" href="/public/styles/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav>
+        <div class="navigation-bar">
+            <!-- LEWA STRONA: Logo -->
+            <a href="/dashboard" class="nav-brand">
+                <img src="/public/images/logo-absolute-cinema.png" alt="Logo" />
+                <span>Absolute Cinema</span>
+            </a>
+
+            <!-- ŚRODEK: Puste lub breadcrumb -->
+            <div class="nav-center">
+                <div class="breadcrumb">
+                    <a href="/dashboard">Start</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Mój Profil</span>
+                </div>
+            </div>
+
+            <!-- PRAWA STRONA: Kontakt, Profil, Wyloguj -->
+            <div class="nav-actions">
+                <a href="#kontakt" class="nav-link">Kontakt</a>
+                <a href="/profile" class="user-profile-btn active">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Mój profil</span>
+                </a>
+                <a href="/logout" class="logout-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Wyloguj</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="profile-container">
+        <?php if ($isAdmin): ?>
+        <!-- ZAKŁADKI DLA ADMINA -->
+        <div class="admin-tabs">
+            <button class="tab-btn active" data-tab="profile-tab">
+                <i class="fas fa-user"></i>
+                Profil Użytkownika
+            </button>
+            <button class="tab-btn" data-tab="admin-tab">
+                <i class="fas fa-cog"></i>
+                Panel Admina
+            </button>
+        </div>
+        <?php endif; ?>
+
+        <!-- SEKCJA PROFILU -->
+        <div id="profile-tab" class="tab-content active">
+            <!-- Nagłówek profilu -->
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="profile-info">
+                    <h1><?php echo htmlspecialchars($user['name'] . ' ' . $user['surname']); ?></h1>
+                    <p class="profile-email">
+                        <i class="fas fa-envelope"></i>
+                        <?php echo htmlspecialchars($user['email']); ?>
+                    </p>
+                    <p class="profile-member-since">
+                        <i class="fas fa-calendar-alt"></i>
+                        Członek od: <?php echo date('d.m.Y', strtotime($user['created_at'])); ?>
+                    </p>
+                    <?php if ($isAdmin): ?>
+                    <span class="role-badge admin">
+                        <i class="fas fa-shield-alt"></i> Administrator
+                    </span>
+                    <?php else: ?>
+                    <span class="role-badge user">
+                        <i class="fas fa-user"></i> Użytkownik
+                    </span>
+                    <?php endif; ?>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-ticket-alt"></i>
+                        </div>
+                        <div class="stat-value"><?php echo $stats['total_tickets']; ?></div>
+                        <div class="stat-label">Biletów</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="stat-value"><?php echo number_format($stats['total_spent'], 2); ?> zł</div>
+                        <div class="stat-label">Wydano</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sekcja biletów -->
+            <section class="tickets-section">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-ticket-alt"></i>
+                        Moje Bilety
+                    </h2>
+                </div>
+
+                <?php if (empty($tickets)): ?>
+                <div class="empty-state">
+                    <i class="fas fa-film"></i>
+                    <h3>Brak biletów</h3>
+                    <p>Nie masz jeszcze żadnych zakupionych biletów.</p>
+                    <a href="/dashboard" class="btn-primary">
+                        <i class="fas fa-search"></i>
+                        Przeglądaj filmy
+                    </a>
+                </div>
+                <?php else: ?>
+                <div class="tickets-grid">
+                    <?php foreach ($tickets as $ticket): ?>
+                    <div class="ticket-card">
+                        <div class="ticket-left">
+                            <div class="ticket-movie-poster">
+                                <?php if ($ticket['movie_image']): ?>
+                                <img src="<?php echo htmlspecialchars($ticket['movie_image']); ?>" alt="<?php echo htmlspecialchars($ticket['movie_title']); ?>">
+                                <?php else: ?>
+                                <div class="poster-placeholder">
+                                    <i class="fas fa-film"></i>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="ticket-center">
+                            <div class="ticket-header">
+                                <h3 class="ticket-movie-title"><?php echo htmlspecialchars($ticket['movie_title']); ?></h3>
+                                <span class="ticket-technology"><?php echo htmlspecialchars($ticket['technology']); ?></span>
+                            </div>
+                            <div class="ticket-details">
+                                <div class="ticket-detail">
+                                    <i class="fas fa-calendar"></i>
+                                    <span><?php echo date('d.m.Y', strtotime($ticket['start_time'])); ?></span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <i class="fas fa-clock"></i>
+                                    <span><?php echo date('H:i', strtotime($ticket['start_time'])); ?></span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span><?php echo htmlspecialchars($ticket['cinema_name']); ?></span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <i class="fas fa-door-open"></i>
+                                    <span><?php echo htmlspecialchars($ticket['hall_name']); ?> (<?php echo htmlspecialchars($ticket['hall_type']); ?>)</span>
+                                </div>
+                            </div>
+                            <div class="ticket-seat">
+                                <span class="seat-label">Miejsce:</span>
+                                <span class="seat-value">Rząd <?php echo htmlspecialchars($ticket['row_label']); ?>, Miejsce <?php echo $ticket['seat_number']; ?></span>
+                            </div>
+                        </div>
+                        <div class="ticket-right">
+                            <div class="ticket-price">
+                                <span class="price-value"><?php echo number_format($ticket['ticket_price'], 2); ?></span>
+                                <span class="price-currency">PLN</span>
+                            </div>
+                            <div class="ticket-barcode">
+                                <div class="barcode-lines">
+                                    <?php for ($i = 0; $i < 20; $i++): ?>
+                                    <div class="barcode-line" style="width: <?php echo rand(2, 4); ?>px;"></div>
+                                    <?php endfor; ?>
+                                </div>
+                                <span class="ticket-token"><?php echo substr($ticket['ticket_token'], 0, 12); ?>...</span>
+                            </div>
+                            <?php 
+                            $showtimeDate = new DateTime($ticket['start_time']);
+                            $now = new DateTime();
+                            $isPast = $showtimeDate < $now;
+                            ?>
+                            <span class="ticket-status <?php echo $isPast ? 'past' : 'upcoming'; ?>">
+                                <?php echo $isPast ? 'Zakończony' : 'Nadchodzący'; ?>
+                            </span>
+                        </div>
+                        <div class="ticket-perforations">
+                            <div class="perforation"></div>
+                            <div class="perforation"></div>
+                            <div class="perforation"></div>
+                            <div class="perforation"></div>
+                            <div class="perforation"></div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+            </section>
+
+            <!-- Sekcja danych użytkownika -->
+            <section class="user-data-section">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-id-card"></i>
+                        Moje Dane
+                    </h2>
+                </div>
+                <div class="user-data-card">
+                    <div class="data-row">
+                        <span class="data-label">Imię</span>
+                        <span class="data-value"><?php echo htmlspecialchars($user['name']); ?></span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Nazwisko</span>
+                        <span class="data-value"><?php echo htmlspecialchars($user['surname']); ?></span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Email</span>
+                        <span class="data-value"><?php echo htmlspecialchars($user['email']); ?></span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Rola</span>
+                        <span class="data-value"><?php echo ucfirst($user['role']); ?></span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <?php if ($isAdmin): ?>
+        <!-- PANEL ADMINA (Placeholder) -->
+        <div id="admin-tab" class="tab-content">
+            <div class="admin-panel-placeholder">
+                <div class="placeholder-icon">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <h2>Panel Administratora</h2>
+                <p>Ta sekcja jest w trakcie budowy.</p>
+                <div class="admin-quick-actions">
+                    <div class="admin-action-card">
+                        <i class="fas fa-film"></i>
+                        <span>Zarządzaj filmami</span>
+                    </div>
+                    <div class="admin-action-card">
+                        <i class="fas fa-users"></i>
+                        <span>Zarządzaj użytkownikami</span>
+                    </div>
+                    <div class="admin-action-card">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Zarządzaj seansami</span>
+                    </div>
+                    <div class="admin-action-card">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Statystyki</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+    </main>
+
+    <script>
+        // Obsługa zakładek dla admina
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Usuń aktywną klasę ze wszystkich przycisków
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                // Dodaj aktywną klasę do klikniętego
+                btn.classList.add('active');
+
+                // Ukryj wszystkie zakładki
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                // Pokaż wybraną zakładkę
+                const tabId = btn.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

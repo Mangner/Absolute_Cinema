@@ -16,28 +16,42 @@
   <body>
     <nav>
       <div class="navigation-bar">
-        <div class="brand">
+        <!-- LEWA STRONA: Logo -->
+        <a href="/dashboard" class="nav-brand">
           <img src="/public/images/logo-absolute-cinema.png" alt="Logo" />
-          Absolute Cinema
-        </div>
-        <div>
+          <span>Absolute Cinema</span>
+        </a>
+
+        <!-- ŚRODEK: Wyszukiwarka i wybór kina -->
+        <div class="nav-center">
+          <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input id="search-bar" type="text" placeholder="Szukaj filmów..." />
+          </div>
+          <div class="cinema-selector">
+            <i class="fas fa-map-marker-alt"></i>
             <?php if (isset($_SESSION['selected_cinema_id'])): ?>
-                    <label><?php echo htmlspecialchars($_SESSION['selected_cinema_name']); ?></label>
+              <span><?php echo htmlspecialchars($_SESSION['selected_cinema_name']); ?></span>
             <?php else: ?>
-                    <label>Lokalizacja</label>
+              <span>Wybierz lokalizację</span>
             <?php endif; ?>
+            <button id="cinema-choice-btn" class="btn-cinema-choice">
+              <i class="fas fa-chevron-down"></i>
+            </button>
+          </div>
         </div>
-        <div>
-            <button id="cinema-choice-btn">Wybierz Kino</button>
-        </div>
-        <div>
-          <a href="/logout" style="color: inherit; text-decoration: none"
-            >Wyloguj</a
-          >
-        </div>
-        <div>Kontakt</div>
-        <div class="search-container">
-          <input id="search-bar" type="text" placeholder="🔎 Szukaj" />
+
+        <!-- PRAWA STRONA: Kontakt, Profil, Wyloguj -->
+        <div class="nav-actions">
+          <a href="#kontakt" class="nav-link">Kontakt</a>
+          <a href="/profile" class="user-profile-btn">
+            <i class="fas fa-user-circle"></i>
+            <span>Mój profil</span>
+          </a>
+          <a href="/logout" class="logout-link">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Wyloguj</span>
+          </a>
         </div>
       </div>
     </nav>

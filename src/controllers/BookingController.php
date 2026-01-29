@@ -24,14 +24,12 @@ class BookingController extends AppController {
 
 
     public function checkout() {
+        $this->requireLogin();
+        
         if (!$this->isPost()) {
             return $this->render('booking', ['messages' => ['Błąd przesyłania danych']]);
         }
 
-        $movieId = $_POST['movie_id'];
-        $showtimeId = $_POST['showtime_id'];
-        $seatIdsString = $_POST['selected_seats']; 
-        
         $movieId = $_POST['movie_id'] ?? null;
         $showtimeId = $_POST['showtime_id'] ?? null;
         $seatIdsString = $_POST['selected_seats'] ?? ''; 
@@ -41,16 +39,19 @@ class BookingController extends AppController {
             return;
         }
 
+        // Pobierz user_id z sesji (NIE zahardkodowane!)
+        $userId = (int) $_SESSION['user_id'];
+
         $seatIds = explode(',', $seatIdsString);
         try {
-            $bookingResult = $this->bookingRepository->createBooking($userId = 1, $showtimeId, $seatIds); 
+            $bookingResult = $this->bookingRepository->createBooking($userId, $showtimeId, $seatIds); 
             return $this->render('payment', [
                 'booking_id' => $bookingResult['booking_id'],
                 'price' => $bookingResult['total_price']
             ]);
 
         } catch (Exception $e) {
-            echo "Problem";
+            echo "Problem: " . $e->getMessage();
         }
     }
 

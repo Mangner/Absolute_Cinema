@@ -3,6 +3,7 @@ require_once 'src/controllers/SecurityController.php';
 require_once 'src/controllers/DashboardController.php';
 require_once 'src/controllers/MovieController.php';
 require_once 'src/controllers/BookingController.php';
+require_once 'src/controllers/ProfileController.php';
 
 class Routing {
 
@@ -21,6 +22,10 @@ class Routing {
         ],
         'dashboard' => [
             'controller' => "DashboardController",
+            'action' => 'index'
+        ],
+        'profile' => [
+            'controller' => "ProfileController",
             'action' => 'index'
         ],
         'search-movies' => [

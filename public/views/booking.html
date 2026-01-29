@@ -10,25 +10,38 @@
 </head>
 <body>
     <nav>
-        <div class="navigation-bar">
-            <a href="/dashboard" class="brand">
-                <img src="/public/images/logo-absolute-cinema.png" alt="Logo" />
-                Absolute Cinema
-            </a>
-            <div class="cinema-location">
-                <i class="fas fa-map-marker-alt"></i>
-                <?php if (isset($_SESSION['selected_cinema_id'])): ?>
-                    <span><?php echo htmlspecialchars($_SESSION['selected_cinema_name']); ?></span>
-                <?php else: ?>
-                    <span>Brak wybranego kina</span>
-                <?php endif; ?>
-            </div>
-            <div class="nav-spacer"></div>
-            <div>
-                <a href="/logout" style="color: inherit; text-decoration: none">Wyloguj</a>
-            </div>
-            <div>Kontakt</div>
+      <div class="navigation-bar">
+        <!-- LEWA STRONA: Logo -->
+        <a href="/dashboard" class="nav-brand">
+          <img src="/public/images/logo-absolute-cinema.png" alt="Logo" />
+          <span>Absolute Cinema</span>
+        </a>
+
+        <!-- ŚRODEK: Lokalizacja kina -->
+        <div class="nav-center">
+          <div class="cinema-location">
+            <i class="fas fa-map-marker-alt"></i>
+            <?php if (isset($_SESSION['selected_cinema_id'])): ?>
+              <span><?php echo htmlspecialchars($_SESSION['selected_cinema_name']); ?></span>
+            <?php else: ?>
+              <span>Brak wybranego kina</span>
+            <?php endif; ?>
+          </div>
         </div>
+
+        <!-- PRAWA STRONA: Kontakt, Profil, Wyloguj -->
+        <div class="nav-actions">
+          <a href="#kontakt" class="nav-link">Kontakt</a>
+          <a href="/profile" class="user-profile-btn">
+            <i class="fas fa-user-circle"></i>
+            <span>Mój profil</span>
+          </a>
+          <a href="/logout" class="logout-link">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Wyloguj</span>
+          </a>
+        </div>
+      </div>
     </nav>
 
     <div class="container">
