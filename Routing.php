@@ -7,7 +7,9 @@ require_once 'src/controllers/ProfileController.php';
 
 class Routing {
 
-    public static $routes = [
+    private static ?Routing $instance = null;
+
+    private array $routes = [
         'login' => [
             'controller' => "SecurityController",
             'action' => 'login'
@@ -74,23 +76,37 @@ class Routing {
         ]
     ];
 
-    // REGEX NA ROUTINGU ZEBY POBRAC ID
-    // DI - SIGNGLETON
-    // Sesja Uzytkownika
-    // Security Bingo
+    
+    private function __construct() {}
 
-    public static function run($url) {
+  
+    private function __clone() {}
+
+   
+    public function __wakeup() {
+        throw new \Exception("Cannot unserialize singleton");
+    }
+
+   
+    public static function getInstance(): Routing {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    public function run(string $url): void {
         
-        if (array_key_exists($url, self::$routes)) {
-            $controller = self::$routes[$url]['controller']; 
-            $action = self::$routes[$url]['action'];
+        if (array_key_exists($url, $this->routes)) {
+            $controller = $this->routes[$url]['controller']; 
+            $action = $this->routes[$url]['action'];
             $object = new $controller;
             $object->$action();
 
         } else if (preg_match('/^movie\/(\d+)$/', $url, $matches)) {
             
-            $controller = self::$routes['movie']['controller'];
-            $action = self::$routes['movie']['action'];
+            $controller = $this->routes['movie']['controller'];
+            $action = $this->routes['movie']['action'];
             $object = new $controller;
 
             $movieId = (int)$matches[1];
@@ -99,8 +115,8 @@ class Routing {
 
         } else if (preg_match('/^movie\/(\d+)\/(\d+)$/', $url, $matches)) {
 
-            $controller = self::$routes['booking']['controller'];
-            $action = self::$routes['booking']['action'];
+            $controller = $this->routes['booking']['controller'];
+            $action = $this->routes['booking']['action'];
             $object = new $controller;
 
             $movieId = (int)$matches[1];

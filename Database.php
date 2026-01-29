@@ -23,6 +23,13 @@ class Database {
         $this->database = DATABASE;
     }
 
+    private function __clone() {}
+
+   
+    public function __wakeup() {
+        throw new \Exception("Cannot unserialize singleton");
+    }
+    
 
     public static function getInstance(): Database
     {
