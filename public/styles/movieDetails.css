@@ -1263,6 +1263,36 @@ body {
     margin-right: 10px;
 }
 
+/* Kontener dla braku seansów na dzisiaj */
+.no-showtimes-container {
+    text-align: center;
+    padding: 40px 20px;
+    background: rgba(212, 175, 55, 0.05);
+    border: 1px dashed rgba(212, 175, 55, 0.3);
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+.no-showtimes-container i {
+    font-size: 3rem;
+    color: #d4af37;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.no-showtimes-container .no-showtimes {
+    padding: 0;
+    margin: 0 0 10px 0;
+    font-size: 1.2rem;
+    color: #fff;
+}
+
+.no-showtimes-hint {
+    color: #888;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
 /* --- Modal zwiastuna --- */
 .trailer-modal {
     display: none;

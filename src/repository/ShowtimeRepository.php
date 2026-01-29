@@ -10,6 +10,16 @@ class ShowtimeRepository extends Repository {
 
     public function getShowtimesByMovieAndCinemaIdAndDate(int $movie_id, int $cinema_id, string $date) {
 
+        $today = date('Y-m-d');
+        
+        // Data w przeszłości - nie zwracamy żadnych seansów
+        if ($date < $today) {
+            return [];
+        }
+
+        // Budujemy zapytanie SQL z warunkiem czasowym
+        // Jeśli data = dzisiaj, filtrujemy tylko przyszłe seanse
+        // Jeśli data > dzisiaj, zwracamy wszystkie seanse na ten dzień
         $sql = "
                 SELECT s.showtime_id, s.movie_id, s.hall_id, s.start_time, s.technology, s.language, s.audio_type, s.base_price
                 FROM showtimes s
@@ -18,8 +28,14 @@ class ShowtimeRepository extends Repository {
                 WHERE s.movie_id = :movie_id
                 AND h.cinema_id = :cinema_id
                 AND DATE(s.start_time) = :date
-                ORDER BY s.start_time ASC
         ";
+
+        // Dla dzisiejszej daty - tylko seanse, które jeszcze się nie zaczęły
+        if ($date === $today) {
+            $sql .= " AND s.start_time > NOW() ";
+        }
+
+        $sql .= " ORDER BY s.start_time ASC";
 
         $stmt = $this->database->connect()->prepare($sql);
         $stmt->bindParam(':movie_id', $movie_id, PDO::PARAM_INT);
@@ -29,8 +45,7 @@ class ShowtimeRepository extends Repository {
 
         $showtimes = $stmt->fetchAll(PDO::FETCH_CLASS, Showtime::class);
         
-        if (!$showtimes) { return null; }
-        return $showtimes;
+        return $showtimes ?: [];
     }
 
 

@@ -104,10 +104,9 @@ initTab({
         <div class="card-image">
             <img src="${snack.image}" alt="${snack.name}">
         </div>
-        <div class="card-content">
+        <div class="card-content snack-content">
             <h3>${snack.name}</h3>
             <p class="price">${snack.price} PLN</p>
-            <button class="btn-gold">Dodaj do koszyka</button>
         </div>
     `,
 });

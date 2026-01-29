@@ -51,8 +51,21 @@ function getAudioTypeLabel(audioType) {
   return labels[audioType] || audioType;
 }
 
-function generateShowtimesButtons(showtimes) {
+function generateShowtimesButtons(showtimes, selectedDate = null) {
   if (!showtimes || showtimes.length === 0) {
+    const today = formatDate(new Date());
+    
+    // Sprawdź czy wybrana data to dzisiaj
+    if (selectedDate === today) {
+      return `
+        <div class="no-showtimes-container">
+          <i class="fas fa-clock"></i>
+          <p class="no-showtimes">Brak dostępnych seansów na dzisiaj.</p>
+          <p class="no-showtimes-hint">Wszystkie dzisiejsze seanse już się rozpoczęły. Zapraszamy jutro!</p>
+        </div>
+      `;
+    }
+    
     return '<p class="no-showtimes">Brak seansów w wybranym dniu.</p>';
   }
 
@@ -220,7 +233,7 @@ async function onDateClick(dateStr) {
       '<p class="error-message">Nie udało się pobrać seansów.</p>';
     return;
   }
-  resultsContainer.innerHTML = generateShowtimesButtons(data);
+  resultsContainer.innerHTML = generateShowtimesButtons(data, dateStr);
 }
 
 async function fetchShowtimes(dateStr) {

@@ -467,6 +467,19 @@ input[type="radio"] { display: none; }
     margin-bottom: 10px;
 }
 
+/* Snack card - tylko informacyjne menu */
+.snack-content {
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.snack-content .price {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #d4af37;
+    margin-bottom: 0;
+}
+
 /* --- Złoty Przycisk --- */
 .btn-gold {
     display: block;
