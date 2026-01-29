@@ -91,6 +91,142 @@ body {
     color: #666;
 }
 
+/* === LIVE SEARCH RESULTS === */
+.search-container {
+    position: relative;
+}
+
+.search-results {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    min-width: 320px;
+    max-height: 450px;
+    overflow-y: auto;
+    background-color: #1e1e1e;
+    border: 1px solid #d4af37;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background-color: rgba(212, 175, 55, 0.15);
+}
+
+.search-result-item:first-child {
+    border-radius: 9px 9px 0 0;
+}
+
+.search-result-item:last-child {
+    border-radius: 0 0 9px 9px;
+}
+
+.search-result-item:only-child {
+    border-radius: 9px;
+}
+
+.search-result-poster {
+    width: 40px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.search-result-poster-placeholder {
+    width: 40px;
+    height: 60px;
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.search-result-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+}
+
+.search-result-title {
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-result-year {
+    color: #888;
+    font-size: 0.8rem;
+}
+
+.search-no-results,
+.search-error {
+    color: #888;
+    font-style: italic;
+    justify-content: center;
+    padding: 20px;
+    cursor: default;
+}
+
+.search-no-results:hover,
+.search-error:hover {
+    background-color: transparent;
+}
+
+.search-error {
+    color: #e74c3c;
+}
+
+.search-more {
+    color: #d4af37;
+    font-size: 0.85rem;
+    justify-content: center;
+    cursor: default;
+}
+
+.search-more:hover {
+    background-color: transparent;
+}
+
+/* Scrollbar dla wyników */
+.search-results::-webkit-scrollbar {
+    width: 6px;
+}
+
+.search-results::-webkit-scrollbar-track {
+    background: #1e1e1e;
+    border-radius: 0 10px 10px 0;
+}
+
+.search-results::-webkit-scrollbar-thumb {
+    background: #d4af37;
+    border-radius: 3px;
+}
+
 .cinema-selector {
     display: flex;
     align-items: center;

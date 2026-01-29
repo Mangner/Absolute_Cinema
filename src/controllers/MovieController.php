@@ -21,6 +21,44 @@ class MovieController extends AppController {
     }
 
 
+    #[AllowedMethods(['GET', 'POST'])]
+    public function search() {
+        header('Content-Type: application/json');
+
+        $searchQuery = '';
+
+        // Obsługa GET i POST
+        if ($this->isPost()) {
+            $content = trim(file_get_contents("php://input"));
+            $decoded = json_decode($content, true);
+            $searchQuery = $decoded['query'] ?? '';
+        } else {
+            $searchQuery = $_GET['q'] ?? '';
+        }
+
+        $searchQuery = trim($searchQuery);
+
+        if (strlen($searchQuery) < 2) {
+            echo json_encode([]);
+            return;
+        }
+
+        $movies = $this->movieRepository->getMoviesByTitle($searchQuery);
+
+        // Zwracamy tylko potrzebne dane (id, title, image)
+        $results = array_map(function($movie) {
+            return [
+                'id' => $movie['movie_id'],
+                'title' => $movie['title'],
+                'image' => $movie['image'],
+                'release_date' => $movie['release_date'] ?? null
+            ];
+        }, $movies ?? []);
+
+        echo json_encode($results);
+    }
+
+
     #[AllowedMethods(['GET'])]
     #[IsLoggedIn]
     public function getDetails($movieId) {
