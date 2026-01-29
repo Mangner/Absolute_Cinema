@@ -74,10 +74,10 @@
             </div>
         </div>
 
-        <form id="booking-form" action="/booking/checkout" method="POST">
+        <form id="booking-form" action="/checkout" method="POST">
             <input type="hidden" name="selected_seats" id="input-selected-seats" value="">
+            <input type="hidden" name="movie_id" value="<?php echo $movie_id; ?>">
             <input type="hidden" name="showtime_id" value="<?php echo $showtime_id ?? 0; ?>">
-            
             <button type="submit" class="checkout-btn" id="checkout-btn" disabled>Przejdź do płatności</button>
         </form>
     </div>
@@ -85,7 +85,5 @@
     <script>
         const seatsData = <?php echo isset($seats) ? json_encode($seats) : '[]'; ?>;
     </script>
-    
-    <script src="/public/js/booking.js"></script>
 </body>
 </html>

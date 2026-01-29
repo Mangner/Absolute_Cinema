@@ -58,6 +58,14 @@ class Routing {
         'booking' => [
             'controller' => "BookingController",
             'action' => 'show'
+        ],
+        'checkout' => [
+            'controller' => "BookingController",
+            'action' => 'checkout'
+        ],
+        'payment/process' => [
+            'controller' => "BookingController",
+            'action' => 'processPayment'
         ]
     ];
 

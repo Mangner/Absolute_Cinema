@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status płatności - Absolute Cinema</title>
+    <link rel="stylesheet" href="/public/styles/payment_status.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="status-container">
+        
+        <?php if ($status === 'success'): ?>
+            <div class="icon-box success">
+                <i class="fas fa-check"></i>
+            </div>
+            <h1>Płatność przyjęta!</h1>
+            <p class="message">Twoja rezerwacja <strong>#<?php echo $booking_id; ?></strong> została opłacona pomyślnie.</p>
+            <p class="sub-message">Bilety są dostępne w panelu użytkownika.</p>
+            
+            <div class="actions">
+                <a href="/dashboard" class="btn btn-primary">Wróć do strony głównej</a>
+                <a href="/dashboard" class="btn btn-outline">Moje bilety</a>
+            </div>
+
+        <?php else: ?>
+            <div class="icon-box error">
+                <i class="fas fa-times"></i>
+            </div>
+            <h1>Płatność odrzucona</h1>
+            <p class="message">Niestety, nie udało się przetworzyć płatności dla rezerwacji <strong>#<?php echo $booking_id; ?></strong>.</p>
+            <p class="sub-message">Środki nie zostały pobrane. Spróbuj ponownie lub wybierz inną metodę płatności.</p>
+            
+            <div class="actions">
+                <a href="/checkout" class="btn btn-primary">Spróbuj ponownie</a>
+                <a href="/dashboard" class="btn btn-outline">Anuluj</a>
+            </div>
+        <?php endif; ?>
+
+    </div>
+</body>
+</html>

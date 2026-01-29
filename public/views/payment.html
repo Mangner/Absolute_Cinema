@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Płatność - Absolute Cinema</title>
+    <link rel="stylesheet" href="/public/styles/payment.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="payment-container">
+        
+        <div class="summary-section">
+            <h2>Podsumowanie Rezerwacji</h2>
+            <div class="booking-id">Nr rezerwacji: <strong>#<?php echo $booking_id; ?></strong></div>
+            
+            <div class="total-price">
+                <span>Do zapłaty:</span>
+                <span class="amount"><?php echo number_format($price, 2); ?> PLN</span>
+            </div>
+
+            <div class="security-info">
+                <i class="fas fa-lock"></i> Połączenie jest szyfrowane SSL
+            </div>
+            
+            <a href="/dashboard" class="cancel-link">Anuluj płatność</a>
+        </div>
+
+        <div class="methods-section">
+            <h3>Wybierz metodę płatności</h3>
+            
+            <form id="payment-form" action="/payment/process" method="POST">
+                <input type="hidden" name="booking_id" value="<?php echo $booking_id; ?>">
+                
+                <div class="payment-methods">
+                    <label class="method-card">
+                        <input type="radio" name="payment_method" value="BLIK" checked onclick="toggleMethod('blik')">
+                        <div class="method-content">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/7/76/Blik_logo.svg" alt="BLIK" style="height: 25px;">
+                            <span>BLIK</span>
+                        </div>
+                    </label>
+
+                    <label class="method-card">
+                        <input type="radio" name="payment_method" value="CARD" onclick="toggleMethod('card')">
+                        <div class="method-content">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Karta Płatnicza</span>
+                        </div>
+                    </label>
+                </div>
+
+                <div id="blik-section" class="method-details active">
+                    <label>Kod BLIK</label>
+                    <input type="text" class="payment-input" placeholder="000 000" maxlength="6" pattern="\d{6}">
+                </div>
+
+                <div id="card-section" class="method-details">
+                    <label>Numer karty</label>
+                    <input type="text" class="payment-input" placeholder="0000 0000 0000 0000">
+                    <div class="card-extra">
+                        <input type="text" class="payment-input" placeholder="MM/RR" style="width: 48%;">
+                        <input type="text" class="payment-input" placeholder="CVC" style="width: 48%;">
+                    </div>
+                </div>
+
+                <button type="submit" class="pay-btn" id="pay-btn">
+                    Zapłać <?php echo number_format($price, 2); ?> PLN
+                </button>
+            </form>
+
+            <div id="loader-overlay" class="loader-overlay" style="display: none;">
+                <div class="spinner"></div>
+                <p>Przetwarzanie płatności...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Prosty skrypt do przełączania widoków BLIK/Karta
+        function toggleMethod(method) {
+            document.getElementById('blik-section').classList.remove('active');
+            document.getElementById('card-section').classList.remove('active');
+            
+            if(method === 'blik') document.getElementById('blik-section').classList.add('active');
+            else document.getElementById('card-section').classList.add('active');
+        }
+
+        // Mockowanie procesu (spinner)
+        document.getElementById('payment-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Zatrzymaj natychmiastowe wysłanie
+            
+            const loader = document.getElementById('loader-overlay');
+            const btn = document.getElementById('pay-btn');
+            
+            loader.style.display = 'flex'; // Pokaż spinner
+            btn.disabled = true;
+
+            // Symulacja opóźnienia 2 sekundy (jak w prawdziwej bramce)
+            setTimeout(() => {
+                this.submit(); // Wyślij formularz do PHP po 2 sekundach
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
