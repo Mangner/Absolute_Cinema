@@ -4,6 +4,7 @@ require_once 'src/controllers/DashboardController.php';
 require_once 'src/controllers/MovieController.php';
 require_once 'src/controllers/BookingController.php';
 require_once 'src/controllers/ProfileController.php';
+require_once 'src/controllers/AdminController.php';
 require_once 'src/middleware/MiddlewareHandler.php';
 
 class Routing {
@@ -74,6 +75,23 @@ class Routing {
         'payment/process' => [
             'controller' => "BookingController",
             'action' => 'processPayment'
+        ],
+        // Admin routes
+        'admin' => [
+            'controller' => "AdminController",
+            'action' => 'index'
+        ],
+        'admin/users' => [
+            'controller' => "AdminController",
+            'action' => 'users'
+        ],
+        'admin/user/add' => [
+            'controller' => "AdminController",
+            'action' => 'addUser'
+        ],
+        'admin/user/delete' => [
+            'controller' => "AdminController",
+            'action' => 'deleteUser'
         ]
     ];
 
@@ -139,6 +157,19 @@ class Routing {
             $showtimeId = (int)$matches[2];
 
             $object->$action($movieId, $showtimeId);
+
+        } else if (preg_match('/^admin\/user\/edit\/(\d+)$/', $url, $matches)) {
+            // Edycja użytkownika
+            $object = new AdminController;
+            $action = 'editUser';
+
+            // Weryfikacja atrybutów przez Middleware
+            if (!MiddlewareHandler::handle($object, $action)) {
+                return;
+            }
+
+            $userId = (int)$matches[1];
+            $object->$action($userId);
 
         } else {
             http_response_code(404);

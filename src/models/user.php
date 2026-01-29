@@ -28,13 +28,17 @@ class User {
     }
 
     public function getId(): int { return $this->user_id; }
+    public function getUserId(): int { return $this->user_id; }
     public function getName(): string { return $this->name; }
     public function getSurname(): string { return $this->surname; }
     public function getEmail(): string { return $this->email; }
     public function getPassword() { return $this->password; }
+    public function getRole(): ?string { return $this->role; }
+    public function getCreatedAt(): string { return $this->created_at; }
 
     public function setName(string $name): void { $this->name = $name; }
     public function setSurname(string $surname): void { $this->surname = $surname; }
     public function setEmail(string $email): void { $this->email = $email; }
+    public function setRole(string $role): void { $this->role = $role; }
 
 }

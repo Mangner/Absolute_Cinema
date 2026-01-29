@@ -241,30 +241,57 @@
         </div>
 
         <?php if ($isAdmin): ?>
-        <!-- PANEL ADMINA (Placeholder) -->
+        <!-- PANEL ADMINA -->
         <div id="admin-tab" class="tab-content">
-            <div class="admin-panel-placeholder">
-                <div class="placeholder-icon">
-                    <i class="fas fa-tools"></i>
+            <div class="admin-panel-section">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-shield-alt"></i>
+                        Panel Administratora
+                    </h2>
                 </div>
-                <h2>Panel Administratora</h2>
-                <p>Ta sekcja jest w trakcie budowy.</p>
+                <p class="admin-subtitle">Zarządzaj serwisem Absolute Cinema</p>
+                
                 <div class="admin-quick-actions">
-                    <div class="admin-action-card">
-                        <i class="fas fa-film"></i>
-                        <span>Zarządzaj filmami</span>
+                    <a href="/admin/users" class="admin-action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="action-content">
+                            <span class="action-title">Zarządzaj użytkownikami</span>
+                            <span class="action-desc">Dodawaj, edytuj i usuwaj użytkowników</span>
+                        </div>
+                        <i class="fas fa-chevron-right action-arrow"></i>
+                    </a>
+                    <div class="admin-action-card disabled">
+                        <div class="action-icon">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <div class="action-content">
+                            <span class="action-title">Zarządzaj filmami</span>
+                            <span class="action-desc">Wkrótce dostępne</span>
+                        </div>
+                        <i class="fas fa-lock action-arrow"></i>
                     </div>
-                    <div class="admin-action-card">
-                        <i class="fas fa-users"></i>
-                        <span>Zarządzaj użytkownikami</span>
+                    <div class="admin-action-card disabled">
+                        <div class="action-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="action-content">
+                            <span class="action-title">Zarządzaj seansami</span>
+                            <span class="action-desc">Wkrótce dostępne</span>
+                        </div>
+                        <i class="fas fa-lock action-arrow"></i>
                     </div>
-                    <div class="admin-action-card">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Zarządzaj seansami</span>
-                    </div>
-                    <div class="admin-action-card">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Statystyki</span>
+                    <div class="admin-action-card disabled">
+                        <div class="action-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="action-content">
+                            <span class="action-title">Statystyki</span>
+                            <span class="action-desc">Wkrótce dostępne</span>
+                        </div>
+                        <i class="fas fa-lock action-arrow"></i>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo isset($user) ? 'Edytuj' : 'Dodaj'; ?> Użytkownika - Admin Panel</title>
+    <link rel="stylesheet" href="/public/styles/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav>
+        <div class="navigation-bar">
+            <a href="/dashboard" class="nav-brand">
+                <img src="/public/images/logo-absolute-cinema.png" alt="Logo" />
+                <span>Absolute Cinema</span>
+            </a>
+
+            <div class="nav-center">
+                <div class="breadcrumb">
+                    <a href="/dashboard">Start</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <a href="/profile">Profil</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <a href="/admin/users">Panel Admina</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span><?php echo isset($user) ? 'Edytuj' : 'Dodaj'; ?> użytkownika</span>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <a href="/admin/users" class="nav-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Wróć do listy
+                </a>
+                <a href="/logout" class="logout-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Wyloguj</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="admin-container">
+        <!-- Header sekcji -->
+        <div class="admin-header">
+            <div class="header-left">
+                <h1>
+                    <i class="fas fa-<?php echo isset($user) ? 'user-edit' : 'user-plus'; ?>"></i>
+                    <?php echo isset($user) ? 'Edytuj użytkownika' : 'Dodaj nowego użytkownika'; ?>
+                </h1>
+                <p class="admin-subtitle">
+                    <?php echo isset($user) 
+                        ? 'Edytujesz dane użytkownika: ' . htmlspecialchars($user->getName() . ' ' . $user->getSurname())
+                        : 'Wypełnij formularz aby dodać nowego użytkownika do systemu'; 
+                    ?>
+                </p>
+            </div>
+        </div>
+
+        <!-- Komunikaty błędów -->
+        <?php if (isset($error)): ?>
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <?php echo htmlspecialchars($error); ?>
+        </div>
+        <?php endif; ?>
+
+        <!-- Formularz -->
+        <div class="form-container">
+            <form action="<?php echo isset($user) ? '/admin/user/edit/' . $user->getUserId() : '/admin/user/add'; ?>" method="POST" class="admin-form">
+                
+                <!-- Sekcja danych osobowych -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-user"></i>
+                        Dane osobowe
+                    </h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">
+                                <i class="fas fa-user"></i>
+                                Imię <span class="required">*</span>
+                            </label>
+                            <input type="text" 
+                                   id="name" 
+                                   name="name" 
+                                   value="<?php echo isset($user) ? htmlspecialchars($user->getName()) : ''; ?>"
+                                   placeholder="Wprowadź imię"
+                                   required
+                                   minlength="2"
+                                   maxlength="50">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="surname">
+                                <i class="fas fa-user"></i>
+                                Nazwisko <span class="required">*</span>
+                            </label>
+                            <input type="text" 
+                                   id="surname" 
+                                   name="surname" 
+                                   value="<?php echo isset($user) ? htmlspecialchars($user->getSurname()) : ''; ?>"
+                                   placeholder="Wprowadź nazwisko"
+                                   required
+                                   minlength="2"
+                                   maxlength="50">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sekcja kontaktowa -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-envelope"></i>
+                        Dane kontaktowe
+                    </h3>
+                    
+                    <div class="form-group full-width">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i>
+                            Adres email <span class="required">*</span>
+                        </label>
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               value="<?php echo isset($user) ? htmlspecialchars($user->getEmail()) : ''; ?>"
+                               placeholder="Wprowadź adres email"
+                               required>
+                    </div>
+                </div>
+
+                <!-- Sekcja bezpieczeństwa -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-lock"></i>
+                        Bezpieczeństwo
+                    </h3>
+                    
+                    <div class="form-group full-width">
+                        <label for="password">
+                            <i class="fas fa-key"></i>
+                            Hasło <?php echo isset($user) ? '(pozostaw puste aby nie zmieniać)' : '<span class="required">*</span>'; ?>
+                        </label>
+                        <div class="password-input-wrapper">
+                            <input type="password" 
+                                   id="password" 
+                                   name="password" 
+                                   placeholder="<?php echo isset($user) ? 'Wprowadź nowe hasło' : 'Wprowadź hasło'; ?>"
+                                   <?php echo isset($user) ? '' : 'required'; ?>
+                                   minlength="6">
+                            <button type="button" class="toggle-password" onclick="togglePassword()">
+                                <i class="fas fa-eye" id="toggleIcon"></i>
+                            </button>
+                        </div>
+                        <small class="form-hint">Hasło musi mieć minimum 6 znaków</small>
+                    </div>
+                </div>
+
+                <!-- Sekcja roli -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-shield-alt"></i>
+                        Uprawnienia
+                    </h3>
+                    
+                    <div class="form-group full-width">
+                        <label for="role">
+                            <i class="fas fa-user-tag"></i>
+                            Rola użytkownika <span class="required">*</span>
+                        </label>
+                        <div class="role-selector">
+                            <label class="role-option">
+                                <input type="radio" 
+                                       name="role" 
+                                       value="user" 
+                                       <?php echo (!isset($user) || $user->getRole() === 'user') ? 'checked' : ''; ?>>
+                                <div class="role-card">
+                                    <div class="role-icon user">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="role-info">
+                                        <span class="role-name">Użytkownik</span>
+                                        <span class="role-desc">Standardowe uprawnienia</span>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="role-option">
+                                <input type="radio" 
+                                       name="role" 
+                                       value="admin"
+                                       <?php echo (isset($user) && $user->getRole() === 'admin') ? 'checked' : ''; ?>>
+                                <div class="role-card">
+                                    <div class="role-icon admin">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <div class="role-info">
+                                        <span class="role-name">Administrator</span>
+                                        <span class="role-desc">Pełne uprawnienia</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Przyciski akcji -->
+                <div class="form-actions">
+                    <a href="/admin/users" class="btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Anuluj
+                    </a>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-<?php echo isset($user) ? 'save' : 'plus'; ?>"></i>
+                        <?php echo isset($user) ? 'Zapisz zmiany' : 'Dodaj użytkownika'; ?>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Toggle widoczności hasła
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Walidacja formularza
+        document.querySelector('.admin-form').addEventListener('submit', function(e) {
+            const name = document.getElementById('name').value.trim();
+            const surname = document.getElementById('surname').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const isEdit = <?php echo isset($user) ? 'true' : 'false'; ?>;
+            
+            let errors = [];
+            
+            if (name.length < 2) {
+                errors.push('Imię musi mieć minimum 2 znaki');
+            }
+            
+            if (surname.length < 2) {
+                errors.push('Nazwisko musi mieć minimum 2 znaki');
+            }
+            
+            if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                errors.push('Podaj prawidłowy adres email');
+            }
+            
+            if (!isEdit && password.length < 6) {
+                errors.push('Hasło musi mieć minimum 6 znaków');
+            }
+            
+            if (isEdit && password.length > 0 && password.length < 6) {
+                errors.push('Nowe hasło musi mieć minimum 6 znaków');
+            }
+            
+            if (errors.length > 0) {
+                e.preventDefault();
+                alert('Błędy walidacji:\n\n' + errors.join('\n'));
+            }
+        });
+    </script>
+</body>
+</html>

@@ -688,38 +688,112 @@ body {
 
 .admin-quick-actions {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
 .admin-action-card {
     display: flex;
-    flex-direction: column;
     align-items: center;
     gap: 15px;
-    padding: 30px 20px;
+    padding: 20px;
     background-color: #1a1a1a;
     border-radius: 12px;
     border: 1px solid #333;
     cursor: pointer;
     transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
 }
 
 .admin-action-card:hover {
     border-color: #d4af37;
     transform: translateY(-3px);
+    background-color: rgba(212, 175, 55, 0.05);
 }
 
-.admin-action-card i {
-    font-size: 2rem;
+.admin-action-card.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.admin-action-card.disabled:hover {
+    transform: none;
+    border-color: #333;
+    background-color: #1a1a1a;
+}
+
+.admin-action-card .action-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background: rgba(212, 175, 55, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.admin-action-card .action-icon i {
+    font-size: 1.25rem;
     color: #d4af37;
 }
 
-.admin-action-card span {
+.admin-action-card .action-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.admin-action-card .action-title {
     color: #fff;
     font-weight: 600;
+    font-size: 1rem;
+}
+
+.admin-action-card .action-desc {
+    color: #888;
+    font-size: 0.85rem;
+}
+
+.admin-action-card .action-arrow {
+    color: #555;
+    font-size: 0.85rem;
+    transition: color 0.3s, transform 0.3s;
+}
+
+.admin-action-card:hover .action-arrow {
+    color: #d4af37;
+    transform: translateX(3px);
+}
+
+.admin-action-card.disabled .action-arrow {
+    color: #555;
+}
+
+/* Admin Panel Section header */
+.admin-panel-section .section-header {
+    margin-bottom: 10px;
+}
+
+.admin-panel-section .section-header h2 {
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-panel-section .section-header h2 i {
+    color: #d4af37;
+}
+
+.admin-subtitle {
+    color: #888;
+    margin-bottom: 30px;
+    font-size: 0.95rem;
 }
 
 /* --- Responsywność --- */

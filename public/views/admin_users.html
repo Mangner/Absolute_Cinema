@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zarządzanie Użytkownikami - Admin Panel</title>
+    <link rel="stylesheet" href="/public/styles/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav>
+        <div class="navigation-bar">
+            <a href="/dashboard" class="nav-brand">
+                <img src="/public/images/logo-absolute-cinema.png" alt="Logo" />
+                <span>Absolute Cinema</span>
+            </a>
+
+            <div class="nav-center">
+                <div class="breadcrumb">
+                    <a href="/dashboard">Start</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <a href="/profile">Profil</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Panel Admina</span>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <a href="/profile" class="nav-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Wróć do profilu
+                </a>
+                <a href="/logout" class="logout-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Wyloguj</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="admin-container">
+        <!-- Header sekcji -->
+        <div class="admin-header">
+            <div class="header-left">
+                <h1>
+                    <i class="fas fa-users"></i>
+                    Zarządzanie Użytkownikami
+                </h1>
+                <p class="admin-subtitle">Lista wszystkich zarejestrowanych użytkowników</p>
+            </div>
+            <a href="/admin/user/add" class="btn-primary">
+                <i class="fas fa-plus"></i>
+                Dodaj użytkownika
+            </a>
+        </div>
+
+        <!-- Komunikaty -->
+        <?php if (isset($message)): ?>
+        <div class="alert alert-<?php echo isset($messageType) ? $messageType : 'info'; ?>">
+            <i class="fas fa-<?php echo isset($messageType) && $messageType === 'success' ? 'check-circle' : 'info-circle'; ?>"></i>
+            <?php echo htmlspecialchars($message); ?>
+        </div>
+        <?php endif; ?>
+
+        <!-- Statystyki -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value"><?php echo count($users ?? []); ?></span>
+                    <span class="stat-label">Wszystkich użytkowników</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon gold">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value"><?php echo count(array_filter($users ?? [], fn($u) => $u->getRole() === 'admin')); ?></span>
+                    <span class="stat-label">Administratorów</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value"><?php echo count(array_filter($users ?? [], fn($u) => $u->getRole() === 'user')); ?></span>
+                    <span class="stat-label">Użytkowników</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela użytkowników -->
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Lista użytkowników</h2>
+                <div class="table-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Szukaj użytkownika...">
+                </div>
+            </div>
+            
+            <?php if (empty($users)): ?>
+            <div class="empty-state">
+                <i class="fas fa-users-slash"></i>
+                <h3>Brak użytkowników</h3>
+                <p>Nie znaleziono żadnych użytkowników w systemie.</p>
+            </div>
+            <?php else: ?>
+            <div class="table-responsive">
+                <table class="admin-table" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Avatar</th>
+                            <th>Imię</th>
+                            <th>Nazwisko</th>
+                            <th>Email</th>
+                            <th>Rola</th>
+                            <th>Data rejestracji</th>
+                            <th>Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($users as $u): ?>
+                        <tr data-user-id="<?php echo $u->getUserId(); ?>">
+                            <td class="id-cell">#<?php echo $u->getUserId(); ?></td>
+                            <td class="avatar-cell">
+                                <div class="user-avatar">
+                                    <?php echo strtoupper(substr($u->getName(), 0, 1) . substr($u->getSurname(), 0, 1)); ?>
+                                </div>
+                            </td>
+                            <td><?php echo htmlspecialchars($u->getName()); ?></td>
+                            <td><?php echo htmlspecialchars($u->getSurname()); ?></td>
+                            <td class="email-cell">
+                                <i class="fas fa-envelope"></i>
+                                <?php echo htmlspecialchars($u->getEmail()); ?>
+                            </td>
+                            <td>
+                                <span class="role-badge <?php echo $u->getRole(); ?>">
+                                    <?php if ($u->getRole() === 'admin'): ?>
+                                    <i class="fas fa-shield-alt"></i>
+                                    <?php else: ?>
+                                    <i class="fas fa-user"></i>
+                                    <?php endif; ?>
+                                    <?php echo ucfirst($u->getRole()); ?>
+                                </span>
+                            </td>
+                            <td class="date-cell">
+                                <?php echo date('d.m.Y', strtotime($u->getCreatedAt())); ?>
+                            </td>
+                            <td class="actions-cell">
+                                <a href="/admin/user/edit/<?php echo $u->getUserId(); ?>" class="btn-action btn-edit" title="Edytuj">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn-action btn-delete" 
+                                        onclick="confirmDelete(<?php echo $u->getUserId(); ?>, '<?php echo htmlspecialchars($u->getName() . ' ' . $u->getSurname()); ?>')"
+                                        title="Usuń"
+                                        <?php echo ($u->getUserId() == $_SESSION['user_id']) ? 'disabled' : ''; ?>>
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php endif; ?>
+        </div>
+    </main>
+
+    <!-- Modal potwierdzenia usunięcia -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Potwierdź usunięcie</h3>
+            </div>
+            <div class="modal-body">
+                <p>Czy na pewno chcesz usunąć użytkownika:</p>
+                <p class="user-to-delete" id="userToDelete"></p>
+                <p class="warning-text">Ta operacja jest nieodwracalna!</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i>
+                    Anuluj
+                </button>
+                <form id="deleteForm" action="/admin/user/delete" method="POST" style="display: inline;">
+                    <input type="hidden" name="user_id" id="deleteUserId">
+                    <button type="submit" class="btn-danger">
+                        <i class="fas fa-trash-alt"></i>
+                        Usuń
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wyszukiwanie użytkowników
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#usersTable tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Modal usunięcia
+        function confirmDelete(userId, userName) {
+            document.getElementById('deleteUserId').value = userId;
+            document.getElementById('userToDelete').textContent = userName;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+        }
+
+        // Zamknięcie modalu przez overlay
+        document.querySelector('.modal-overlay').addEventListener('click', closeDeleteModal);
+
+        // Zamknięcie modalu przez Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeDeleteModal();
+            }
+        });
+    </script>
+</body>
+</html>
