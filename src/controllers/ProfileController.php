@@ -2,6 +2,11 @@
 
 require_once 'AppController.php';
 require_once __DIR__.'/../repository/ProfileRepository.php';
+require_once __DIR__.'/../middleware/Attribute/AllowedMethods.php';
+require_once __DIR__.'/../middleware/Attribute/IsLoggedIn.php';
+
+use Middleware\Attribute\AllowedMethods;
+use Middleware\Attribute\IsLoggedIn;
 
 class ProfileController extends AppController
 {
@@ -12,10 +17,10 @@ class ProfileController extends AppController
         $this->profileRepository = new ProfileRepository();
     }
 
+    #[AllowedMethods(['GET'])]
+    #[IsLoggedIn]
     public function index(): void
     {
-        $this->requireLogin();
-
         $userId = (int) $_SESSION['user_id'];
         $userRole = $_SESSION['role'] ?? 'user';
 

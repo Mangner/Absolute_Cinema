@@ -151,8 +151,9 @@ CREATE TABLE tickets (
 );
 
 /* --- DODANIE ADMINA (ID: 1) --- */
+/* Hasło: admin123 (zahashowane bcrypt) */
 INSERT INTO users (name, surname, email, password, role) VALUES 
-('Admin', 'Główny', 'admin@example.com', '$2y$10$vI8aWBnW3fBr4ffg5PMDlO.pOeYbeDL.xeO/IyceOArj8k8sAGvFC', 'admin');
+('Admin', 'Główny', 'admin@example.com', '$2y$10$emDfvP/TaxR48ESGYaG/s.xv.spf8iisiaZHGNOkcwWY5rybcjuIy', 'admin');
 
 /* --- DODANIE GATUNKÓW --- */
 INSERT INTO genres (name, description) VALUES

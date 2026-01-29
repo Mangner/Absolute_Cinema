@@ -2,6 +2,11 @@
 
 require_once 'AppController.php';
 require_once __DIR__."/../repository/BookingRepository.php";
+require_once __DIR__.'/../middleware/Attribute/AllowedMethods.php';
+require_once __DIR__.'/../middleware/Attribute/IsLoggedIn.php';
+
+use Middleware\Attribute\AllowedMethods;
+use Middleware\Attribute\IsLoggedIn;
 
 
 class BookingController extends AppController {
@@ -12,6 +17,8 @@ class BookingController extends AppController {
         $this->bookingRepository = new BookingRepository();
     }
 
+    #[AllowedMethods(['GET'])]
+    #[IsLoggedIn]
     public function show(int $movie_id, int $showtime_id) {
 
         $seats = $this->bookingRepository->getSeats($showtime_id);
@@ -23,13 +30,10 @@ class BookingController extends AppController {
     }
 
 
+    #[AllowedMethods(['POST'])]
+    #[IsLoggedIn]
     public function checkout() {
-        $this->requireLogin();
         
-        if (!$this->isPost()) {
-            return $this->render('booking', ['messages' => ['Błąd przesyłania danych']]);
-        }
-
         $movieId = $_POST['movie_id'] ?? null;
         $showtimeId = $_POST['showtime_id'] ?? null;
         $seatIdsString = $_POST['selected_seats'] ?? ''; 
@@ -56,12 +60,10 @@ class BookingController extends AppController {
     }
 
 
+    #[AllowedMethods(['POST'])]
+    #[IsLoggedIn]
     public function processPayment() {
-        if (!$this->isPost()) {
-            header("Location: /dashboard");
-            return;
-        }
-
+        
         $bookingId = $_POST['booking_id'] ?? null;
         if (!$bookingId) {
             header("Location: /dashboard");
@@ -89,5 +91,3 @@ class BookingController extends AppController {
     }
 
 }
-
-?>

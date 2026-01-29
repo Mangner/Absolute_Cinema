@@ -4,6 +4,7 @@ require_once 'src/controllers/DashboardController.php';
 require_once 'src/controllers/MovieController.php';
 require_once 'src/controllers/BookingController.php';
 require_once 'src/controllers/ProfileController.php';
+require_once 'src/middleware/MiddlewareHandler.php';
 
 class Routing {
 
@@ -101,6 +102,12 @@ class Routing {
             $controller = $this->routes[$url]['controller']; 
             $action = $this->routes[$url]['action'];
             $object = new $controller;
+
+            // Weryfikacja atrybutów przez Middleware
+            if (!MiddlewareHandler::handle($object, $action)) {
+                return; // Middleware obsłużył błąd (405, 401, etc.)
+            }
+
             $object->$action();
 
         } else if (preg_match('/^movie\/(\d+)$/', $url, $matches)) {
@@ -109,8 +116,12 @@ class Routing {
             $action = $this->routes['movie']['action'];
             $object = new $controller;
 
-            $movieId = (int)$matches[1];
+            // Weryfikacja atrybutów przez Middleware
+            if (!MiddlewareHandler::handle($object, $action)) {
+                return;
+            }
 
+            $movieId = (int)$matches[1];
             $object->$action($movieId);
 
         } else if (preg_match('/^movie\/(\d+)\/(\d+)$/', $url, $matches)) {
@@ -118,6 +129,11 @@ class Routing {
             $controller = $this->routes['booking']['controller'];
             $action = $this->routes['booking']['action'];
             $object = new $controller;
+
+            // Weryfikacja atrybutów przez Middleware
+            if (!MiddlewareHandler::handle($object, $action)) {
+                return;
+            }
 
             $movieId = (int)$matches[1];
             $showtimeId = (int)$matches[2];

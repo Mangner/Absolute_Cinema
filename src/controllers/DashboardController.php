@@ -5,6 +5,11 @@ require_once __DIR__.'/../repository/CinemaRepository.php';
 require_once __DIR__.'/../repository/UserRepository.php';
 require_once __DIR__.'/../repository/MovieRepository.php';
 require_once __DIR__.'/../repository/SnacksRepository.php';
+require_once __DIR__.'/../middleware/Attribute/AllowedMethods.php';
+require_once __DIR__.'/../middleware/Attribute/IsLoggedIn.php';
+
+use Middleware\Attribute\AllowedMethods;
+use Middleware\Attribute\IsLoggedIn;
 
 
 class DashboardController extends AppController {
@@ -19,23 +24,18 @@ class DashboardController extends AppController {
         $this->snacksRepository = new SnacksRepository();
     }
 
+    #[AllowedMethods(['GET'])]
+    #[IsLoggedIn]
     public function index() {
-        $this->requireLogin();
         $this->render('dashboard');
     }
 
 
+    #[AllowedMethods(['POST'])]
+    #[IsLoggedIn(redirectOnFail: false)]
     public function search() {
 
         header('Content-Type: application/json');
-
-        if (!$this->isPost()) {
-            http_response_code(405);
-            echo json_encode([
-                'status' => 'Method not allowed'
-            ]);
-            return;
-        }
 
         $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
 
@@ -47,7 +47,6 @@ class DashboardController extends AppController {
             return;
         }
 
-        //TODO wyciągnac odpowiedni content 
         $content = trim(file_get_contents("php://input"));
         $decoded = json_decode($content, true);
         $searchTag = $decoded['search'] ?? '';
@@ -62,16 +61,9 @@ class DashboardController extends AppController {
     }
 
 
+    #[AllowedMethods(['GET'])]
     public function getOnScreenMovies() {
         header('Content-Type: application/json');
-
-        if (!$this->isGet()) {
-            http_response_code(405);
-            echo json_encode([
-                'status' => 'Method not allowed'
-            ]);
-            return;
-        }
 
         $movies = $this->movieRepository->getMoviesOnScreen(); 
 
@@ -83,16 +75,9 @@ class DashboardController extends AppController {
     }
 
 
+    #[AllowedMethods(['GET'])]
     public function getUpcomingMovies() {
         header('Content-Type: application/json');
-
-        if (!$this->isGet()) {
-            http_response_code(405);
-            echo json_encode([
-                'status' => 'Method not allowed'
-            ]);
-            return;
-        }
 
         $movies = $this->movieRepository->getUpcomingMovies(); 
 
@@ -104,16 +89,9 @@ class DashboardController extends AppController {
     }
 
 
+    #[AllowedMethods(['GET'])]
     public function getSnacks() {
         header('Content-Type: application/json');
-
-        if (!$this->isGet()) {
-            http_response_code(405);
-            echo json_encode([
-                'status' => 'Method not allowed'
-            ]);
-            return;
-        }
 
         http_response_code(200);
         echo json_encode([
@@ -123,16 +101,9 @@ class DashboardController extends AppController {
     }
 
 
+    #[AllowedMethods(['GET'])]
     public function getCinemas() {
         header('Content-Type: application/json');
-        
-        if (!$this->isGet()) {
-            http_response_code(405);
-            echo json_encode([
-                'status' => 'Method not allowed'
-            ]);
-            return;
-        }
 
         http_response_code(200);
         echo json_encode([
@@ -142,42 +113,10 @@ class DashboardController extends AppController {
     }
 
 
+    #[AllowedMethods(['POST'])]
+    #[IsLoggedIn(redirectOnFail: false)]
     public function setCinema() {
         header('Content-Type: application/json');
-        
-        // Manual session check for AJAX - requireLogin() redirects which breaks fetch
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if (empty($_SESSION['user_id'])) {
-            http_response_code(401);
-            echo json_encode([
-                'status' => 'unauthorized',
-                'message' => 'Session expired. Please login again.'
-            ]);
-            return;
-        }
-
-        // Check session timeout (same as requireLogin)
-        $timeout = 600;
-        if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $timeout)) {
-            session_unset();
-            session_destroy();
-            http_response_code(401);
-            echo json_encode([
-                'status' => 'unauthorized',
-                'message' => 'Session expired. Please login again.'
-            ]);
-            return;
-        }
-        $_SESSION['last_activity'] = time();
-
-        if (!$this->isPost()) {
-            http_response_code(405);
-            echo json_encode(['status' => 'Method not allowed']);
-            return;
-        }
 
         $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
         

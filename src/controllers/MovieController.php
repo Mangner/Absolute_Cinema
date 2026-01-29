@@ -3,6 +3,11 @@
 require_once 'AppController.php';
 require_once __DIR__."/../repository/MovieRepository.php";
 require_once __DIR__."/../repository/ShowtimeRepository.php";
+require_once __DIR__.'/../middleware/Attribute/AllowedMethods.php';
+require_once __DIR__.'/../middleware/Attribute/IsLoggedIn.php';
+
+use Middleware\Attribute\AllowedMethods;
+use Middleware\Attribute\IsLoggedIn;
 
 
 class MovieController extends AppController {
@@ -16,6 +21,8 @@ class MovieController extends AppController {
     }
 
 
+    #[AllowedMethods(['GET'])]
+    #[IsLoggedIn]
     public function getDetails($movieId) {
         
         $cinemaId = isset($_SESSION['selected_cinema_id']) ? (int)$_SESSION['selected_cinema_id'] : null;
@@ -33,36 +40,10 @@ class MovieController extends AppController {
     }
 
 
+    #[AllowedMethods(['POST'])]
+    #[IsLoggedIn(redirectOnFail: false)]
     public function getShowtimes() {
         header('Content-Type: application/json');
-        
-        // Session check for security (same as setCinema)
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if (empty($_SESSION['user_id'])) {
-            http_response_code(401);
-            echo json_encode(['status' => 'unauthorized', 'message' => 'Login required']);
-            return;
-        }
-        
-        // Check timeout
-        $timeout = 600;
-        if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $timeout)) {
-            session_unset();
-            session_destroy();
-            http_response_code(401);
-            echo json_encode(['status' => 'unauthorized', 'message' => 'Session expired']);
-            return;
-        }
-        $_SESSION['last_activity'] = time();
-
-        if (!$this->isPost()) {
-            http_response_code(405);
-            echo json_encode(['status' => 'Method not allowed']);
-            return;
-        }
 
         $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
         if ($contentType !== "application/json") {
@@ -105,6 +86,3 @@ class MovieController extends AppController {
         ]);
     }
 }
-
-
-?>

@@ -7,6 +7,11 @@ require_once __DIR__."/../valueObjects/Password.php";
 require_once __DIR__."/../valueObjects/Name.php";
 require_once __DIR__."/../DTOs/RegisterUserDTO.php";
 require_once __DIR__."/../models/user.php";
+require_once __DIR__.'/../middleware/Attribute/AllowedMethods.php';
+require_once __DIR__.'/../middleware/Attribute/IsLoggedIn.php';
+
+use Middleware\Attribute\AllowedMethods;
+use Middleware\Attribute\IsLoggedIn;
 
 
 class SecurityController extends AppController {
@@ -19,6 +24,7 @@ class SecurityController extends AppController {
     }
 
 
+    #[AllowedMethods(['GET', 'POST'])]
     public function login()
     {
         if (!$this->isPost()) {
@@ -41,8 +47,6 @@ class SecurityController extends AppController {
             return $this->render("login", ['message' => "Błędne hasło!"]);
         }
 
-        // TODO create user session/ cookie/ token 
-
         session_regenerate_id(true);
         $_SESSION['user_id'] = $user->getId(); 
         $_SESSION['user_email'] = $user->getEmail();
@@ -53,6 +57,7 @@ class SecurityController extends AppController {
     }
 
     
+    #[AllowedMethods(['GET'])]
     public function logout() {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -79,6 +84,7 @@ class SecurityController extends AppController {
     }
 
 
+    #[AllowedMethods(['GET', 'POST'])]
     public function register() {
 
         if (!$this->isPost()) {
