@@ -1,6 +1,8 @@
 /* init.sql */
 
 /* --- CZYSZCZENIE STAREJ STRUKTURY --- */
+DROP VIEW IF EXISTS all_movies_history CASCADE;
+DROP TABLE IF EXISTS movies_archive CASCADE;
 DROP TABLE IF EXISTS movie_cast CASCADE;
 DROP TABLE IF EXISTS movie_genres CASCADE;
 DROP TABLE IF EXISTS tickets CASCADE;
@@ -90,6 +92,29 @@ CREATE TABLE movies (
     rotten_tomatoes_rating DECIMAL(3, 1),
     metacritic_rating DECIMAL(3, 1),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+/* --- 6a. ARCHIWUM FILMÓW (dla mechanizmu Trigger) --- */
+CREATE TABLE movies_archive (
+    archive_id SERIAL PRIMARY KEY,
+    movie_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    original_title VARCHAR(255),
+    description TEXT,
+    director VARCHAR(100),
+    release_date DATE NOT NULL,
+    image VARCHAR(1024),
+    trailer_url VARCHAR(512),
+    price DECIMAL(10, 2), 
+    duration INT NOT NULL,
+    production_country VARCHAR(100),
+    original_language VARCHAR(10),
+    age_rating VARCHAR(10),
+    imdb_rating DECIMAL(3, 1),
+    rotten_tomatoes_rating DECIMAL(3, 1),
+    metacritic_rating DECIMAL(3, 1),
+    created_at TIMESTAMP,
+    archived_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 /* --- 7. POWIĄZANIE FILMÓW Z GATUNKAMI (Relacja jeden do wielu) --- */
@@ -472,3 +497,113 @@ VALUES (
     35.00, 
     'AC-84JFG61'
 );
+
+/* ============================================
+   TRIGGER - ARCHIWIZACJA USUWANYCH FILMÓW
+   ============================================ */
+
+/* Funkcja wyzwalacza - kopiuje usuwany film do archiwum */
+CREATE OR REPLACE FUNCTION archive_movie_function()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO movies_archive (
+        movie_id,
+        title,
+        original_title,
+        description,
+        director,
+        release_date,
+        image,
+        trailer_url,
+        price,
+        duration,
+        production_country,
+        original_language,
+        age_rating,
+        imdb_rating,
+        rotten_tomatoes_rating,
+        metacritic_rating,
+        created_at,
+        archived_at
+    ) VALUES (
+        OLD.movie_id,
+        OLD.title,
+        OLD.original_title,
+        OLD.description,
+        OLD.director,
+        OLD.release_date,
+        OLD.image,
+        OLD.trailer_url,
+        OLD.price,
+        OLD.duration,
+        OLD.production_country,
+        OLD.original_language,
+        OLD.age_rating,
+        OLD.imdb_rating,
+        OLD.rotten_tomatoes_rating,
+        OLD.metacritic_rating,
+        OLD.created_at,
+        CURRENT_TIMESTAMP
+    );
+    
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+/* Trigger uruchamiany PRZED usunięciem filmu */
+CREATE TRIGGER trigger_archive_movie
+    BEFORE DELETE ON movies
+    FOR EACH ROW
+    EXECUTE FUNCTION archive_movie_function();
+
+/* ============================================
+   WIDOK - PEŁNA HISTORIA FILMÓW
+   ============================================ */
+
+/* Widok łączący aktywne filmy z archiwum */
+CREATE VIEW all_movies_history AS
+SELECT 
+    movie_id,
+    title,
+    original_title,
+    description,
+    director,
+    release_date,
+    image,
+    trailer_url,
+    price,
+    duration,
+    production_country,
+    original_language,
+    age_rating,
+    imdb_rating,
+    rotten_tomatoes_rating,
+    metacritic_rating,
+    created_at,
+    NULL::TIMESTAMP AS archived_at,
+    'ACTIVE' AS status
+FROM movies
+
+UNION ALL
+
+SELECT 
+    movie_id,
+    title,
+    original_title,
+    description,
+    director,
+    release_date,
+    image,
+    trailer_url,
+    price,
+    duration,
+    production_country,
+    original_language,
+    age_rating,
+    imdb_rating,
+    rotten_tomatoes_rating,
+    metacritic_rating,
+    created_at,
+    archived_at,
+    'ARCHIVED' AS status
+FROM movies_archive;
