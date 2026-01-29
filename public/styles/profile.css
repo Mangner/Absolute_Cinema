@@ -792,3 +792,187 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* --- Modal QR Code --- */
+.qr-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-modal.active {
+    display: flex;
+}
+
+.qr-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+}
+
+.qr-modal-content {
+    position: relative;
+    background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+    border: 2px solid #d4af37;
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(212, 175, 55, 0.2);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.qr-modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: #888;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-modal-close:hover {
+    background-color: #e74c3c;
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+.qr-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.qr-modal-header i {
+    font-size: 1.8rem;
+    color: #d4af37;
+}
+
+.qr-modal-header h2 {
+    font-size: 1.5rem;
+    color: #fff;
+    margin: 0;
+}
+
+.qr-modal-movie {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #d4af37;
+    margin-bottom: 5px;
+}
+
+.qr-modal-seat {
+    font-size: 0.95rem;
+    color: #888;
+    margin-bottom: 25px;
+}
+
+.qr-code-wrapper {
+    display: inline-block;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.qr-code-wrapper #qrcode {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-code-wrapper #qrcode img {
+    display: block;
+}
+
+.qr-modal-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.qr-modal-hint i {
+    color: #d4af37;
+}
+
+/* --- Przycisk "Pokaż kod QR" na karcie biletu --- */
+.btn-show-qr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 15px;
+    margin-top: 10px;
+    background: linear-gradient(135deg, #d4af37 0%, #b8962e 100%);
+    border: none;
+    border-radius: 8px;
+    color: #000;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-show-qr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+}
+
+.btn-show-qr i {
+    font-size: 1rem;
+}
+
+/* Responsywność dla modala QR */
+@media (max-width: 600px) {
+    .qr-modal-content {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+
+    .qr-code-wrapper {
+        padding: 15px;
+    }
+
+    .qr-modal-header h2 {
+        font-size: 1.3rem;
+    }
+}
+

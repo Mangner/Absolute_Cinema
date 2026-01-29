@@ -6,6 +6,7 @@
     <title>Mój Profil - Absolute Cinema</title>
     <link rel="stylesheet" href="/public/styles/profile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
     <nav>
@@ -122,7 +123,10 @@
                 <?php else: ?>
                 <div class="tickets-grid">
                     <?php foreach ($tickets as $ticket): ?>
-                    <div class="ticket-card">
+                    <div class="ticket-card" 
+                         data-token="<?php echo htmlspecialchars($ticket['ticket_token']); ?>"
+                         data-movie="<?php echo htmlspecialchars($ticket['movie_title']); ?>"
+                         data-seat="Rząd <?php echo htmlspecialchars($ticket['row_label']); ?>, Miejsce <?php echo $ticket['seat_number']; ?>">
                         <div class="ticket-left">
                             <div class="ticket-movie-poster">
                                 <?php if ($ticket['movie_image']): ?>
@@ -183,6 +187,16 @@
                             <span class="ticket-status <?php echo $isPast ? 'past' : 'upcoming'; ?>">
                                 <?php echo $isPast ? 'Zakończony' : 'Nadchodzący'; ?>
                             </span>
+                            <button class="btn-show-qr" 
+                                    onclick="showQRCode(
+                                        '<?php echo htmlspecialchars($ticket['ticket_token']); ?>',
+                                        '<?php echo htmlspecialchars($ticket['movie_title']); ?>',
+                                        'Rząd <?php echo htmlspecialchars($ticket['row_label']); ?>, Miejsce <?php echo $ticket['seat_number']; ?>',
+                                        '<?php echo date('d.m.Y H:i', strtotime($ticket['start_time'])); ?>'
+                                    )">
+                                <i class="fas fa-qrcode"></i>
+                                Pokaż kod
+                            </button>
                         </div>
                         <div class="ticket-perforations">
                             <div class="perforation"></div>
@@ -275,5 +289,30 @@
             });
         });
     </script>
+
+    <!-- Modal QR Code -->
+    <div id="qr-modal" class="qr-modal">
+        <div class="qr-modal-overlay"></div>
+        <div class="qr-modal-content">
+            <button id="qr-modal-close" class="qr-modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="qr-modal-header">
+                <i class="fas fa-ticket-alt"></i>
+                <h2 id="qr-modal-title">Twój Bilet</h2>
+            </div>
+            <p id="qr-modal-movie" class="qr-modal-movie"></p>
+            <p id="qr-modal-seat" class="qr-modal-seat"></p>
+            <div class="qr-code-wrapper">
+                <div id="qrcode"></div>
+            </div>
+            <p class="qr-modal-hint">
+                <i class="fas fa-info-circle"></i>
+                Pokaż ten kod przy wejściu do kina
+            </p>
+        </div>
+    </div>
+
+    <script src="/public/scripts/qrModal.js"></script>
 </body>
 </html>
